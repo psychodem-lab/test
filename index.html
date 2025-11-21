@@ -9,17 +9,25 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
-            padding: 20px 10px; /* Mały margines na boki dla telefonów */
-            background-color: #fff0f5; /* Pastelowy róż tła (LavenderBlush) */
+            padding: 0;
+            background-color: #fff0f5; /* Pastelowy róż tła */
             color: #555;
+            
+            /* CENTROWANIE - te linie zapewniają środek */
             display: flex;
-            justify_content: center; /* Środkowanie w poziomie */
+            justify-content: center; /* Środek w poziomie */
+            align-items: flex-start; /* Zaczynamy od góry (żeby nie ucięło na małych ekranach) */
+            min-height: 100vh; /* Rozciągnij tło na całą wysokość */
         }
 
         /* Główny kontener - WĄSKI i MOBILNY */
         main {
-            width: 100%;
-            max-width: 450px; /* Bardzo wąski układ, idealny na mobile */
+            width: 90%; /* Na telefonach zajmie 90% szerokości */
+            max-width: 450px; /* Na komputerze nie będzie szerszy niż 450px */
+            
+            /* Marginesy: góra/dół 40px, boki AUTO (to klucz do centrowania) */
+            margin: 40px auto; 
+            
             background: #ffffff;
             padding: 25px;
             border-radius: 20px; /* Mocno zaokrąglone rogi */
@@ -245,7 +253,7 @@
             let scores = { I: 0, P: 0, C: 0 };
             const answers = this.querySelectorAll('input[type="radio"]:checked');
             
-            // Sprawdzenie czy wszystkie zaznaczone (teoretycznie 'required' w HTML to robi, ale dla pewności)
+            // Sprawdzenie czy wszystkie zaznaczone
             if (answers.length < 6) return;
 
             answers.forEach(answer => {
@@ -263,7 +271,7 @@
             document.getElementById('results').style.display = 'block';
             document.getElementById('submit-button').style.display = 'none';
             
-            // Przewinięcie do wyniku (przydatne na mobile)
+            // Przewinięcie do wyniku
             document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
         });
     </script>
