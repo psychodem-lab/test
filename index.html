@@ -188,3 +188,19 @@
                 if (scores.hasOwnProperty(category)) {
                     scores[category] += value;
                 }
+            });
+
+            // 4. Wyświetlanie wyników
+            document.getElementById('intymnosc-score').textContent = scores.I;
+            document.getElementById('namietnosc-score').textContent = scores.P;
+            document.getElementById('zaangazowanie-score').textContent = scores.C;
+
+            // Ujawnienie sekcji z wynikami
+            document.getElementById('results').style.display = 'block';
+            
+            // Ukrycie przycisku i formularza, aby nie można było policzyć wyniku ponownie bez odświeżenia
+            document.getElementById('submit-button').style.display = 'none';
+        });
+    </script>
+</body>
+</html>
