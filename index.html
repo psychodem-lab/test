@@ -159,48 +159,46 @@
         </section>
     </main>
     
-    <script>
-        document.getElementById('quiz-form').addEventListener('submit', function(event) {
-            // Zapobieganie domyślnej akcji formularza (przeładowaniu strony)
-            event.preventDefault();
+   <script>
+    document.getElementById('quiz-form').addEventListener('submit', function(event) {
+        // Zapobieganie domyślnej akcji formularza (przeładowaniu strony)
+        event.preventDefault();
 
-            // 1. Inicjalizacja wyników
-            let scores = {
-                I: 0, // Intymność
-                P: 0, // Namiętność
-                C: 0  // Zaangażowanie
-            };
+        // 1. Inicjalizacja wyników
+        let scores = { I: 0, P: 0, C: 0 };
+        
+        // 2. Pobranie wszystkich elementów formularza, które są radio buttonami i zostały zaznaczone
+        const answers = this.querySelectorAll('input[type="radio"]:checked');
 
-            // 2. Pobranie wszystkich zaznaczonych odpowiedzi (radio buttonów)
-            const answers = this.querySelectorAll('input[type="radio"]:checked');
+        // Sprawdzenie, czy wszystkie pytania zostały wypełnione
+        if (answers.length < 6) {
+             // Jeśli brakuje odpowiedzi, po prostu pozwól przeglądarce pokazać komunikat "required" (powinno się zdarzyć automatycznie)
+             return; 
+        }
+
+        // 3. Iteracja i sumowanie wyników
+        answers.forEach(answer => {
+            const value = parseInt(answer.value, 10); // Użycie 10 dla pewności parsowania dziesiętnego
+            const name = answer.name; 
+            const category = name.charAt(1); 
             
-            // 3. Iteracja i sumowanie wyników
-            answers.forEach(answer => {
-                // Pobranie wartości (punktów) i nazwy grupy pytań (np. qI1)
-                const value = parseInt(answer.value);
-                const name = answer.name; 
-                
-                // Wyodrębnienie kategorii (pierwsza litera nazwy grupy)
-                // np. z 'qI1' bierzemy 'I'
-                const category = name.charAt(1); 
-
-                // Dodanie punktów do odpowiedniej kategorii
-                if (scores.hasOwnProperty(category)) {
-                    scores[category] += value;
-                }
-            });
-
-            // 4. Wyświetlanie wyników
-            document.getElementById('intymnosc-score').textContent = scores.I;
-            document.getElementById('namietnosc-score').textContent = scores.P;
-            document.getElementById('zaangazowanie-score').textContent = scores.C;
-
-            // Ujawnienie sekcji z wynikami
-            document.getElementById('results').style.display = 'block';
-            
-            // Ukrycie przycisku i formularza, aby nie można było policzyć wyniku ponownie bez odświeżenia
-            document.getElementById('submit-button').style.display = 'none';
+            if (!isNaN(value) && scores.hasOwnProperty(category)) {
+                scores[category] += value;
+            }
         });
-    </script>
+
+        // 4. Wyświetlanie wyników
+        document.getElementById('intymnosc-score').textContent = scores.I;
+        document.getElementById('namietnosc-score').textContent = scores.P;
+        document.getElementById('zaangazowanie-score').textContent = scores.C;
+
+        // Ujawnienie sekcji z wynikami
+        document.getElementById('results').style.display = 'block';
+        
+        // Ukrycie przycisku
+        document.getElementById('submit-button').style.display = 'none';
+    });
+</script>
 </body>
 </html>
+        
