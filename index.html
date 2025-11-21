@@ -3,202 +3,270 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Miłości Sternberga - Pomiar Związku</title>
+    <title>Test Miłości</title>
     <style>
+        /* Ustawienia ogólne i tło */
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
-            padding: 20px;
-            background-color: #f4f4f9;
-        }
-        main {
-            max-width: 800px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        header h1 {
-            color: #333;
-            text-align: center;
-        }
-        .question-group {
-            margin-bottom: 20px;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        .question-text {
-            font-weight: bold;
-            margin-bottom: 10px;
+            padding: 20px 10px; /* Mały margines na boki dla telefonów */
+            background-color: #fff0f5; /* Pastelowy róż tła (LavenderBlush) */
             color: #555;
+            display: flex;
+            justify_content: center; /* Środkowanie w poziomie */
         }
+
+        /* Główny kontener - WĄSKI i MOBILNY */
+        main {
+            width: 100%;
+            max-width: 450px; /* Bardzo wąski układ, idealny na mobile */
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 20px; /* Mocno zaokrąglone rogi */
+            box-shadow: 0 10px 25px rgba(255, 182, 193, 0.4); /* Różowa poświata */
+        }
+
+        header h1 {
+            color: #db7093; /* PaleVioletRed */
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 30px;
+        }
+
+        /* Styl kafelka z pytaniem */
+        .question-group {
+            background-color: #fdfbf7; /* Bardzo jasny kremowy */
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid #f3e5f5;
+        }
+
+        .question-text {
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #6d5b75; /* Stonowany fiolet */
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+
+        /* Skala ocen - Flexbox dla łatwego klikania */
+        .rating-scale {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Stylizacja opcji wyboru */
         .rating-scale label {
-            margin-right: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        .rating-scale input[type="radio"] {
+            margin-bottom: 5px;
+            transform: scale(1.3); /* Powiększenie kropek do klikania */
+            accent-color: #db7093; /* Różowy kolor zaznaczenia */
             cursor: pointer;
         }
+
+        /* Przycisk */
         button {
             display: block;
             width: 100%;
-            padding: 10px;
-            background-color: #007bff;
+            padding: 15px;
+            background-color: #b39ddb; /* Pastelowy fiolet */
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 50px; /* Kształt pigułki */
             font-size: 16px;
+            font-weight: bold;
             cursor: pointer;
-            margin-top: 20px;
+            margin-top: 10px;
+            transition: background 0.3s;
+            box-shadow: 0 4px 10px rgba(179, 157, 219, 0.5);
         }
+
         button:hover {
-            background-color: #0056b3;
+            background-color: #9575cd;
         }
+
+        /* Sekcja wyników */
         #results {
             margin-top: 30px;
-            padding: 20px;
-            border: 2px solid #28a745;
-            border-radius: 4px;
-            background-color: #e2ffe8;
-        }
-        #results h2 {
-            color: #28a745;
+            padding: 25px;
+            border-radius: 20px;
+            background-color: #e0f2f1; /* Pastelowa mięta */
+            border: 2px solid #b2dfdb;
             text-align: center;
+            animation: fadeIn 0.5s ease-in;
         }
-        #results p {
-            font-size: 1.1em;
-            margin: 8px 0;
+
+        #results h2 {
+            color: #00897b;
+            margin-top: 0;
+            font-size: 1.4rem;
         }
+
+        .result-line {
+            font-size: 1.1rem;
+            margin: 10px 0;
+            color: #444;
+        }
+
         .score {
             font-weight: bold;
-            color: #dc3545;
+            color: #db7093;
+            font-size: 1.3rem;
+        }
+        
+        /* Animacja pojawiania się wyniku */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Stopka */
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 0.75rem;
+            color: #aaa;
         }
     </style>
 </head>
 <body>
+
     <main>
         <header>
-            <h1>💔 Trójczynnikowy Test Związku</h1>
-            <p>Oceń poniższe stwierdzenia w skali od 1 (zdecydowanie się nie zgadzam) do 5 (zdecydowanie się zgadzam).</p>
+            <h1>💖 Test Związku</h1>
+            <p>Oceń szczerość poniższych zdań (1 - nie, 5 - tak).</p>
         </header>
         
         <form id="quiz-form">
             
-            <div class="question-group" data-category="I">
-                <p class="question-text">1. Czuję, że mogę podzielić się moim wewnętrznym "ja" z moim partnerem/partnerką.</p>
+            <div class="question-group">
+                <p class="question-text">1. Mogę powierzyć partnerowi/ce moje najgłębsze sekrety.</p>
                 <div class="rating-scale">
-                    <label><input type="radio" name="qI1" value="1" required> 1</label>
-                    <label><input type="radio" name="qI1" value="2"> 2</label>
-                    <label><input type="radio" name="qI1" value="3"> 3</label>
-                    <label><input type="radio" name="qI1" value="4"> 4</label>
-                    <label><input type="radio" name="qI1" value="5"> 5</label>
-                </div>
-            </div>
-            <div class="question-group" data-category="I">
-                <p class="question-text">2. Mój partner/partnerka w pełni mnie rozumie.</p>
-                <div class="rating-scale">
-                    <label><input type="radio" name="qI2" value="1" required> 1</label>
-                    <label><input type="radio" name="qI2" value="2"> 2</label>
-                    <label><input type="radio" name="qI2" value="3"> 3</label>
-                    <label><input type="radio" name="qI2" value="4"> 4</label>
-                    <label><input type="radio" name="qI2" value="5"> 5</label>
+                    <label><input type="radio" name="qI1" value="1" required>1</label>
+                    <label><input type="radio" name="qI1" value="2">2</label>
+                    <label><input type="radio" name="qI1" value="3">3</label>
+                    <label><input type="radio" name="qI1" value="4">4</label>
+                    <label><input type="radio" name="qI1" value="5">5</label>
                 </div>
             </div>
 
-            <div class="question-group" data-category="P">
-                <p class="question-text">3. Moje myśli często koncentrują się na moim partnerze/partnerce.</p>
+            <div class="question-group">
+                <p class="question-text">2. Czuję silną więź emocjonalną z partnerem/ką.</p>
                 <div class="rating-scale">
-                    <label><input type="radio" name="qP1" value="1" required> 1</label>
-                    <label><input type="radio" name="qP1" value="2"> 2</label>
-                    <label><input type="radio" name="qP1" value="3"> 3</label>
-                    <label><input type="radio" name="qP1" value="4"> 4</label>
-                    <label><input type="radio" name="qP1" value="5"> 5</label>
-                </div>
-            </div>
-            <div class="question-group" data-category="P">
-                <p class="question-text">4. Czuję silną atrakcyjność fizyczną do mojego partnera/partnerki.</p>
-                <div class="rating-scale">
-                    <label><input type="radio" name="qP2" value="1" required> 1</label>
-                    <label><input type="radio" name="qP2" value="2"> 2</label>
-                    <label><input type="radio" name="qP2" value="3"> 3</label>
-                    <label><input type="radio" name="qP2" value="4"> 4</label>
-                    <label><input type="radio" name="qP2" value="5"> 5</label>
+                    <label><input type="radio" name="qI2" value="1" required>1</label>
+                    <label><input type="radio" name="qI2" value="2">2</label>
+                    <label><input type="radio" name="qI2" value="3">3</label>
+                    <label><input type="radio" name="qI2" value="4">4</label>
+                    <label><input type="radio" name="qI2" value="5">5</label>
                 </div>
             </div>
 
-            <div class="question-group" data-category="C">
-                <p class="question-text">5. Jestem zdeterminowany, aby utrzymać ten związek w przyszłości.</p>
+            <div class="question-group">
+                <p class="question-text">3. Mój partner/ka jest dla mnie bardzo atrakcyjny/a fizycznie.</p>
                 <div class="rating-scale">
-                    <label><input type="radio" name="qC1" value="1" required> 1</label>
-                    <label><input type="radio" name="qC1" value="2"> 2</label>
-                    <label><input type="radio" name="qC1" value="3"> 3</label>
-                    <label><input type="radio" name="qC1" value="4"> 4</label>
-                    <label><input type="radio" name="qC1" value="5"> 5</label>
-                </div>
-            </div>
-            <div class="question-group" data-category="C">
-                <p class="question-text">6. Uważam, że mój związek jest trwały.</p>
-                <div class="rating-scale">
-                    <label><input type="radio" name="qC2" value="1" required> 1</label>
-                    <label><input type="radio" name="qC2" value="2"> 2</label>
-                    <label><input type="radio" name="qC2" value="3"> 3</label>
-                    <label><input type="radio" name="qC2" value="4"> 4</label>
-                    <label><input type="radio" name="qC2" value="5"> 5</label>
+                    <label><input type="radio" name="qP1" value="1" required>1</label>
+                    <label><input type="radio" name="qP1" value="2">2</label>
+                    <label><input type="radio" name="qP1" value="3">3</label>
+                    <label><input type="radio" name="qP1" value="4">4</label>
+                    <label><input type="radio" name="qP1" value="5">5</label>
                 </div>
             </div>
             
-            <button type="submit" id="submit-button">Oblicz Wynik</button>
+            <div class="question-group">
+                <p class="question-text">4. Nasza relacja jest pełna romantyzmu i pasji.</p>
+                <div class="rating-scale">
+                    <label><input type="radio" name="qP2" value="1" required>1</label>
+                    <label><input type="radio" name="qP2" value="2">2</label>
+                    <label><input type="radio" name="qP2" value="3">3</label>
+                    <label><input type="radio" name="qP2" value="4">4</label>
+                    <label><input type="radio" name="qP2" value="5">5</label>
+                </div>
+            </div>
+
+            <div class="question-group">
+                <p class="question-text">5. Planuję naszą wspólną przyszłość długoterminowo.</p>
+                <div class="rating-scale">
+                    <label><input type="radio" name="qC1" value="1" required>1</label>
+                    <label><input type="radio" name="qC1" value="2">2</label>
+                    <label><input type="radio" name="qC1" value="3">3</label>
+                    <label><input type="radio" name="qC1" value="4">4</label>
+                    <label><input type="radio" name="qC1" value="5">5</label>
+                </div>
+            </div>
+
+            <div class="question-group">
+                <p class="question-text">6. Traktuję nasz związek jako coś stałego i nienaruszalnego.</p>
+                <div class="rating-scale">
+                    <label><input type="radio" name="qC2" value="1" required>1</label>
+                    <label><input type="radio" name="qC2" value="2">2</label>
+                    <label><input type="radio" name="qC2" value="3">3</label>
+                    <label><input type="radio" name="qC2" value="4">4</label>
+                    <label><input type="radio" name="qC2" value="5">5</label>
+                </div>
+            </div>
+            
+            <button type="submit" id="submit-button">Sprawdź Wynik ✨</button>
         </form>
 
         <section id="results" style="display:none;">
             <h2>Twoje Wyniki</h2>
-            <p>Intymność: <span id="intymnosc-score" class="score"></span></p>
-            <p>Namiętność: <span id="namietnosc-score" class="score"></span></p>
-            <p>Zaangażowanie: <span id="zaangazowanie-score" class="score"></span></p>
-            <hr>
-            <p>Maksymalny możliwy wynik w każdej kategorii to 10 (2 pytania po 5 punktów).</p>
+            <div class="result-line">Intymność: <span id="intymnosc-score" class="score">0</span></div>
+            <div class="result-line">Namiętność: <span id="namietnosc-score" class="score">0</span></div>
+            <div class="result-line">Zaangażowanie: <span id="zaangazowanie-score" class="score">0</span></div>
         </section>
+
+        <footer>
+            &copy; 2025 Psychologia Miłości
+        </footer>
     </main>
     
-   <script>
-    document.getElementById('quiz-form').addEventListener('submit', function(event) {
-        // Zapobieganie domyślnej akcji formularza (przeładowaniu strony)
-        event.preventDefault();
+    <script>
+        document.getElementById('quiz-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Zatrzymanie odświeżania
 
-        // 1. Inicjalizacja wyników
-        let scores = { I: 0, P: 0, C: 0 };
-        
-        // 2. Pobranie wszystkich elementów formularza, które są radio buttonami i zostały zaznaczone
-        const answers = this.querySelectorAll('input[type="radio"]:checked');
-
-        // Sprawdzenie, czy wszystkie pytania zostały wypełnione
-        if (answers.length < 6) {
-             // Jeśli brakuje odpowiedzi, po prostu pozwól przeglądarce pokazać komunikat "required" (powinno się zdarzyć automatycznie)
-             return; 
-        }
-
-        // 3. Iteracja i sumowanie wyników
-        answers.forEach(answer => {
-            const value = parseInt(answer.value, 10); // Użycie 10 dla pewności parsowania dziesiętnego
-            const name = answer.name; 
-            const category = name.charAt(1); 
+            let scores = { I: 0, P: 0, C: 0 };
+            const answers = this.querySelectorAll('input[type="radio"]:checked');
             
-            if (!isNaN(value) && scores.hasOwnProperty(category)) {
-                scores[category] += value;
-            }
+            // Sprawdzenie czy wszystkie zaznaczone (teoretycznie 'required' w HTML to robi, ale dla pewności)
+            if (answers.length < 6) return;
+
+            answers.forEach(answer => {
+                const val = parseInt(answer.value);
+                const cat = answer.name.charAt(1); // Pobiera I, P lub C z nazwy np. qI1
+                if (scores.hasOwnProperty(cat)) scores[cat] += val;
+            });
+
+            // Wstawienie wyników
+            document.getElementById('intymnosc-score').innerText = scores.I;
+            document.getElementById('namietnosc-score').innerText = scores.P;
+            document.getElementById('zaangazowanie-score').innerText = scores.C;
+
+            // Wyświetlenie sekcji
+            document.getElementById('results').style.display = 'block';
+            document.getElementById('submit-button').style.display = 'none';
+            
+            // Przewinięcie do wyniku (przydatne na mobile)
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
         });
+    </script>
 
-        // 4. Wyświetlanie wyników
-        document.getElementById('intymnosc-score').textContent = scores.I;
-        document.getElementById('namietnosc-score').textContent = scores.P;
-        document.getElementById('zaangazowanie-score').textContent = scores.C;
-
-        // Ujawnienie sekcji z wynikami
-        document.getElementById('results').style.display = 'block';
-        
-        // Ukrycie przycisku
-        document.getElementById('submit-button').style.display = 'none';
-    });
-</script>
 </body>
 </html>
-        
