@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Osobowości</title>
+    <style>
+        /* Stylizacja (CSS) - wygląd strony */
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #333;
+        }
+
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 8px;
+            background-color: #3498db;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #2980b9;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        #result-area, #quiz-area {
+            display: none; /* Ukryte na start */
+        }
+
+        #start-area {
+            display: block;
+        }
+
+        .result-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #27ae60;
+            margin-bottom: 10px;
+        }
+
+        .result-desc {
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="start-area">
+        <h1>Jaki jest Twój żywioł?</h1>
+        <p>Odpowiedz na 3 proste pytania i sprawdź, jaki typ energii reprezentujesz.</p>
+        <button class="btn" onclick="startQuiz()">Rozpocznij Test</button>
+    </div>
+
+    <div id="quiz-area">
+        <h2 id="question-number">Pytanie 1/3</h2>
+        <p id="question-text" class="question-text">Treść pytania...</p>
+        <div id="answer-buttons">
+            </div>
+    </div>
+
+    <div id="result-area">
+        <h1>Twój wynik:</h1>
+        <div id="result-title" class="result-title"></div>
+        <p id="result-desc" class="result-desc"></p>
+        <button class="btn" onclick="location.reload()">Zrób test ponownie</button>
+    </div>
+</div>
+
+<script>
+    /* Logika (JavaScript) - działanie testu */
+    
+    // Baza pytań
+    const questions = [
+        {
+            question: "Gdy masz wolny wieczór, najchętniej:",
+            answers: [
+                { text: "Idę na imprezę ze znajomymi", type: "Ogień" },
+                { text: "Czytam książkę pod kocem", type: "Ziemia" },
+                { text: "Planuję przyszłe projekty", type: "Powietrze" },
+                { text: "Biorę długą, relaksującą kąpiel", type: "Woda" }
+            ]
+        },
+        {
+            question: "W sytuacjach stresowych:",
+            answers: [
+                { text: "Działam szybko i impulsywnie", type: "Ogień" },
+                { text: "Szukam logicznego rozwiązania", type: "Ziemia" },
+                { text: "Analizuję wszystkie opcje", type: "Powietrze" },
+                { text: "Kieruję się intuicją i emocjami", type: "Woda" }
+            ]
+        },
+        {
+            question: "Twój idealny urlop to:",
+            answers: [
+                { text: "Aktywny wypoczynek, sport", type: "Ogień" },
+                { text: "Wędrówka po górach, natura", type: "Ziemia" },
+                { text: "Zwiedzanie muzeów i miast", type: "Powietrze" },
+                { text: "Plaża, morze i spokój", type: "Woda" }
+            ]
+        }
+    ];
+
+    // Opisy wyników
+    const results = {
+        "Ogień": "Jesteś OGNIEM! Masz w sobie mnóstwo energii, pasji i odwagi. Jesteś naturalnym liderem, który nie boi się wyzwań.",
+        "Ziemia": "Jesteś ZIEMIĄ! Cechuje Cię stabilność, spokój i praktyczne podejście do życia. Jesteś oparciem dla bliskich.",
+        "Powietrze": "Jesteś POWIETRZEM! Masz otwarty umysł, kochasz wolność i intelektualne wyzwania. Jesteś świetnym komunikatorem.",
+        "Woda": "Jesteś WODĄ! Cechuje Cię głęboka wrażliwość, intuicja i empatia. Potrafisz doskonale rozumieć emocje innych."
+    };
+
+    let currentQuestionIndex = 0;
+    let scores = { "Ogień": 0, "Ziemia": 0, "Powietrze": 0, "Woda": 0 };
+
+    function startQuiz() {
+        document.getElementById('start-area').style.display = 'none';
+        document.getElementById('quiz-area').style.display = 'block';
+        showQuestion();
+    }
+
+    function showQuestion() {
+        let currentQuestion = questions[currentQuestionIndex];
+        document.getElementById('question-number').innerText = `Pytanie ${currentQuestionIndex + 1}/${questions.length}`;
+        document.getElementById('question-text').innerText = currentQuestion.question;
+
+        const answerButtonsElement = document.getElementById('answer-buttons');
+        answerButtonsElement.innerHTML = ''; // Czyści poprzednie przyciski
+
+        currentQuestion.answers.forEach(answer => {
+            const button = document.createElement('button');
+            button.innerText = answer.text;
+            button.classList.add('btn');
+            button.onclick = () => selectAnswer(answer.type);
+            answerButtonsElement.appendChild(button);
+        });
+    }
+
+    function selectAnswer(type) {
+        scores[type]++; // Dodaj punkt do typu
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questions.length) {
+            showQuestion();
+        } else {
+            showResult();
+        }
+    }
+
+    function showResult() {
+        document.getElementById('quiz-area').style.display = 'none';
+        document.getElementById('result-area').style.display = 'block';
+
+        // Znajdź typ z największą liczbą punktów
+        let bestType = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+
+        document.getElementById('result-title').innerText = bestType;
+        document.getElementById('result-desc').innerText = results[bestType];
+    }
+</script>
+
+</body>
+</html>
