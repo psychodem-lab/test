@@ -3,192 +3,188 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Osobowości</title>
+    <title>Test Miłości Sternberga - Pomiar Związku</title>
     <style>
-        /* Stylizacja (CSS) - wygląd strony */
         body {
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            background-color: #f4f4f9;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            font-family: Arial, sans-serif;
             margin: 0;
-            color: #333;
+            padding: 20px;
+            background-color: #f4f4f9;
         }
-
-        .container {
-            background: white;
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            max-width: 500px;
-            width: 100%;
+        main {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        header h1 {
+            color: #333;
             text-align: center;
         }
-
-        h1 {
-            color: #2c3e50;
-            margin-bottom: 1rem;
+        .question-group {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
         }
-
-        .btn {
+        .question-text {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #555;
+        }
+        .rating-scale label {
+            margin-right: 15px;
+            cursor: pointer;
+        }
+        button {
             display: block;
             width: 100%;
-            padding: 15px;
-            margin: 10px 0;
-            border: none;
-            border-radius: 8px;
-            background-color: #3498db;
+            padding: 10px;
+            background-color: #007bff;
             color: white;
+            border: none;
+            border-radius: 4px;
             font-size: 16px;
             cursor: pointer;
-            transition: background 0.3s;
+            margin-top: 20px;
         }
-
-        .btn:hover {
-            background-color: #2980b9;
+        button:hover {
+            background-color: #0056b3;
         }
-
-        .question-text {
-            font-size: 1.2rem;
-            margin-bottom: 1.5rem;
+        #results {
+            margin-top: 30px;
+            padding: 20px;
+            border: 2px solid #28a745;
+            border-radius: 4px;
+            background-color: #e2ffe8;
         }
-
-        #result-area, #quiz-area {
-            display: none; /* Ukryte na start */
+        #results h2 {
+            color: #28a745;
+            text-align: center;
         }
-
-        #start-area {
-            display: block;
+        #results p {
+            font-size: 1.1em;
+            margin: 8px 0;
         }
-
-        .result-title {
-            font-size: 1.5rem;
+        .score {
             font-weight: bold;
-            color: #27ae60;
-            margin-bottom: 10px;
-        }
-
-        .result-desc {
-            line-height: 1.6;
+            color: #dc3545;
         }
     </style>
 </head>
 <body>
-
-<div class="container">
-    <div id="start-area">
-        <h1>Jaki jest Twój żywioł?</h1>
-        <p>Odpowiedz na 3 proste pytania i sprawdź, jaki typ energii reprezentujesz.</p>
-        <button class="btn" onclick="startQuiz()">Rozpocznij Test</button>
-    </div>
-
-    <div id="quiz-area">
-        <h2 id="question-number">Pytanie 1/3</h2>
-        <p id="question-text" class="question-text">Treść pytania...</p>
-        <div id="answer-buttons">
+    <main>
+        <header>
+            <h1>💔 Trójczynnikowy Test Związku</h1>
+            <p>Oceń poniższe stwierdzenia w skali od 1 (zdecydowanie się nie zgadzam) do 5 (zdecydowanie się zgadzam).</p>
+        </header>
+        
+        <form id="quiz-form">
+            
+            <div class="question-group" data-category="I">
+                <p class="question-text">1. Czuję, że mogę podzielić się moim wewnętrznym "ja" z moim partnerem/partnerką.</p>
+                <div class="rating-scale">
+                    <label><input type="radio" name="qI1" value="1" required> 1</label>
+                    <label><input type="radio" name="qI1" value="2"> 2</label>
+                    <label><input type="radio" name="qI1" value="3"> 3</label>
+                    <label><input type="radio" name="qI1" value="4"> 4</label>
+                    <label><input type="radio" name="qI1" value="5"> 5</label>
+                </div>
             </div>
-    </div>
+            <div class="question-group" data-category="I">
+                <p class="question-text">2. Mój partner/partnerka w pełni mnie rozumie.</p>
+                <div class="rating-scale">
+                    <label><input type="radio" name="qI2" value="1" required> 1</label>
+                    <label><input type="radio" name="qI2" value="2"> 2</label>
+                    <label><input type="radio" name="qI2" value="3"> 3</label>
+                    <label><input type="radio" name="qI2" value="4"> 4</label>
+                    <label><input type="radio" name="qI2" value="5"> 5</label>
+                </div>
+            </div>
 
-    <div id="result-area">
-        <h1>Twój wynik:</h1>
-        <div id="result-title" class="result-title"></div>
-        <p id="result-desc" class="result-desc"></p>
-        <button class="btn" onclick="location.reload()">Zrób test ponownie</button>
-    </div>
-</div>
+            <div class="question-group" data-category="P">
+                <p class="question-text">3. Moje myśli często koncentrują się na moim partnerze/partnerce.</p>
+                <div class="rating-scale">
+                    <label><input type="radio" name="qP1" value="1" required> 1</label>
+                    <label><input type="radio" name="qP1" value="2"> 2</label>
+                    <label><input type="radio" name="qP1" value="3"> 3</label>
+                    <label><input type="radio" name="qP1" value="4"> 4</label>
+                    <label><input type="radio" name="qP1" value="5"> 5</label>
+                </div>
+            </div>
+            <div class="question-group" data-category="P">
+                <p class="question-text">4. Czuję silną atrakcyjność fizyczną do mojego partnera/partnerki.</p>
+                <div class="rating-scale">
+                    <label><input type="radio" name="qP2" value="1" required> 1</label>
+                    <label><input type="radio" name="qP2" value="2"> 2</label>
+                    <label><input type="radio" name="qP2" value="3"> 3</label>
+                    <label><input type="radio" name="qP2" value="4"> 4</label>
+                    <label><input type="radio" name="qP2" value="5"> 5</label>
+                </div>
+            </div>
 
-<script>
-    /* Logika (JavaScript) - działanie testu */
+            <div class="question-group" data-category="C">
+                <p class="question-text">5. Jestem zdeterminowany, aby utrzymać ten związek w przyszłości.</p>
+                <div class="rating-scale">
+                    <label><input type="radio" name="qC1" value="1" required> 1</label>
+                    <label><input type="radio" name="qC1" value="2"> 2</label>
+                    <label><input type="radio" name="qC1" value="3"> 3</label>
+                    <label><input type="radio" name="qC1" value="4"> 4</label>
+                    <label><input type="radio" name="qC1" value="5"> 5</label>
+                </div>
+            </div>
+            <div class="question-group" data-category="C">
+                <p class="question-text">6. Uważam, że mój związek jest trwały.</p>
+                <div class="rating-scale">
+                    <label><input type="radio" name="qC2" value="1" required> 1</label>
+                    <label><input type="radio" name="qC2" value="2"> 2</label>
+                    <label><input type="radio" name="qC2" value="3"> 3</label>
+                    <label><input type="radio" name="qC2" value="4"> 4</label>
+                    <label><input type="radio" name="qC2" value="5"> 5</label>
+                </div>
+            </div>
+            
+            <button type="submit" id="submit-button">Oblicz Wynik</button>
+        </form>
+
+        <section id="results" style="display:none;">
+            <h2>Twoje Wyniki</h2>
+            <p>Intymność: <span id="intymnosc-score" class="score"></span></p>
+            <p>Namiętność: <span id="namietnosc-score" class="score"></span></p>
+            <p>Zaangażowanie: <span id="zaangazowanie-score" class="score"></span></p>
+            <hr>
+            <p>Maksymalny możliwy wynik w każdej kategorii to 10 (2 pytania po 5 punktów).</p>
+        </section>
+    </main>
     
-    // Baza pytań
-    const questions = [
-        {
-            question: "Gdy masz wolny wieczór, najchętniej:",
-            answers: [
-                { text: "Idę na imprezę ze znajomymi", type: "Ogień" },
-                { text: "Czytam książkę pod kocem", type: "Ziemia" },
-                { text: "Planuję przyszłe projekty", type: "Powietrze" },
-                { text: "Biorę długą, relaksującą kąpiel", type: "Woda" }
-            ]
-        },
-        {
-            question: "W sytuacjach stresowych:",
-            answers: [
-                { text: "Działam szybko i impulsywnie", type: "Ogień" },
-                { text: "Szukam logicznego rozwiązania", type: "Ziemia" },
-                { text: "Analizuję wszystkie opcje", type: "Powietrze" },
-                { text: "Kieruję się intuicją i emocjami", type: "Woda" }
-            ]
-        },
-        {
-            question: "Twój idealny urlop to:",
-            answers: [
-                { text: "Aktywny wypoczynek, sport", type: "Ogień" },
-                { text: "Wędrówka po górach, natura", type: "Ziemia" },
-                { text: "Zwiedzanie muzeów i miast", type: "Powietrze" },
-                { text: "Plaża, morze i spokój", type: "Woda" }
-            ]
-        }
-    ];
+    <script>
+        document.getElementById('quiz-form').addEventListener('submit', function(event) {
+            // Zapobieganie domyślnej akcji formularza (przeładowaniu strony)
+            event.preventDefault();
 
-    // Opisy wyników
-    const results = {
-        "Ogień": "Jesteś OGNIEM! Masz w sobie mnóstwo energii, pasji i odwagi. Jesteś naturalnym liderem, który nie boi się wyzwań.",
-        "Ziemia": "Jesteś ZIEMIĄ! Cechuje Cię stabilność, spokój i praktyczne podejście do życia. Jesteś oparciem dla bliskich.",
-        "Powietrze": "Jesteś POWIETRZEM! Masz otwarty umysł, kochasz wolność i intelektualne wyzwania. Jesteś świetnym komunikatorem.",
-        "Woda": "Jesteś WODĄ! Cechuje Cię głęboka wrażliwość, intuicja i empatia. Potrafisz doskonale rozumieć emocje innych."
-    };
+            // 1. Inicjalizacja wyników
+            let scores = {
+                I: 0, // Intymność
+                P: 0, // Namiętność
+                C: 0  // Zaangażowanie
+            };
 
-    let currentQuestionIndex = 0;
-    let scores = { "Ogień": 0, "Ziemia": 0, "Powietrze": 0, "Woda": 0 };
+            // 2. Pobranie wszystkich zaznaczonych odpowiedzi (radio buttonów)
+            const answers = this.querySelectorAll('input[type="radio"]:checked');
+            
+            // 3. Iteracja i sumowanie wyników
+            answers.forEach(answer => {
+                // Pobranie wartości (punktów) i nazwy grupy pytań (np. qI1)
+                const value = parseInt(answer.value);
+                const name = answer.name; 
+                
+                // Wyodrębnienie kategorii (pierwsza litera nazwy grupy)
+                // np. z 'qI1' bierzemy 'I'
+                const category = name.charAt(1); 
 
-    function startQuiz() {
-        document.getElementById('start-area').style.display = 'none';
-        document.getElementById('quiz-area').style.display = 'block';
-        showQuestion();
-    }
-
-    function showQuestion() {
-        let currentQuestion = questions[currentQuestionIndex];
-        document.getElementById('question-number').innerText = `Pytanie ${currentQuestionIndex + 1}/${questions.length}`;
-        document.getElementById('question-text').innerText = currentQuestion.question;
-
-        const answerButtonsElement = document.getElementById('answer-buttons');
-        answerButtonsElement.innerHTML = ''; // Czyści poprzednie przyciski
-
-        currentQuestion.answers.forEach(answer => {
-            const button = document.createElement('button');
-            button.innerText = answer.text;
-            button.classList.add('btn');
-            button.onclick = () => selectAnswer(answer.type);
-            answerButtonsElement.appendChild(button);
-        });
-    }
-
-    function selectAnswer(type) {
-        scores[type]++; // Dodaj punkt do typu
-        currentQuestionIndex++;
-
-        if (currentQuestionIndex < questions.length) {
-            showQuestion();
-        } else {
-            showResult();
-        }
-    }
-
-    function showResult() {
-        document.getElementById('quiz-area').style.display = 'none';
-        document.getElementById('result-area').style.display = 'block';
-
-        // Znajdź typ z największą liczbą punktów
-        let bestType = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
-
-        document.getElementById('result-title').innerText = bestType;
-        document.getElementById('result-desc').innerText = results[bestType];
-    }
-</script>
-
-</body>
-</html>
+                // Dodanie punktów do odpowiedniej kategorii
+                if (scores.hasOwnProperty(category)) {
+                    scores[category] += value;
+                }
