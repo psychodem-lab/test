@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ścieżka do Trwałego Związku - Warsztaty</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #d4e1f1; /* Delikatny błękit */
+            --accent: #e9d5da; /* Zgaszony róż */
+            --text: #444;
+            --bg: #fdfcfb;
+        }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background-color: var(--bg);
+            margin: 0;
+            padding: 0;
+        }
+        section {
+            padding: 80px 20px;
+            max-width: 900px;
+            margin: 0 auto;
+            border-bottom: 1px solid #eee;
+        }
+        h1, h2 {
+            font-family: 'Playfair Display', serif;
+            color: #2c3e50;
+            text-align: center;
+        }
+        h1 { font-size: 3rem; margin-bottom: 10px; }
+        .subtitle { text-align: center; font-style: italic; color: #7f8c8d; margin-bottom: 50px; }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(255,255,255,0.8), rgba(255,255,255,0.8)), url('https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&q=80&w=1200');
+            background-size: cover;
+            height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Moduły */
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+        }
+        .card:hover { transform: translateY(-5px); }
+
+        /* Cytaty */
+        blockquote {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            text-align: center;
+            border: none;
+            margin: 40px 0;
+            padding: 20px;
+            background: var(--primary);
+            border-radius: 20px;
+        }
+
+        /* Formularze/Ćwiczenia */
+        .exercise-box {
+            background: #fff;
+            border-left: 5px solid var(--accent);
+            padding: 20px;
+            margin: 20px 0;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        footer { text-align: center; padding: 40px; font-size: 0.9rem; color: #999; }
+    </style>
+</head>
+<body>
+
+    <header class="hero">
+        <h1>Ścieżka do Trwałego Związku</h1>
+        <p class="subtitle">Warsztaty rozwoju relacji dla Narzeczonych</p>
+        <p><strong>Prowadzący: Jan Kowalski</strong></p>
+    </header>
+
+    <section id="quote">
+        <blockquote>
+            "Miłość nie polega na tym, aby wzajemnie sobie się przyglądać, lecz aby patrzeć razem w tym samym kierunku."<br>
+            <small>— Antoine de Saint-Exupéry, Mały Książę</small>
+        </blockquote>
+    </section>
+
+    <section id="sternberg">
+        <h2>Trójkąt Miłości (Sternberg)</h2>
+        <div class="card-container">
+            <div class="card">
+                <h3>Intymność</h3>
+                <p>Bliskość, dzielenie się myślami, zaufanie i poczucie bezpieczeństwa.</p>
+            </div>
+            <div class="card">
+                <h3>Namiętność</h3>
+                <p>Pożądanie, chemia, fascynacja fizyczna i emocjonalna.</p>
+            </div>
+            <div class="card">
+                <h3>Zaangażowanie</h3>
+                <p>Świadoma decyzja o byciu razem i wspólnym budowaniu przyszłości.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="jezyki">
+        <h2>5 Języków Miłości</h2>
+        <p>Odkryjcie, jak najlepiej komunikujecie sobie uczucia:</p>
+        <ul>
+            <li><strong>Słowa (Afirmacja):</strong> Komplementy i wsparcie.</li>
+            <li><strong>Czas:</strong> 100% uwagi dla drugiej osoby.</li>
+            <li><strong>Podarunki:</strong> Drobne gesty pamięci.</li>
+            <li><strong>Przysługi:</strong> Pomoc w codziennych obowiązkach.</li>
+            <li><strong>Dotyk:</strong> Bliskość fizyczna i czułość.</li>
+        </ul>
+        <div class="exercise-box">
+            <p><strong>Zadanie:</strong> Wpisz dominujący język Twojego partnera:</p>
+            <input type="text" placeholder="Mój partner najbardziej czuje się kochany przez...">
+        </div>
+    </section>
+
+    <section id="empatia">
+        <h2>Warsztat Empatii</h2>
+        <p>Zamiast radzić lub oceniać, spróbuj odzwierciedlić emocje:</p>
+        <div style="background: #f9f9f9; padding: 20px; border-radius: 10px;">
+            <p><em>"Słyszę, że to było dla Ciebie bardzo trudne..."</em></p>
+            <p><em>"Wygląda na to, że czujesz się teraz przytłoczony/-a."</em></p>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 Warsztaty dla Narzeczonych. Materiały stworzone dla Jana Kowalskiego.</p>
+    </footer>
+
+</body>
+</html>
