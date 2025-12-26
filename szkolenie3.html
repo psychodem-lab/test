@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Prezentacja</title>
+    <title>Prezentacja Pro - Pan & Zoom</title>
     <style>
         :root {
             --primary-color: #0078d4;
@@ -22,11 +22,9 @@
             height: 100vh;
             overflow: hidden;
             font-family: 'Segoe UI', system-ui, sans-serif;
-            /* touch-action: none; - Wyłączamy domyślne gesty, by obsłużyć je ręcznie w JS */
             touch-action: none;
         }
 
-        /* Obszar wizjera */
         .viewport {
             width: 100vw;
             height: 85vh;
@@ -47,7 +45,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
+            overflow: hidden; /* Ważne: przycina powiększony obraz */
+            position: relative;
         }
 
         .slide {
@@ -57,10 +56,9 @@
             box-shadow: 0 10px 50px rgba(0,0,0,0.7);
             pointer-events: none;
             user-select: none;
-            /* Płynny zoom */
             transition: transform 0.1s ease-out;
-            transform-origin: center center;
             will-change: transform;
+            transform: translate(0px, 0px) scale(1);
         }
 
         /* --- PANEL PRAWY GÓRNY --- */
@@ -85,22 +83,11 @@
             text-align: center;
             border: 1px solid rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(10px);
-            transition: all 0.2s ease;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
 
-        .counter-btn {
-            color: #fff;
-            background: rgba(0, 120, 212, 0.85);
-        }
-
-        #slide-link-btn {
-            background: rgba(40, 167, 69, 0.85);
-            color: white;
-            text-decoration: none;
-            display: none;
-        }
+        .counter-btn { color: #fff; background: rgba(0, 120, 212, 0.85); }
+        #slide-link-btn { background: rgba(40, 167, 69, 0.85); color: white; text-decoration: none; display: none; }
 
         /* --- SPIS TREŚCI --- */
         .grid-overlay {
@@ -117,24 +104,16 @@
             padding: 40px 20px;
             overflow-y: auto;
         }
-
         .grid-overlay.active { display: flex; }
-
         .grid-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
             gap: 15px;
             max-width: 1100px;
             width: 100%;
-            margin-top: 30px;
         }
-
-        .thumb-item { cursor: pointer; text-align: center; }
-        .thumb-item img { width: 100%; border-radius: 6px; border: 2px solid transparent; }
-        .thumb-item:hover img { border-color: var(--primary-color); }
-        .thumb-item span { color: #aaa; font-size: 11px; display: block; margin-top: 5px; }
-
-        .close-grid { color: white; font-size: 35px; cursor: pointer; align-self: flex-end; margin-right: 20px; }
+        .thumb-item { cursor: pointer; text-align: center; color: #aaa; font-size: 11px; }
+        .thumb-item img { width: 100%; border-radius: 6px; margin-bottom: 5px; }
 
         /* --- DOLNY PASEK --- */
         .controls-bar {
@@ -148,22 +127,10 @@
             align-items: center;
             gap: 15px;
             z-index: 100;
-            border-top: 1px solid #333;
         }
-
-        .btn {
-            padding: 12px 20px;
-            background: #2a2a2a;
-            color: white;
-            border: 1px solid #444;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            min-width: 120px;
-        }
-
-        .btn:disabled { opacity: 0.15; cursor: not-allowed; }
-        .fs-btn { background: var(--primary-color); border: none; font-weight: bold; }
+        .btn { padding: 12px 20px; background: #2a2a2a; color: white; border: 1px solid #444; border-radius: 8px; min-width: 120px; }
+        .btn:disabled { opacity: 0.15; }
+        .fs-btn { background: var(--primary-color); border: none; }
     </style>
 </head>
 <body>
@@ -174,79 +141,102 @@
     </div>
 
     <div class="grid-overlay" id="gridOverlay">
-        <div class="close-grid" onclick="toggleGrid(false)">×</div>
+        <div class="close-grid" style="color:white; font-size:40px; cursor:pointer" onclick="toggleGrid(false)">×</div>
         <div class="grid-container" id="gridContainer"></div>
     </div>
 
     <div class="viewport" id="viewport">
         <div class="slider-track" id="track">
-            <div class="slide-wrapper" data-link="https://psychodem-lab.github.io/CBT/index.html">
-                <img src="prezentacja/slajd1.JPG" class="slide">
-            </div>
-            
-            <div class="slide-wrapper">
-                <img src="prezentacja/slajd2.JPG" class="slide">
-            </div>
-            
-            <div class="slide-wrapper" data-link="https://wikipedia.org">
-                <img src="prezentacja/slajd3.JPG" class="slide">
-            </div>
-          
-            <div class="slide-wrapper">
-                <img src="prezentacja/slajd2.JPG" class="slide">
-            </div>
+            <div class="slide-wrapper" data-link="https://psychodem-lab.github.io/CBT/index.html"><img src="prezentacja/slajd1.JPG" class="slide"></div>
+            <div class="slide-wrapper"><img src="prezentacja/slajd2.JPG" class="slide"></div>
+            <div class="slide-wrapper" data-link="https://wikipedia.org"><img src="prezentacja/slajd3.JPG" class="slide"></div>
+            <div class="slide-wrapper"><img src="prezentacja/slajd2.JPG" class="slide"></div>
+            <div class="slide-wrapper"><img src="prezentacja/slajd2.JPG" class="slide"></div>
         </div>
     </div>
 
     <div class="controls-bar">
         <button id="prevBtn" class="btn" onclick="changeSlide(-1)">❮ Poprzedni</button>
-        <button class="btn fs-btn" onclick="toggleFullScreen()">⛶</button>
+        <button class="btn fs-btn" onclick="toggleFullScreen()">⛶ Fullscreen (F)</button>
         <button id="nextBtn" class="btn" onclick="changeSlide(1)">Następny ❯</button>
     </div>
 
     <script>
         let currentSlide = 0;
-        let touchStartX = 0;
-        let initialDist = 0;
-        let currentScale = 1;
-
         const track = document.getElementById('track');
         const slides = document.querySelectorAll('.slide-wrapper');
         const counter = document.getElementById('counter');
         const linkBtn = document.getElementById('slide-link-btn');
         const viewport = document.getElementById('viewport');
 
-        function generateGrid() {
-            const gridContainer = document.getElementById('gridContainer');
-            slides.forEach((wrapper, index) => {
-                const imgSource = wrapper.querySelector('img').src;
-                const item = document.createElement('div');
-                item.className = 'thumb-item';
-                item.onclick = () => { goToSlide(index); toggleGrid(false); };
-                item.innerHTML = `<img src="${imgSource}"><span>SLAJD ${index + 1}</span>`;
-                gridContainer.appendChild(item);
-            });
-        }
-
-        function toggleGrid(show) { document.getElementById('gridOverlay').classList.toggle('active', show); }
-
-        function resetZoom() {
-            slides.forEach(s => s.querySelector('img').style.transform = 'scale(1)');
-            currentScale = 1;
-        }
+        // Zmienne Pan & Zoom
+        let scale = 1;
+        let pointX = 0;
+        let pointY = 0;
+        let startX = 0;
+        let startY = 0;
+        let initialDist = 0;
 
         function updateSlider() {
-            resetZoom();
+            scale = 1; pointX = 0; pointY = 0; // Reset przy zmianie
+            resetTransform();
             track.style.transform = `translateX(-${currentSlide * 100}vw)`;
             counter.innerText = `SLAJD ${currentSlide + 1} / ${slides.length}`;
-            
             const url = slides[currentSlide].getAttribute('data-link');
             linkBtn.style.display = url ? 'block' : 'none';
             if(url) linkBtn.href = url;
-
             document.getElementById('prevBtn').disabled = (currentSlide === 0);
             document.getElementById('nextBtn').disabled = (currentSlide === slides.length - 1);
         }
+
+        function resetTransform() {
+            slides.forEach(s => {
+                const img = s.querySelector('img');
+                img.style.transform = `translate(0px, 0px) scale(1)`;
+            });
+        }
+
+        function applyTransform() {
+            const img = slides[currentSlide].querySelector('img');
+            img.style.transform = `translate(${pointX}px, ${pointY}px) scale(${scale})`;
+        }
+
+        viewport.addEventListener('touchstart', e => {
+            if (e.touches.length === 1) {
+                startX = e.touches[0].clientX - pointX;
+                startY = e.touches[0].clientY - pointY;
+                this.isSwipe = true;
+                this.touchStartX = e.touches[0].clientX;
+            } else if (e.touches.length === 2) {
+                this.isSwipe = false;
+                initialDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+            }
+        });
+
+        viewport.addEventListener('touchmove', e => {
+            e.preventDefault();
+            if (e.touches.length === 1) {
+                if (scale > 1.1) {
+                    pointX = e.touches[0].clientX - startX;
+                    pointY = e.touches[0].clientY - startY;
+                    applyTransform();
+                }
+            } else if (e.touches.length === 2) {
+                let dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+                let zoom = dist / initialDist;
+                scale = Math.min(Math.max(1, scale * zoom), 5);
+                initialDist = dist;
+                applyTransform();
+            }
+        });
+
+        viewport.addEventListener('touchend', e => {
+            if (scale <= 1.1 && e.changedTouches.length === 1) {
+                let endX = e.changedTouches[0].clientX;
+                if (endX < this.touchStartX - 60) changeSlide(1);
+                if (endX > this.touchStartX + 60) changeSlide(-1);
+            }
+        });
 
         function changeSlide(direction) {
             const newIndex = currentSlide + direction;
@@ -258,56 +248,27 @@
 
         function goToSlide(index) { currentSlide = index; updateSlider(); }
 
+        function generateGrid() {
+            const container = document.getElementById('gridContainer');
+            slides.forEach((s, i) => {
+                const item = document.createElement('div');
+                item.className = 'thumb-item';
+                item.onclick = () => { goToSlide(i); toggleGrid(false); };
+                item.innerHTML = `<img src="${s.querySelector('img').src}"><span>SLAJD ${i+1}</span>`;
+                container.appendChild(item);
+            });
+        }
+
+        function toggleGrid(show) { document.getElementById('gridOverlay').classList.toggle('active', show); }
         function toggleFullScreen() {
             if (!document.fullscreenElement) document.documentElement.requestFullscreen();
             else document.exitFullscreen();
         }
 
-        // --- ZAAWANSOWANY DOTYK (SWIPE + ZOOM) ---
-        function getDistance(touches) {
-            return Math.hypot(touches[0].pageX - touches[1].pageX, touches[0].pageY - touches[1].pageY);
-        }
-
-        viewport.addEventListener('touchstart', e => {
-            if (e.touches.length === 1) {
-                touchStartX = e.touches[0].screenX;
-            } else if (e.touches.length === 2) {
-                initialDist = getDistance(e.touches);
-            }
-        }, {passive: false});
-
-        viewport.addEventListener('touchmove', e => {
-            if (e.touches.length === 2) {
-                e.preventDefault();
-                const dist = getDistance(e.touches);
-                let zoomFactor = dist / initialDist;
-                let newScale = currentScale * zoomFactor;
-                if (newScale >= 1 && newScale <= 4) {
-                    slides[currentSlide].querySelector('img').style.transform = `scale(${newScale})`;
-                }
-            }
-        }, {passive: false});
-
-        viewport.addEventListener('touchend', e => {
-            const img = slides[currentSlide].querySelector('img');
-            const transform = window.getComputedStyle(img).getPropertyValue('transform');
-            if (transform !== 'none') {
-                const matrix = new WebKitCSSMatrix(transform);
-                currentScale = matrix.a;
-            }
-
-            if (e.changedTouches.length === 1 && currentScale <= 1.1) {
-                let touchEndX = e.changedTouches[0].screenX;
-                if (touchEndX < touchStartX - 60) changeSlide(1);
-                if (touchEndX > touchStartX + 60) changeSlide(-1);
-            }
-        }, {passive: false});
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === "ArrowRight" || e.key === " ") changeSlide(1);
+        document.addEventListener('keydown', e => {
+            if (e.key === "ArrowRight") changeSlide(1);
             if (e.key === "ArrowLeft") changeSlide(-1);
             if (e.key.toLowerCase() === "f") toggleFullScreen();
-            if (e.key === "Escape") toggleGrid(false);
         });
 
         generateGrid();
