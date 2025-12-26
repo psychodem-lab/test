@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prezentacja z Animacją</title>
+    <title>Prezentacja - Dotyk i Slajdy</title>
     <style>
         body {
             margin: 0;
@@ -11,140 +11,158 @@
             background-color: #121212;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
             height: 100vh;
             overflow: hidden;
             font-family: 'Segoe UI', sans-serif;
+            /* Wyłącza domyślne gesty przeglądarki, by nie przeszkadzały w nawigacji */
+            touch-action: pan-y;
         }
 
-        .slide-container {
-            position: relative;
+        .viewport {
             width: 100vw;
             height: 85vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .slider-track {
+            display: flex;
+            height: 100%;
+            transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            will-change: transform;
+        }
+
+        .slide-wrapper {
+            min-width: 100vw;
+            height: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 1;
         }
 
         .slide {
-            position: absolute; /* Wszystkie slajdy w tym samym miejscu */
             max-width: 95%;
             max-height: 95%;
             object-fit: contain;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            
-            /* --- EFEKT PRZEJŚCIA --- */
-            opacity: 0;
-            transform: scale(0.98); /* Lekkie pomniejszenie nieaktywnego slajdu */
-            transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
-            pointer-events: none; /* Nieaktywne slajdy nie reagują na myszkę */
+            /* Zapobiega "przeciąganiu" obrazka jako pliku przy dotyku */
+            pointer-events: none;
+            user-select: none;
         }
 
-        .slide.active {
-            opacity: 1;
-            transform: scale(1); /* Powrót do naturalnego rozmiaru */
-            pointer-events: auto;
-            z-index: 2;
-        }
-
-        /* Panel kontrolny */
         .controls-bar {
             position: fixed;
             bottom: 0;
             width: 100%;
             height: 80px;
-            background: linear-gradient(transparent, rgba(0,0,0,0.9)); /* Elegancki gradient */
+            background: #1a1a1a;
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 30px;
             z-index: 100;
+            border-top: 1px solid #333;
         }
 
         button {
             padding: 12px 25px;
-            background: #222;
+            background: #333;
             color: white;
-            border: 1px solid #444;
+            border: 1px solid #555;
             border-radius: 8px;
             cursor: pointer;
             font-size: 16px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             min-width: 130px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
         }
 
-        button:hover {
-            background: #0078d4; /* Kolor akcentu (np. błękit PowerPoint) */
-            border-color: #0078d4;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 120, 212, 0.4);
-        }
+        button:disabled { opacity: 0.2; }
 
         .counter {
             position: fixed;
             top: 20px;
             right: 20px;
             color: #fff;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(5px); /* Efekt szklanego tła */
+            background: rgba(0,0,0,0.6);
             padding: 8px 18px;
             border-radius: 20px;
-            font-size: 14px;
             z-index: 101;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
 
-    <div class="counter" id="counter">1 / 1</div>
+    <div class="counter" id="counter">SLAJD 1 / 3</div>
 
-    <div class="slide-container">
-        <img src="prezentacja/slajd1.JPG" class="slide active">
-        <img src="prezentacja/slajd2.JPG" class="slide">
-        <img src="prezentacja/slajd3.JPG" class="slide">
+    <div class="viewport" id="viewport">
+        <div class="slider-track" id="track">
+            <div class="slide-wrapper"><img src="prezentacja/slajd1.JPG" class="slide"></div>
+            <div class="slide-wrapper"><img src="prezentacja/slajd2.JPG" class="slide"></div>
+            <div class="slide-wrapper"><img src="prezentacja/slajd3.JPG" class="slide"></div>
+        </div>
     </div>
 
     <div class="controls-bar">
-        <button onclick="changeSlide(-1)">Poprzedni</button>
-        <button onclick="changeSlide(1)">Następny</button>
+        <button id="prevBtn" onclick="changeSlide(-1)">Poprzedni</button>
+        <button id="nextBtn" onclick="changeSlide(1)">Następny</button>
     </div>
 
     <script>
         let currentSlide = 0;
-        const slides = document.querySelectorAll('.slide');
-        const counter = document.getElementById('counter');
+        let touchStartX = 0;
+        let touchEndX = 0;
 
-        function updateCounter() {
+        const track = document.getElementById('track');
+        const viewport = document.getElementById('viewport');
+        const slides = document.querySelectorAll('.slide-wrapper');
+        const counter = document.getElementById('counter');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+
+        function updateSlider() {
+            const offset = currentSlide * 100;
+            track.style.transform = `translateX(-${offset}vw)`;
             counter.innerText = `SLAJD ${currentSlide + 1} / ${slides.length}`;
+            
+            prevBtn.disabled = (currentSlide === 0);
+            nextBtn.disabled = (currentSlide === slides.length - 1);
         }
 
         function changeSlide(direction) {
-            if (slides.length <= 1) return;
-            
-            // Usuwamy klasę active z obecnego slajdu
-            slides[currentSlide].classList.remove('active');
-            
-            // Obliczamy nowy indeks
-            currentSlide = (currentSlide + direction + slides.length) % slides.length;
-            
-            // Dodajemy klasę active do nowego slajdu
-            slides[currentSlide].classList.add('active');
-            
-            updateCounter();
+            const newIndex = currentSlide + direction;
+            if (newIndex >= 0 && newIndex < slides.length) {
+                currentSlide = newIndex;
+                updateSlider();
+            }
         }
 
-        // Nawigacja klawiaturą
+        // --- OBSŁUGA GESTÓW (SWIPE) ---
+        viewport.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, false);
+
+        viewport.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, false);
+
+        function handleSwipe() {
+            const swipeThreshold = 50; // Minimalna odległość przesunięcia w pikselach
+            if (touchEndX < touchStartX - swipeThreshold) {
+                changeSlide(1); // Swipe w lewo -> następny
+            }
+            if (touchEndX > touchStartX + swipeThreshold) {
+                changeSlide(-1); // Swipe w prawo -> poprzedni
+            }
+        }
+
+        // Klawiatura
         document.addEventListener('keydown', (e) => {
-            if (e.key === "ArrowRight" || e.key === " ") changeSlide(1);
+            if (e.key === "ArrowRight") changeSlide(1);
             if (e.key === "ArrowLeft") changeSlide(-1);
         });
 
-        updateCounter();
+        updateSlider();
     </script>
 </body>
 </html>
