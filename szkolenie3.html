@@ -2,15 +2,15 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interaktywna Prezentacja</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Prezentacja Pro - Full Zoom & Swipe</title>
     <style>
         :root {
             --primary-color: #0078d4;
             --success-color: #28a745;
             --bg-color: #121212;
             --panel-color: #1a1a1a;
-            --btn-width: 170px; /* Ujednolicona szerokość przycisków */
+            --btn-width: 170px;
         }
 
         body {
@@ -22,10 +22,11 @@
             height: 100vh;
             overflow: hidden;
             font-family: 'Segoe UI', system-ui, sans-serif;
-            touch-action: pan-y;
+            /* touch-action: none; - Wyłączamy domyślne gesty, by obsłużyć je ręcznie w JS */
+            touch-action: none;
         }
 
-        /* Obszar slajdów */
+        /* Obszar wizjera */
         .viewport {
             width: 100vw;
             height: 85vh;
@@ -46,6 +47,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow: hidden;
         }
 
         .slide {
@@ -55,9 +57,13 @@
             box-shadow: 0 10px 50px rgba(0,0,0,0.7);
             pointer-events: none;
             user-select: none;
+            /* Płynny zoom */
+            transition: transform 0.1s ease-out;
+            transform-origin: center center;
+            will-change: transform;
         }
 
-        /* --- PANEL PRAWY GÓRNY (SPIS I LINK) --- */
+        /* --- PANEL PRAWY GÓRNY --- */
         .top-right-panel {
             position: fixed;
             top: 20px;
@@ -89,24 +95,14 @@
             background: rgba(0, 120, 212, 0.85);
         }
 
-        .counter-btn:hover {
-            background: rgba(0, 120, 212, 1);
-            transform: translateY(-2px);
-        }
-
         #slide-link-btn {
             background: rgba(40, 167, 69, 0.85);
             color: white;
             text-decoration: none;
-            display: none; /* Pokazywany przez JS */
+            display: none;
         }
 
-        #slide-link-btn:hover {
-            background: rgba(40, 167, 69, 1);
-            transform: translateY(-2px);
-        }
-
-        /* --- SPIS TREŚCI (OVERLAY) --- */
+        /* --- SPIS TREŚCI --- */
         .grid-overlay {
             position: fixed;
             top: 0;
@@ -126,34 +122,21 @@
 
         .grid-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            gap: 15px;
             max-width: 1100px;
             width: 100%;
             margin-top: 30px;
         }
 
-        .thumb-item {
-            cursor: pointer;
-            text-align: center;
-            transition: transform 0.2s;
-        }
-
-        .thumb-item:hover { transform: scale(1.05); }
-
-        .thumb-item img {
-            width: 100%;
-            border-radius: 6px;
-            border: 2px solid transparent;
-        }
-
+        .thumb-item { cursor: pointer; text-align: center; }
+        .thumb-item img { width: 100%; border-radius: 6px; border: 2px solid transparent; }
         .thumb-item:hover img { border-color: var(--primary-color); }
-
-        .thumb-item span { color: #aaa; font-size: 11px; display: block; margin-top: 6px; }
+        .thumb-item span { color: #aaa; font-size: 11px; display: block; margin-top: 5px; }
 
         .close-grid { color: white; font-size: 35px; cursor: pointer; align-self: flex-end; margin-right: 20px; }
 
-        /* --- DOLNY PASEK STEROWANIA --- */
+        /* --- DOLNY PASEK --- */
         .controls-bar {
             position: fixed;
             bottom: 0;
@@ -163,27 +146,24 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 20px;
+            gap: 15px;
             z-index: 100;
             border-top: 1px solid #333;
         }
 
         .btn {
-            padding: 12px 24px;
+            padding: 12px 20px;
             background: #2a2a2a;
             color: white;
             border: 1px solid #444;
             border-radius: 8px;
             cursor: pointer;
             font-size: 14px;
-            min-width: 130px;
-            transition: all 0.2s;
+            min-width: 120px;
         }
 
-        .btn:hover:not(:disabled) { border-color: var(--primary-color); background: #333; }
         .btn:disabled { opacity: 0.15; cursor: not-allowed; }
         .fs-btn { background: var(--primary-color); border: none; font-weight: bold; }
-        .fs-btn:hover { background: #0086eb; }
     </style>
 </head>
 <body>
@@ -200,7 +180,6 @@
 
     <div class="viewport" id="viewport">
         <div class="slider-track" id="track">
-            
             <div class="slide-wrapper" data-link="https://psychodem-lab.github.io/CBT/index.html">
                 <img src="prezentacja/slajd1.JPG" class="slide">
             </div>
@@ -216,27 +195,27 @@
             <div class="slide-wrapper">
                 <img src="prezentacja/slajd2.JPG" class="slide">
             </div>
-
-            </div>
+        </div>
     </div>
 
     <div class="controls-bar">
         <button id="prevBtn" class="btn" onclick="changeSlide(-1)">❮ Poprzedni</button>
-        <button class="btn fs-btn" onclick="toggleFullScreen()">⛶</button>
+        <button class="btn fs-btn" onclick="toggleFullScreen()">⛶ Fullscreen (F)</button>
         <button id="nextBtn" class="btn" onclick="changeSlide(1)">Następny ❯</button>
     </div>
 
     <script>
         let currentSlide = 0;
         let touchStartX = 0;
-        let touchEndX = 0;
+        let initialDist = 0;
+        let currentScale = 1;
 
         const track = document.getElementById('track');
         const slides = document.querySelectorAll('.slide-wrapper');
         const counter = document.getElementById('counter');
         const linkBtn = document.getElementById('slide-link-btn');
+        const viewport = document.getElementById('viewport');
 
-        // Automatyczne budowanie spisu treści
         function generateGrid() {
             const gridContainer = document.getElementById('gridContainer');
             slides.forEach((wrapper, index) => {
@@ -249,24 +228,22 @@
             });
         }
 
-        function toggleGrid(show) { 
-            document.getElementById('gridOverlay').classList.toggle('active', show); 
+        function toggleGrid(show) { document.getElementById('gridOverlay').classList.toggle('active', show); }
+
+        function resetZoom() {
+            slides.forEach(s => s.querySelector('img').style.transform = 'scale(1)');
+            currentScale = 1;
         }
 
         function updateSlider() {
+            resetZoom();
             track.style.transform = `translateX(-${currentSlide * 100}vw)`;
             counter.innerText = `SLAJD ${currentSlide + 1} / ${slides.length}`;
             
-            // Logika przycisku linku
             const url = slides[currentSlide].getAttribute('data-link');
-            if (url) {
-                linkBtn.href = url;
-                linkBtn.style.display = 'block';
-            } else {
-                linkBtn.style.display = 'none';
-            }
+            linkBtn.style.display = url ? 'block' : 'none';
+            if(url) linkBtn.href = url;
 
-            // Stan przycisków nawigacji
             document.getElementById('prevBtn').disabled = (currentSlide === 0);
             document.getElementById('nextBtn').disabled = (currentSlide === slides.length - 1);
         }
@@ -279,32 +256,53 @@
             }
         }
 
-        function goToSlide(index) { 
-            currentSlide = index; 
-            updateSlider(); 
-        }
+        function goToSlide(index) { currentSlide = index; updateSlider(); }
 
         function toggleFullScreen() {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(err => {
-                    console.warn(`Błąd wejścia w tryb FS: ${err.message}`);
-                });
-            } else {
-                document.exitFullscreen();
-            }
+            if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+            else document.exitFullscreen();
         }
 
-        // Obsługa Swipe (Dotyk)
-        const vp = document.getElementById('viewport');
-        vp.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, {passive: true});
-        vp.addEventListener('touchend', e => {
-            touchEndX = e.changedTouches[0].screenX;
-            const threshold = 50;
-            if (touchEndX < touchStartX - threshold) changeSlide(1);
-            if (touchEndX > touchStartX + threshold) changeSlide(-1);
-        }, {passive: true});
+        // --- ZAAWANSOWANY DOTYK (SWIPE + ZOOM) ---
+        function getDistance(touches) {
+            return Math.hypot(touches[0].pageX - touches[1].pageX, touches[0].pageY - touches[1].pageY);
+        }
 
-        // Obsługa Klawiatury
+        viewport.addEventListener('touchstart', e => {
+            if (e.touches.length === 1) {
+                touchStartX = e.touches[0].screenX;
+            } else if (e.touches.length === 2) {
+                initialDist = getDistance(e.touches);
+            }
+        }, {passive: false});
+
+        viewport.addEventListener('touchmove', e => {
+            if (e.touches.length === 2) {
+                e.preventDefault();
+                const dist = getDistance(e.touches);
+                let zoomFactor = dist / initialDist;
+                let newScale = currentScale * zoomFactor;
+                if (newScale >= 1 && newScale <= 4) {
+                    slides[currentSlide].querySelector('img').style.transform = `scale(${newScale})`;
+                }
+            }
+        }, {passive: false});
+
+        viewport.addEventListener('touchend', e => {
+            const img = slides[currentSlide].querySelector('img');
+            const transform = window.getComputedStyle(img).getPropertyValue('transform');
+            if (transform !== 'none') {
+                const matrix = new WebKitCSSMatrix(transform);
+                currentScale = matrix.a;
+            }
+
+            if (e.changedTouches.length === 1 && currentScale <= 1.1) {
+                let touchEndX = e.changedTouches[0].screenX;
+                if (touchEndX < touchStartX - 60) changeSlide(1);
+                if (touchEndX > touchStartX + 60) changeSlide(-1);
+            }
+        }, {passive: false});
+
         document.addEventListener('keydown', (e) => {
             if (e.key === "ArrowRight" || e.key === " ") changeSlide(1);
             if (e.key === "ArrowLeft") changeSlide(-1);
@@ -312,7 +310,6 @@
             if (e.key === "Escape") toggleGrid(false);
         });
 
-        // Start aplikacji
         generateGrid();
         updateSlider();
     </script>
