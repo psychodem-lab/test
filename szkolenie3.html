@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prezentacja - Dotyk i Slajdy</title>
+    <title>Prezentacja - Spis Treści</title>
     <style>
         body {
             margin: 0;
@@ -14,10 +14,10 @@
             height: 100vh;
             overflow: hidden;
             font-family: 'Segoe UI', sans-serif;
-            /* Wyłącza domyślne gesty przeglądarki, by nie przeszkadzały w nawigacji */
             touch-action: pan-y;
         }
 
+        /* Wizjer */
         .viewport {
             width: 100vw;
             height: 85vh;
@@ -45,11 +45,92 @@
             max-height: 95%;
             object-fit: contain;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            /* Zapobiega "przeciąganiu" obrazka jako pliku przy dotyku */
             pointer-events: none;
-            user-select: none;
         }
 
+        /* Przycisk Licznika / Spisu treści */
+        .counter-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            color: #fff;
+            background: rgba(0, 120, 212, 0.8);
+            padding: 10px 20px;
+            border-radius: 25px;
+            z-index: 101;
+            font-size: 14px;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: background 0.3s;
+        }
+
+        .counter-btn:hover {
+            background: rgba(0, 120, 212, 1);
+        }
+
+        /* Panel Spisu Treści (Overlay) */
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 200;
+            display: none; /* Ukryty domyślnie */
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            overflow-y: auto;
+        }
+
+        .grid-overlay.active {
+            display: flex;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            max-width: 1000px;
+            width: 100%;
+            margin-top: 30px;
+        }
+
+        .thumb-item {
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: transform 0.2s, border-color 0.2s;
+            text-align: center;
+        }
+
+        .thumb-item:hover {
+            transform: scale(1.05);
+            border-color: #0078d4;
+        }
+
+        .thumb-item img {
+            width: 100%;
+            border-radius: 5px;
+            display: block;
+        }
+
+        .thumb-item span {
+            color: #ccc;
+            font-size: 12px;
+            display: block;
+            margin-top: 5px;
+        }
+
+        .close-grid {
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+            align-self: flex-end;
+            margin-right: 20px;
+        }
+
+        /* Panel kontrolny dolny */
         .controls-bar {
             position: fixed;
             bottom: 0;
@@ -64,35 +145,28 @@
             border-top: 1px solid #333;
         }
 
-        button {
+        button.nav-btn {
             padding: 12px 25px;
             background: #333;
             color: white;
             border: 1px solid #555;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 16px;
             min-width: 130px;
         }
 
-        button:disabled { opacity: 0.2; }
-
-        .counter {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            color: #fff;
-            background: rgba(0,0,0,0.6);
-            padding: 8px 18px;
-            border-radius: 20px;
-            z-index: 101;
-            font-size: 14px;
-        }
+        button.nav-btn:disabled { opacity: 0.2; }
     </style>
 </head>
 <body>
 
-    <div class="counter" id="counter">SLAJD 1 / 3</div>
+    <div class="counter-btn" id="counter" onclick="toggleGrid(true)">SLAJD 1 / 3 (ZOBACZ WSZYSTKIE)</div>
+
+    <div class="grid-overlay" id="gridOverlay">
+        <div class="close-grid" onclick="toggleGrid(false)">× Zamknij</div>
+        <div class="grid-container" id="gridContainer">
+            </div>
+    </div>
 
     <div class="viewport" id="viewport">
         <div class="slider-track" id="track">
@@ -103,8 +177,8 @@
     </div>
 
     <div class="controls-bar">
-        <button id="prevBtn" onclick="changeSlide(-1)">Poprzedni</button>
-        <button id="nextBtn" onclick="changeSlide(1)">Następny</button>
+        <button id="prevBtn" class="nav-btn" onclick="changeSlide(-1)">Poprzedni</button>
+        <button id="nextBtn" class="nav-btn" onclick="changeSlide(1)">Następny</button>
     </div>
 
     <script>
@@ -116,16 +190,38 @@
         const viewport = document.getElementById('viewport');
         const slides = document.querySelectorAll('.slide-wrapper');
         const counter = document.getElementById('counter');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
+        const gridOverlay = document.getElementById('gridOverlay');
+        const gridContainer = document.getElementById('gridContainer');
+
+        // Automatyczne generowanie spisu treści
+        function generateGrid() {
+            slides.forEach((wrapper, index) => {
+                const imgSrc = wrapper.querySelector('img').src;
+                const item = document.createElement('div');
+                item.className = 'thumb-item';
+                item.onclick = () => {
+                    goToSlide(index);
+                    toggleGrid(false);
+                };
+                item.innerHTML = `
+                    <img src="${imgSrc}">
+                    <span>Slajd ${index + 1}</span>
+                `;
+                gridContainer.appendChild(item);
+            });
+        }
+
+        function toggleGrid(show) {
+            gridOverlay.classList.toggle('active', show);
+        }
 
         function updateSlider() {
             const offset = currentSlide * 100;
             track.style.transform = `translateX(-${offset}vw)`;
-            counter.innerText = `SLAJD ${currentSlide + 1} / ${slides.length}`;
+            counter.innerText = `SLAJD ${currentSlide + 1} / ${slides.length} (SPIS)`;
             
-            prevBtn.disabled = (currentSlide === 0);
-            nextBtn.disabled = (currentSlide === slides.length - 1);
+            document.getElementById('prevBtn').disabled = (currentSlide === 0);
+            document.getElementById('nextBtn').disabled = (currentSlide === slides.length - 1);
         }
 
         function changeSlide(direction) {
@@ -136,32 +232,29 @@
             }
         }
 
-        // --- OBSŁUGA GESTÓW (SWIPE) ---
-        viewport.addEventListener('touchstart', e => {
-            touchStartX = e.changedTouches[0].screenX;
-        }, false);
+        function goToSlide(index) {
+            currentSlide = index;
+            updateSlider();
+        }
 
+        // Dotyk
+        viewport.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, false);
         viewport.addEventListener('touchend', e => {
             touchEndX = e.changedTouches[0].screenX;
-            handleSwipe();
+            const swipeThreshold = 50;
+            if (touchEndX < touchStartX - swipeThreshold) changeSlide(1);
+            if (touchEndX > touchStartX + swipeThreshold) changeSlide(-1);
         }, false);
-
-        function handleSwipe() {
-            const swipeThreshold = 50; // Minimalna odległość przesunięcia w pikselach
-            if (touchEndX < touchStartX - swipeThreshold) {
-                changeSlide(1); // Swipe w lewo -> następny
-            }
-            if (touchEndX > touchStartX + swipeThreshold) {
-                changeSlide(-1); // Swipe w prawo -> poprzedni
-            }
-        }
 
         // Klawiatura
         document.addEventListener('keydown', (e) => {
             if (e.key === "ArrowRight") changeSlide(1);
             if (e.key === "ArrowLeft") changeSlide(-1);
+            if (e.key === "Escape") toggleGrid(false);
         });
 
+        // Start
+        generateGrid();
         updateSlider();
     </script>
 </body>
