@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prezentacja Pro - Interaktywna</title>
+    <title>Interaktywna Prezentacja</title>
     <style>
         :root {
             --primary-color: #0078d4;
+            --success-color: #28a745;
             --bg-color: #121212;
             --panel-color: #1a1a1a;
-            --text-color: #ffffff;
+            --btn-width: 170px; /* Ujednolicona szerokość przycisków */
         }
 
         body {
@@ -20,11 +21,11 @@
             flex-direction: column;
             height: 100vh;
             overflow: hidden;
-            font-family: 'Segoe UI', Tahoma, sans-serif;
+            font-family: 'Segoe UI', system-ui, sans-serif;
             touch-action: pan-y;
         }
 
-        /* Główny wizjer */
+        /* Obszar slajdów */
         .viewport {
             width: 100vw;
             height: 85vh;
@@ -51,58 +52,68 @@
             max-width: 95%;
             max-height: 95%;
             object-fit: contain;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+            box-shadow: 0 10px 50px rgba(0,0,0,0.7);
             pointer-events: none;
             user-select: none;
         }
 
-        /* Przycisk Linku */
-        #slide-link-btn {
-            position: fixed;
-            bottom: 100px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #28a745;
-            color: white;
-            padding: 14px 28px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 16px;
-            display: none;
-            z-index: 150;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
-            border: 2px solid rgba(255,255,255,0.2);
-            transition: all 0.2s ease;
-        }
-
-        #slide-link-btn:hover {
-            background: #218838;
-            transform: translateX(-50%) scale(1.05);
-        }
-
-        /* Licznik i Spis Treści */
-        .counter-btn {
+        /* --- PANEL PRAWY GÓRNY (SPIS I LINK) --- */
+        .top-right-panel {
             position: fixed;
             top: 20px;
             right: 20px;
-            color: #fff;
-            background: rgba(0, 120, 212, 0.8);
-            padding: 10px 20px;
-            border-radius: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
             z-index: 101;
-            font-size: 13px;
-            cursor: pointer;
-            border: 1px solid rgba(255,255,255,0.2);
+            align-items: flex-end;
         }
 
+        .counter-btn, #slide-link-btn {
+            width: var(--btn-width);
+            box-sizing: border-box;
+            padding: 12px 15px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: bold;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .counter-btn {
+            color: #fff;
+            background: rgba(0, 120, 212, 0.85);
+        }
+
+        .counter-btn:hover {
+            background: rgba(0, 120, 212, 1);
+            transform: translateY(-2px);
+        }
+
+        #slide-link-btn {
+            background: rgba(40, 167, 69, 0.85);
+            color: white;
+            text-decoration: none;
+            display: none; /* Pokazywany przez JS */
+        }
+
+        #slide-link-btn:hover {
+            background: rgba(40, 167, 69, 1);
+            transform: translateY(-2px);
+        }
+
+        /* --- SPIS TREŚCI (OVERLAY) --- */
         .grid-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.96);
+            background: rgba(0, 0, 0, 0.97);
             z-index: 200;
             display: none;
             flex-direction: column;
@@ -115,9 +126,9 @@
 
         .grid-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-            gap: 15px;
-            max-width: 1200px;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 20px;
+            max-width: 1100px;
             width: 100%;
             margin-top: 30px;
         }
@@ -125,20 +136,24 @@
         .thumb-item {
             cursor: pointer;
             text-align: center;
+            transition: transform 0.2s;
         }
+
+        .thumb-item:hover { transform: scale(1.05); }
 
         .thumb-item img {
             width: 100%;
-            border-radius: 4px;
+            border-radius: 6px;
             border: 2px solid transparent;
-            transition: border-color 0.2s;
         }
 
         .thumb-item:hover img { border-color: var(--primary-color); }
 
-        .thumb-item span { color: #888; font-size: 10px; display: block; margin-top: 5px; }
+        .thumb-item span { color: #aaa; font-size: 11px; display: block; margin-top: 6px; }
 
-        /* Pasek nawigacji */
+        .close-grid { color: white; font-size: 35px; cursor: pointer; align-self: flex-end; margin-right: 20px; }
+
+        /* --- DOLNY PASEK STEROWANIA --- */
         .controls-bar {
             position: fixed;
             bottom: 0;
@@ -154,28 +169,29 @@
         }
 
         .btn {
-            padding: 12px 20px;
-            background: #333;
+            padding: 12px 24px;
+            background: #2a2a2a;
             color: white;
-            border: 1px solid #555;
+            border: 1px solid #444;
             border-radius: 8px;
             cursor: pointer;
             font-size: 14px;
-            min-width: 120px;
+            min-width: 130px;
+            transition: all 0.2s;
         }
 
-        .btn:hover { border-color: var(--primary-color); }
-        .btn:disabled { opacity: 0.2; }
-        .fs-btn { background: var(--primary-color); border: none; }
-
-        .close-grid { color: white; font-size: 32px; cursor: pointer; align-self: flex-end; }
+        .btn:hover:not(:disabled) { border-color: var(--primary-color); background: #333; }
+        .btn:disabled { opacity: 0.15; cursor: not-allowed; }
+        .fs-btn { background: var(--primary-color); border: none; font-weight: bold; }
+        .fs-btn:hover { background: #0086eb; }
     </style>
 </head>
 <body>
 
-    <div class="counter-btn" id="counter" onclick="toggleGrid(true)">SLAJD 1 / 3 (SPIS)</div>
-    
-    <a id="slide-link-btn" target="_blank">Otwórz link</a>
+    <div class="top-right-panel">
+        <div class="counter-btn" id="counter" onclick="toggleGrid(true)">SLAJD 1 / ...</div>
+        <a id="slide-link-btn" target="_blank">OTWÓRZ LINK</a>
+    </div>
 
     <div class="grid-overlay" id="gridOverlay">
         <div class="close-grid" onclick="toggleGrid(false)">×</div>
@@ -184,19 +200,24 @@
 
     <div class="viewport" id="viewport">
         <div class="slider-track" id="track">
+            
             <div class="slide-wrapper" data-link="https://psychodem-lab.github.io/CBT/index.html">
                 <img src="prezentacja/slajd1.JPG" class="slide">
             </div>
-            <div class="slide-wrapper"> 
-                <img src="prezentacja/slajd2.JPG" class="slide"> 
+            
+            <div class="slide-wrapper">
+                <img src="prezentacja/slajd2.JPG" class="slide">
             </div>
+            
             <div class="slide-wrapper" data-link="https://wikipedia.org">
                 <img src="prezentacja/slajd3.JPG" class="slide">
             </div>
-            <div class="slide-wrapper"> 
-                <img src="prezentacja/slajd2.JPG" class="slide"> 
+          
+            <div class="slide-wrapper">
+                <img src="prezentacja/slajd2.JPG" class="slide">
             </div>
-        </div>
+
+            </div>
     </div>
 
     <div class="controls-bar">
@@ -215,26 +236,25 @@
         const counter = document.getElementById('counter');
         const linkBtn = document.getElementById('slide-link-btn');
 
-        // Generowanie miniatur
+        // Automatyczne budowanie spisu treści
         function generateGrid() {
             const gridContainer = document.getElementById('gridContainer');
             slides.forEach((wrapper, index) => {
-                const imgSrc = wrapper.querySelector('img').src;
+                const imgSource = wrapper.querySelector('img').src;
                 const item = document.createElement('div');
                 item.className = 'thumb-item';
                 item.onclick = () => { goToSlide(index); toggleGrid(false); };
-                item.innerHTML = `<img src="${imgSrc}"><span>${index + 1}</span>`;
+                item.innerHTML = `<img src="${imgSource}"><span>SLAJD ${index + 1}</span>`;
                 gridContainer.appendChild(item);
             });
         }
 
-        function toggleGrid(show) { document.getElementById('gridOverlay').classList.toggle('active', show); }
+        function toggleGrid(show) { 
+            document.getElementById('gridOverlay').classList.toggle('active', show); 
+        }
 
         function updateSlider() {
-            // Przesunięcie taśmy
             track.style.transform = `translateX(-${currentSlide * 100}vw)`;
-            
-            // Logika licznika
             counter.innerText = `SLAJD ${currentSlide + 1} / ${slides.length}`;
             
             // Logika przycisku linku
@@ -246,7 +266,7 @@
                 linkBtn.style.display = 'none';
             }
 
-            // Blokada przycisków
+            // Stan przycisków nawigacji
             document.getElementById('prevBtn').disabled = (currentSlide === 0);
             document.getElementById('nextBtn').disabled = (currentSlide === slides.length - 1);
         }
@@ -259,25 +279,32 @@
             }
         }
 
-        function goToSlide(index) { currentSlide = index; updateSlider(); }
+        function goToSlide(index) { 
+            currentSlide = index; 
+            updateSlider(); 
+        }
 
         function toggleFullScreen() {
             if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen();
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.warn(`Błąd wejścia w tryb FS: ${err.message}`);
+                });
             } else {
                 document.exitFullscreen();
             }
         }
 
-        // Obsługa Swipe
-        document.getElementById('viewport').addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; });
-        document.getElementById('viewport').addEventListener('touchend', e => {
+        // Obsługa Swipe (Dotyk)
+        const vp = document.getElementById('viewport');
+        vp.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, {passive: true});
+        vp.addEventListener('touchend', e => {
             touchEndX = e.changedTouches[0].screenX;
-            if (touchEndX < touchStartX - 50) changeSlide(1);
-            if (touchEndX > touchStartX + 50) changeSlide(-1);
-        });
+            const threshold = 50;
+            if (touchEndX < touchStartX - threshold) changeSlide(1);
+            if (touchEndX > touchStartX + threshold) changeSlide(-1);
+        }, {passive: true});
 
-        // Klawiatura
+        // Obsługa Klawiatury
         document.addEventListener('keydown', (e) => {
             if (e.key === "ArrowRight" || e.key === " ") changeSlide(1);
             if (e.key === "ArrowLeft") changeSlide(-1);
@@ -285,7 +312,7 @@
             if (e.key === "Escape") toggleGrid(false);
         });
 
-        // Inicjalizacja
+        // Start aplikacji
         generateGrid();
         updateSlider();
     </script>
