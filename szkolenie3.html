@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-    <title>Relacje to Supermoc - Prezentacja</title>
+    <title>Relacje to Supermoc - Warsztaty</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reset.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.css">
@@ -12,13 +12,17 @@
 
     <style>
         :root { --r-main-color: #2c3e50; --r-heading-color: #2e86de; }
-        .reveal .slides section { text-align: left; font-size: 0.9em; }
+        .reveal .slides section { text-align: left; font-size: 0.8em; }
         .reveal h1, .reveal h2, .reveal h3 { text-align: center; text-transform: none; }
         .section-tag { background: #2e86de; color: white; padding: 5px 15px; border-radius: 5px; font-size: 0.5em !important; font-weight: bold; display: inline-block; margin-bottom: 20px; }
-        .fact-box { border: 2px solid #ee5253; padding: 15px; border-radius: 10px; background: #fff5f5; font-size: 0.8em; margin-top: 20px; }
-        .exercise-box { border: 2px solid #10ac84; padding: 15px; border-radius: 10px; background: #f1fcf9; font-size: 0.8em; margin-top: 20px; }
-        .progress-bar { width: 100%; height: 5px; background: #eee; position: fixed; top: 0; left: 0; z-index: 100; }
-        .reveal .slide-number { font-size: 20px; }
+        .fact-box { border: 2px solid #ee5253; padding: 15px; border-radius: 10px; background: #fff5f5; font-size: 0.8em; margin-top: 10px; }
+        .exercise-box { border: 2px solid #10ac84; padding: 15px; border-radius: 10px; background: #f1fcf9; font-size: 0.8em; margin-top: 10px; }
+        
+        /* Styl listy wartości */
+        .values-container { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 20px; max-height: 450px; overflow-y: auto; padding: 10px; }
+        .value-item { background: #f0f2f5; padding: 5px 12px; border-radius: 20px; cursor: pointer; font-size: 0.6em; border: 1px solid #ddd; transition: all 0.2s; user-select: none; }
+        .value-item.crossed { text-decoration: line-through; opacity: 0.4; background: #dfe6e9; color: #b2bec3; }
+        .counter-badge { text-align: center; margin-top: 15px; font-weight: bold; color: #2e86de; font-size: 0.9em; }
     </style>
 </head>
 <body>
@@ -27,295 +31,152 @@
 
             <section style="text-align: center;">
                 <h1>Relacje to supermoc</h1>
-                <h3>Jak żyć wspólnie z innymi, pamiętając o sobie?</h3>
-                <p>Warsztaty rozwojowe</p>
-                <p style="font-size: 0.6em; color: #7f8c8d;">Czas trwania: 09:00 – 12:00</p>
+                <p>Jak żyć wspólnie z innymi, pamiętając o sobie?</p>
+                <div style="font-size: 0.5em; color: gray; margin-top: 100px;">Użyj strzałek, aby nawigować</div>
             </section>
 
             <section>
                 <span class="section-tag">Wprowadzenie</span>
-                <h2>Kim jesteśmy w relacjach?</h2>
+                <h2>Prawda i Fakty</h2>
+                <p>W dzisiejszym świecie relacje są często powierzchowne. My skupimy się na autentyczności.</p>
                 <ul>
-                    <li>Każdy z nas jest "wyspą", ale potrzebujemy mostów.</li>
-                    <li>Relacje to nie tylko branie, to wymiana energii.</li>
-                    <li>Najważniejsza relacja to ta, którą masz ze samym sobą.</li>
+                    <li>Fakt: Człowiek jest istotą stadną (biologia).</li>
+                    <li>Fakt: Brak relacji skraca życie bardziej niż palenie papierosów.</li>
+                    <li>Cel: Zrozumieć, jak dbać o siebie, będąc z innymi.</li>
                 </ul>
             </section>
 
             <section>
-                <span class="section-tag">Plan Dnia</span>
-                <h2>Agenda spotkania</h2>
+                <span class="section-tag">Plan</span>
+                <h2>Harmonogram warsztatu</h2>
                 <ol>
-                    <li><strong>09:00 - 10:00:</strong> Komunikacja (Fundament)</li>
-                    <li><strong>10:00 - 11:00:</strong> Emocje i Potrzeby (Wnętrze)</li>
-                    <li><strong>11:00 - 12:00:</strong> Wartości i Cele (Kierunek)</li>
+                    <li>09:00 - 10:00: Komunikacja (Rady i błędy)</li>
+                    <li>10:00 - 11:00: Emocje i Samowspółczucie</li>
+                    <li>11:00 - 12:00: Wartości, Cele i Przyjaźń</li>
                 </ol>
             </section>
 
             <section>
                 <span class="section-tag">Uważność</span>
-                <h2>Start: Minuta uważności</h2>
-                <p>Usiądź wygodnie. Poczuj swoje stopy na podłodze.</p>
+                <h2>Twój Osobisty Cel</h2>
                 <div class="exercise-box">
-                    <strong>Zadanie:</strong> Sformułuj w myślach swój osobisty cel na te 3 godziny. Czego chcesz się o sobie dowiedzieć?
+                    Zapisz lub zapamiętaj: Co jedna rzecz sprawi, że uznasz te 3 godziny za wartościowe?
                 </div>
             </section>
 
-            <section style="text-align: center;">
-                <span class="section-tag">BLOK 1</span>
-                <h1>09:00 – 10:00</h1>
-                <h2>SKUTECZNA KOMUNIKACJA</h2>
+            <section style="text-align: center;"><h2>09:00 - 10:00<br>Komunikacja</h2></section>
+            
+            <section>
+                <span class="section-tag">Mówienie</span>
+                <h2>Fakt: Mózg a oskarżenia</h2>
+                <p>Gdy słyszymy "Ty zawsze...", włącza się ciało migdałowate (reakcja walcz/uciekaj).</p>
+                <div class="fact-box">Komunikat "JA" omija system obronny rozmówcy.</div>
             </section>
 
             <section>
-                <span class="section-tag">Komunikacja</span>
-                <h2>Dlaczego się nie rozumiemy?</h2>
+                <h2>Rady dla Mówiącego</h2>
                 <ul>
-                    <li><strong>Błędy poznawcze:</strong> Zakładamy, że wiemy, co inni myślą.</li>
-                    <li><strong>Szum informacyjny:</strong> Emocje zagłuszają fakty.</li>
-                    <li><strong>Brak intencji:</strong> Mówimy, by wygrać, a nie by zrozumieć.</li>
+                    <li>Mów o konkretnych faktach (co widziały oczy).</li>
+                    <li>Nazywaj swoje emocje (czuję smutek).</li>
+                    <li>Wyrażaj prośby, nie żądania.</li>
                 </ul>
             </section>
 
             <section>
-                <span class="section-tag">Osoba Mówiąca</span>
-                <h2>Zasada 1: Oddzielaj fakty od interpretacji</h2>
-                <p>Fakt: "Nie odpisałeś na moją wiadomość przez 5 godzin."</p>
-                <p>Interpretacja: "Ignorujesz mnie i masz mnie gdzieś."</p>
-                <div class="fact-box">Mózg reaguje obronnie na interpretacje, ale akceptuje fakty.</div>
+                <span class="section-tag">Słuchanie</span>
+                <h2>Słuchanie to nie czekanie na swoją kolej</h2>
+                <p>Większość ludzi słucha po to, by odpowiedzieć, a nie po to, by zrozumieć.</p>
             </section>
 
             <section>
-                <span class="section-tag">Osoba Mówiąca</span>
-                <h2>Zasada 2: Komunikat typu "JA"</h2>
-                <p>Zamiast: "Ty zawsze robisz bałagan!"</p>
-                <p>Powiedz: "<strong>Czuję</strong> irytację, <strong>kiedy</strong> widzę naczynia w zlewie, <strong>ponieważ</strong> zależy mi na porządku w kuchni."</p>
-            </section>
-
-            <section>
-                <span class="section-tag">Osoba Mówiąca</span>
-                <h2>Zasada 3: Mów o potrzebach, nie o żądaniach</h2>
+                <h2>Aktywne Słuchanie</h2>
                 <ul>
-                    <li>Żądanie wywołuje opór.</li>
-                    <li>Prośba zostawia przestrzeń na dialog.</li>
-                    <li>Przykład: "Czy mógłbyś to zrobić do jutra?" zamiast "Zrób to teraz!"</li>
+                    <li>Zwróć się ciałem do rozmówcy.</li>
+                    <li>Utrzymuj kontakt wzrokowy (bez gapienia się).</li>
+                    <li>Wyłącz powiadomienia w telefonie.</li>
                 </ul>
             </section>
 
             <section>
-                <span class="section-tag">Osoba Słuchająca</span>
-                <h2>Zasada 4: Aktywne Słuchanie</h2>
-                <p>To nie jest tylko milczenie. To obecność.</p>
-                <ul>
-                    <li>Kontakt wzrokowy.</li>
-                    <li>Potakiwanie (reakcje niewerbalne).</li>
-                    <li>Eliminacja rozpraszaczy (telefon!).</li>
-                </ul>
+                <h2>Parafraza (Narzędzie)</h2>
+                <p>Parafraza to faktograficzne sprawdzenie zrozumienia.</p>
+                <div class="exercise-box">"Słyszę, że denerwuje Cię brak odzewu z mojej strony, czy dobrze rozumiem?"</div>
             </section>
 
-            <section>
-                <span class="section-tag">Osoba Słuchająca</span>
-                <h2>Zasada 5: Parafraza</h2>
-                <p>Sprawdź, czy dobrze rozumiesz:</p>
-                <div class="exercise-box">
-                    "Z tego co mówisz, rozumiem że poczułeś się pominięty podczas wyboru lidera grupy. Czy tak?"
-                </div>
-            </section>
-
-            <section>
-                <span class="section-tag">Osoba Słuchająca</span>
-                <h2>Zasada 6: Pułapka "Dobrej Rady"</h2>
-                <div class="fact-box">
-                    Ludzie często potrzebują bycia wysłuchanym, a nie naprawionym. 
-                    Zanim dasz radę, zapytaj: "Czy potrzebujesz teraz rady, czy po prostu chcesz, żebym Cię wysłuchał?"
-                </div>
-            </section>
-
-            <section>
-                <span class="section-tag">Komunikacja</span>
-                <h2>Podsumowanie godziny</h2>
-                <p>Dobra komunikacja to narzędzie, które chroni Twoje granice i szanuje granice innych.</p>
-            </section>
-
-            <section style="text-align: center;">
-                <span class="section-tag">BLOK 2</span>
-                <h1>10:00 – 11:00</h1>
-                <h2>EMOCJE I POTRZEBY</h2>
-            </section>
+            <section style="text-align: center;"><h2>10:00 - 11:00<br>Emocje i Potrzeby</h2></section>
 
             <section>
                 <span class="section-tag">Emocje</span>
-                <h2>Skąd się biorą emocje?</h2>
-                <p>Emocja to reakcja biochemiczna na Twoje myśli o świecie.</p>
+                <h2>Podstawowe Emocje</h2>
+                <p>Radość, smutek, złość, lęk, wstręt, zaskoczenie.</p>
+                <div class="fact-box">Nie ma złych emocji. Każda jest informacją o Twoim stanie wewnętrznym.</div>
+            </section>
+
+            <section>
+                <h2>Potrzeby</h2>
+                <p>Pod każdą emocją kryje się potrzeba.</p>
                 <ul>
-                    <li>Pojawiają się automatycznie.</li>
-                    <li>Są przejściowe (trwają ok. 90 sekund, jeśli ich nie karmimy myślami).</li>
+                    <li>Złość -> Potrzeba szacunku/granic.</li>
+                    <li>Smutek -> Potrzeba bliskości/akceptacji.</li>
                 </ul>
-            </section>
-
-            <section>
-                <span class="section-tag">Emocje</span>
-                <h2>Złość - Strażnik Granic</h2>
-                <p>Złość mówi Ci: "Twoje granice zostały naruszone" lub "Coś jest dla Ciebie niesprawiedliwe".</p>
-                <p>Nie tłum jej – zrozum, o czym raportuje.</p>
-            </section>
-
-            <section>
-                <span class="section-tag">Emocje</span>
-                <h2>Lęk - Strażnik Bezpieczeństwa</h2>
-                <p>Lęk mówi: "Uważaj, coś może być zagrożeniem".</p>
-                <p>Często lęk jest wyolbrzymiony, ale jego intencja jest zawsze opiekuńcza.</p>
-            </section>
-
-            <section>
-                <span class="section-tag">Potrzeby</span>
-                <h2>Piramida potrzeb w relacji</h2>
-                <ul>
-                    <li><strong>Bezpieczeństwo:</strong> Czy mogę być przy Tobie sobą?</li>
-                    <li><strong>Akceptacja:</strong> Czy nie muszę udawać kogoś innego?</li>
-                    <li><strong>Autonomia:</strong> Czy mam prawo do własnego zdania?</li>
-                </ul>
-            </section>
-
-            <section>
-                <span class="section-tag">Potrzeby</span>
-                <h2>Jak wyrażać potrzeby?</h2>
-                <div class="exercise-box">
-                    Zamiast: "Nigdy nie masz dla mnie czasu."<br>
-                    Spróbuj: "Potrzebuję więcej wspólnej zabawy, żeby czuć się z Tobą blisko."
-                </div>
             </section>
 
             <section>
                 <span class="section-tag">Samowspółczucie</span>
-                <h2>Samowspółczucie (Self-Compassion)</h2>
-                <p>To nie jest użalanie się nad sobą. To traktowanie siebie jak najlepszego przyjaciela.</p>
-                <div class="fact-box">Badania dr Kristin Neff: Samowspółczucie zwiększa odporność psychiczną bardziej niż wysoka samoocena.</div>
+                <h2>Samowspółczucie (Self-compassion)</h2>
+                <p>Badania naukowe potwierdzają: osoby życzliwe dla siebie mają mniejszy poziom lęku społecznego.</p>
             </section>
 
             <section>
-                <span class="section-tag">Samowspółczucie</span>
-                <h2>3 filary samowspółczucia</h2>
+                <h2>Jak to robić?</h2>
                 <ol>
-                    <li><strong>Uważność:</strong> Widzę, że mi teraz ciężko.</li>
-                    <li><strong>Wspólnota:</strong> Inni ludzie też popełniają błędy.</li>
-                    <li><strong>Życzliwość:</strong> Co powiedziałbym komuś, kogo kocham w tej sytuacji?</li>
+                    <li>Zauważ dyskomfort.</li>
+                    <li>Pamiętaj, że cierpienie jest częścią bycia człowiekiem.</li>
+                    <li>Użyj łagodnego języka wobec siebie.</li>
                 </ol>
             </section>
 
-            <section>
-                <span class="section-tag">Samowspółczucie</span>
-                <h2>Praktyka: "Pauza na współczucie"</h2>
-                <p>Kiedy zawalisz sprawę, weź oddech i powiedz do siebie: "To jest chwila cierpienia. Każdy czasem się myli. Będę dla siebie wyrozumiały".</p>
-            </section>
-
-            <section>
-                <span class="section-tag">Podsumowanie</span>
-                <h2>Emocje i Ty</h2>
-                <p>Pamiętaj: Ty nie JESTEŚ swoją emocją. Ty ją TYLKO CZUJESZ.</p>
-            </section>
-
-            <section style="text-align: center;">
-                <span class="section-tag">BLOK 3</span>
-                <h1>11:00 – 12:00</h1>
-                <h2>WARTOŚCI I CELE</h2>
-            </section>
+            <section style="text-align: center;"><h2>11:00 - 12:00<br>Wartości i Cele</h2></section>
 
             <section>
                 <span class="section-tag">Wartości</span>
                 <h2>Czym są wartości?</h2>
-                <p>Wartości to to, co jest dla Ciebie naprawdę ważne w głębi serca.</p>
-                <p>Przykłady: Wolność, Lojalność, Rozwój, Rodzina, Kreatywność.</p>
+                <p>To Twój wewnętrzny kompas. Cele się osiąga, wartościami się ŻYJE każdego dnia.</p>
             </section>
 
-            <section>
-                <span class="section-tag">Zabawa</span>
-                <h2>Metafora Stołu (z "W pułapce myśli")</h2>
-                <p>Wyobraź sobie swój stół życia. Co go podtrzymuje?</p>
-                <div class="exercise-box">
-                    Wybierz 4 nogi (wartości). Jeśli zabierzesz jedną z nich, czy Twój stół będzie stabilny?
+            <section id="exercise-values">
+                <span class="section-tag">Zabawa: W pułapce myśli</span>
+                <h3>Wybierz swoje fundamenty</h3>
+                <p style="font-size: 0.5em; text-align: center;">Klikaj wartości, które CHCESZ ODRZUCIĆ. Zostaw maksymalnie 8 najważniejszych.</p>
+                
+                <div class="values-container" id="valuesGrid">
+                    </div>
+                
+                <div class="counter-badge" id="counter">
+                    Pozostało wartości: <span id="valCount">90</span>
                 </div>
             </section>
 
             <section>
-                <span class="section-tag">Wartości</span>
-                <h2>Wartości to nie wybór logiczny</h2>
-                <p>Wartości się nie wybiera, je się odkrywa. One już w Tobie są, objawiają się w tym, co sprawia, że czujesz dumę lub gniew.</p>
-            </section>
-
-            <section>
-                <span class="section-tag">Cele</span>
-                <h2>Wartości vs Cele</h2>
-                <div class="fact-box">
-                    <strong>Wartość:</strong> Bycie kochającym rodzicem (proces trwa całe życie).<br>
-                    <strong>Cel:</strong> Zabranie dziecka do kina w sobotę (można odhaczyć).
-                </div>
-            </section>
-
-            <section>
-                <span class="section-tag">Cele</span>
-                <h2>Pułapka celów</h2>
-                <p>Jeśli żyjesz tylko celami, czujesz satysfakcję tylko przez chwilę po ich osiągnięciu. Jeśli żyjesz wartościami, czujesz satysfakcję w trakcie drogi.</p>
+                <h2>Metafora Stołu</h2>
+                <p>Jeśli Twoje 8 wartości to nogi stołu, to na nich opiera się całe Twoje życie i relacje.</p>
+                <div class="fact-box">Działanie wbrew wartościom powoduje chroniczny stres.</div>
             </section>
 
             <section>
                 <span class="section-tag">Przyjaźń</span>
-                <h2>Wartości w przyjaźni</h2>
-                <p>Co sprawia, że przyjaźń trwa?</p>
+                <h2>Co liczy się w przyjaźni?</h2>
                 <ul>
-                    <li>Wspólne wartości (podstawy).</li>
-                    <li>Różne zainteresowania (urozmaicenie).</li>
-                    <li>Szczerość ponad miłość (fakt: prawda buduje zaufanie mocniej niż komplementy).</li>
+                    <li>Zbieżność kluczowych wartości.</li>
+                    <li>Umiejętność przechodzenia przez konflikty (komunikacja).</li>
+                    <li>Dbanie o siebie (granice) przy jednoczesnej dbałości o drugą osobę.</li>
                 </ul>
             </section>
 
-            <section>
-                <span class="section-tag">Zabawa</span>
-                <h2>W pułapce myśli dla nastolatków</h2>
-                <p>Zadanie: Która wartość jest dla Ciebie kluczowa w przyjaźni?</p>
-                <div style="display: flex; flex-wrap: wrap; gap: 10px; font-size: 0.6em;">
-                    <span style="background: #eee; padding: 5px;">Wsparcie</span>
-                    <span style="background: #eee; padding: 5px;">Zabawa</span>
-                    <span style="background: #eee; padding: 5px;">Dyskrecja</span>
-                    <span style="background: #eee; padding: 5px;">Inspiracja</span>
-                </div>
-            </section>
-
-            <section>
-                <span class="section-tag">Granice</span>
-                <h2>Pamiętanie o sobie</h2>
-                <p>Mówienie "NIE" innym często oznacza mówienie "TAK" sobie i swoim wartościom.</p>
-                <div class="fact-box">Asertywność to nie agresja. To jasne określanie swojego terytorium.</div>
-            </section>
-
-            <section>
-                <span class="section-tag">Praktyka</span>
-                <h2>Twój plan działania</h2>
-                <div class="exercise-box">
-                    Zapisz jedną rzecz, którą zrobisz w tym tygodniu, aby zadbać o swoją najważniejszą relację (z kimś lub ze sobą).
-                </div>
-            </section>
-
-            <section>
-                <span class="section-tag">Podsumowanie</span>
-                <h2>Podsumowanie warsztatów</h2>
-                <ol>
-                    <li>Komunikuj fakty i potrzeby.</li>
-                    <li>Słuchaj, by zrozumieć.</li>
-                    <li>Bądź dla siebie dobrym przyjacielem.</li>
-                    <li>Działaj zgodnie ze swoimi wartościami.</li>
-                </ol>
-            </section>
-
             <section style="text-align: center;">
-                <h2>Pytania i odpowiedzi</h2>
-                <p>Dziękuję za Twój czas i obecność!</p>
-                <p style="font-size: 0.5em; margin-top: 50px;">Opracowano na podstawie faktów psychologicznych i technik uważności.</p>
-            </section>
-
-            <section style="text-align: center;">
-                <h1>KONIEC</h1>
-                <p>Powodzenia w budowaniu supermocy!</p>
+                <h2>Podsumowanie</h2>
+                <p>Relacje to supermoc, ale wymagają treningu.</p>
+                <h3>Dziękuję!</h3>
             </section>
 
         </div>
@@ -323,12 +184,60 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.js"></script>
     <script>
+        // Lista wartości z Twojego zdjęcia
+        const listaWartosci = [
+            "Autentyczność", "Akceptacja", "Bezpieczeństwo", "Bogactwo", "Bliskie relacje",
+            "Cierpliwość", "Ciekawość", "Czystość", "Czułość", "Delikatność",
+            "Duma", "Dyskrecja", "Duchowość", "Doskonałość", "Elastyczność",
+            "Efektywność", "Entuzjazm", "Godność", "Harmonia", "Honor",
+            "Hedonizm", "Intuicja", "Konsekwencja", "Kreatywność", "Komfort",
+            "Kompetencja", "Lojalność", "Marzenia", "Miłość", "Misja",
+            "Mądrość", "Nadzieja", "Niezależność", "Odpowiedzialność", "Odwaga",
+            "Otwartość", "Otoczenie", "Pasja", "Przygoda", "Perfekcjonizm",
+            "Piękno", "Prawość", "Pomoc innym", "Pogoda ducha", "Przyjaźń",
+            "Prestiż", "Prawda", "Pokora", "Prostota", "Przyjemność",
+            "Rodzina", "Radość", "Rozwój", "Rozwaga", "Ryzyko",
+            "Rozrywka", "Równowaga", "Samoświadomość", "Sława", "Spontaniczność",
+            "Sprawiedliwość", "Szczęście", "Stanowczość", "Sukces", "Szczerość",
+            "Szczodrość", "Spokój", "Stabilność", "Szacunek", "Szlachetność",
+            "Tolerancja", "Troskliwość", "Twórczość", "Uczciwość", "Wdzięczność",
+            "Wiedza", "Wykształcenie", "Wygoda", "Wolność", "Wierność",
+            "Wyrozumiałość", "Wsparcie", "Wrażliwość", "Wiarygodność", "Wiara",
+            "Zaufanie", "Zaradność", "Zdrowie", "Zadowolenie", "Zaangażowanie"
+        ];
+
+        const grid = document.getElementById('valuesGrid');
+        const countDisplay = document.getElementById('valCount');
+        let remaining = listaWartosci.length;
+
+        // Generowanie kafelków
+        listaWartosci.forEach(val => {
+            const div = document.createElement('div');
+            div.className = 'value-item';
+            div.innerText = val;
+            div.onclick = function() {
+                this.classList.toggle('crossed');
+                updateCounter();
+            };
+            grid.appendChild(div);
+        });
+
+        function updateCounter() {
+            const crossed = document.querySelectorAll('.value-item.crossed').length;
+            const left = listaWartosci.length - crossed;
+            countDisplay.innerText = left;
+            
+            if(left <= 8) {
+                countDisplay.style.color = "#10ac84"; // Zielony gdy osiągnięto cel
+            } else {
+                countDisplay.style.color = "#2e86de";
+            }
+        }
+
         Reveal.initialize({
             hash: true,
             slideNumber: 'c/t',
-            transition: 'slide',
-            center: false,
-            margin: 0.1
+            transition: 'slide'
         });
     </script>
 </body>
