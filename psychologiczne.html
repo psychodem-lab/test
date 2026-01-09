@@ -3,203 +3,277 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Psychologa - Pełna Diagnostyka</title>
+    <title>Panel Diagnostyczny Psychologa</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; color: #333; }
-        .container { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 5px 25px rgba(0,0,0,0.1); max-width: 1000px; margin: auto; }
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg: #f8fafc;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --white: #ffffff;
+            --accent: #eff6ff;
+        }
+
+        body { font-family: 'Inter', -apple-system, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; line-height: 1.6; }
+        .container { max-width: 900px; margin: 20px auto; background: var(--white); border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); overflow: hidden; }
+        
+        /* Logowanie */
+        #login-section { padding: 60px 40px; text-align: center; max-width: 400px; margin: 100px auto; }
+        .login-card { background: var(--white); padding: 30px; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
+        
+        /* Layout */
+        .header { padding: 40px; border-bottom: 1px solid var(--border); text-align: center; }
+        .patient-info { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 25px 40px; background: var(--accent); }
+        
+        /* Accordion */
+        .accordion { border-bottom: 1px solid var(--border); }
+        .accordion-header { width: 100%; padding: 20px 40px; background: none; border: none; text-align: left; font-size: 18px; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: var(--text); }
+        .accordion-header:hover { background: #f1f5f9; }
+        .accordion-content { display: none; padding: 10px 40px 30px 40px; border-top: 1px solid #f1f5f9; }
+        .accordion.active .accordion-content { display: block; }
+        .accordion.active .accordion-header { color: var(--primary); background: var(--accent); }
+
+        /* Formularze */
+        .q-block { margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #f1f5f9; }
+        .q-label { font-size: 14px; font-weight: 600; margin-bottom: 8px; display: block; color: var(--text); }
+        select, input, textarea { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 15px; background: var(--white); transition: border 0.2s; }
+        select:focus, input:focus { border-color: var(--primary); outline: none; }
+
+        /* Wyniki */
+        .score-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
+        .badge { padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 700; background: #dbeafe; color: #1e40af; }
+        
+        .footer { padding: 30px 40px; display: flex; justify-content: flex-end; gap: 12px; background: #f8fafc; }
+        .btn { padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; border: none; font-size: 15px; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-light); }
+        
         .hidden { display: none !important; }
-        .test-card { border: 1px solid #e1e4e8; padding: 25px; border-radius: 8px; margin-bottom: 30px; background-color: #fff; }
-        h2, h3 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; margin-top: 0; }
-        .question { margin-bottom: 10px; padding: 8px; background: #f9f9f9; border-radius: 5px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-        .question-text { flex-grow: 1; font-size: 14px; }
-        select, input[type="text"], textarea { padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        .score-box { background: #e8f4fd; padding: 15px; border-left: 5px solid #3498db; font-weight: bold; margin-top: 15px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
-        .btn { padding: 12px 25px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; transition: 0.3s; font-weight: bold; }
-        .btn-save { background: #27ae60; color: white; }
-        .btn-login { background: #2c3e50; color: white; width: 100%; margin-top: 10px; }
-        .btn-logout { background: #e74c3c; color: white; }
-        .patient-header { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; background: #f8f9fa; padding: 15px; border-radius: 8px; }
-        textarea { width: 100%; resize: vertical; margin-top: 10px; }
-        .dass-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        @media (max-width: 768px) { .dass-grid { grid-template-columns: 1fr; } }
+        @media print { .no-print { display: none; } }
     </style>
 </head>
 <body>
 
-    <div id="login-section" class="container" style="max-width: 400px; margin-top: 100px;">
-        <h2 style="text-align:center">Autoryzacja Systemu</h2>
-        <input type="password" id="password-input" placeholder="Wpisz hasło dostępu">
-        <button class="btn btn-login" onclick="checkPassword()">Zaloguj</button>
-        <p id="error-msg" style="color: red; display: none; text-align: center;">Nieprawidłowe hasło.</p>
+    <div id="login-section">
+        <div class="login-card">
+            <h2 style="margin-top:0">Autoryzacja</h2>
+            <p style="color: var(--text-light); font-size: 14px; margin-bottom: 20px;">Wymagany dostęp dla personelu medycznego</p>
+            <input type="password" id="password-input" placeholder="Hasło dostępu">
+            <button class="btn btn-primary" style="width:100%; margin-top: 10px;" onclick="checkPassword()">Zaloguj się</button>
+            <p id="error-msg" style="color: #ef4444; display: none; font-size: 13px; margin-top: 15px;">Nieprawidłowe hasło dostępu.</p>
+        </div>
     </div>
 
     <div id="main-section" class="container hidden">
         <div id="pdf-content">
-            <h1 style="text-align:center; color: #2c3e50; margin-bottom: 5px;">Karta Badania Psychologicznego</h1>
-            <p style="text-align: center; color: #7f8c8d; margin-bottom: 30px;">Dokument wygenerowany systemowo</p>
-            
-            <div class="patient-header">
+            <div class="header">
+                <h1 style="margin:0; font-size: 26px; letter-spacing: -0.5px;">Arkusz Wyników Diagnostycznych</h1>
+                <p style="color: var(--text-light); margin-top: 8px;">Poufne • Dokumentacja Medyczna</p>
+            </div>
+
+            <div class="patient-info">
                 <div>
-                    <label><strong>Inicjały Pacjenta:</strong></label><br>
-                    <input type="text" id="p-initials" placeholder="np. A.Z.">
+                    <label class="q-label">Inicjały Pacjenta</label>
+                    <input type="text" id="p-initials" placeholder="Wpisz inicjały">
                 </div>
                 <div>
-                    <label><strong>Data Badania:</strong></label><br>
+                    <label class="q-label">Data Badania</label>
                     <input type="text" id="p-date">
                 </div>
             </div>
 
-            <div class="test-card">
-                <h3>1. PHQ-9 (Patient Health Questionnaire)</h3>
-                <div id="phq-questions"></div>
-                <div class="score-box" id="phq-result">Wynik PHQ-9: 0 pkt (Brak danych)</div>
-            </div>
-
-            <div class="test-card">
-                <h3>2. Inwentarz Depresji Becka (BDI-II)</h3>
-                <div id="beck-questions" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
-                <div class="score-box" id="beck-result">Wynik BDI-II: 0 pkt (Brak danych)</div>
-            </div>
-
-            <div class="test-card">
-                <h3>3. Skala Yale-Brown (Y-BOCS)</h3>
-                <div id="ybocs-questions"></div>
-                <div class="score-box" id="ybocs-result">Wynik Y-BOCS: 0 pkt (Brak danych)</div>
-            </div>
-
-            <div class="test-card">
-                <h3>4. Skala DASS-42 (Depression, Anxiety, Stress Scale)</h3>
-                <p><small>Skala odpowiedzi: 0 (nigdy) do 3 (bardzo często).</small></p>
-                <div id="dass-questions" class="dass-grid"></div>
-                <div class="score-box">
-                    <div id="dass-d-res">Depresja (D): 0 pkt</div>
-                    <div id="dass-a-res">Lęk (A): 0 pkt</div>
-                    <div id="dass-s-res">Stres (S): 0 pkt</div>
+            <div class="accordion">
+                <button class="accordion-header" onclick="toggleAcc(this)">1. Inwentarz Depresji Becka (BDI-II) <span>+</span></button>
+                <div class="accordion-content">
+                    <div id="beck-questions"></div>
+                    <div class="score-row"><span class="badge" id="res-beck">Wynik: 0 pkt</span></div>
                 </div>
             </div>
 
-            <div class="test-card">
-                <h3>Podsumowanie i Orzeczenie</h3>
-                <textarea id="clinical-notes" rows="6" placeholder="Wpisz wnioski z badania..."></textarea>
+            <div class="accordion">
+                <button class="accordion-header" onclick="toggleAcc(this)">2. Kwestionariusz Zdrowia Pacjenta (PHQ-9) <span>+</span></button>
+                <div class="accordion-content">
+                    <div id="phq-questions"></div>
+                    <div class="score-row"><span class="badge" id="res-phq">Wynik: 0 pkt</span></div>
+                </div>
+            </div>
+
+            <div class="accordion">
+                <button class="accordion-header" onclick="toggleAcc(this)">3. Skala Depresji, Lęku i Stresu (DASS-42) <span>+</span></button>
+                <div class="accordion-content">
+                    <div id="dass-questions" style="display: grid; grid-template-columns: 1fr; gap: 10px;"></div>
+                    <div class="score-row">
+                        <span class="badge" id="res-dass-d">Depresja: 0</span>
+                        <span class="badge" id="res-dass-a">Lęk: 0</span>
+                        <span class="badge" id="res-dass-s">Stres: 0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion">
+                <button class="accordion-header" onclick="toggleAcc(this)">4. Skala Yale-Brown (Y-BOCS) <span>+</span></button>
+                <div class="accordion-content">
+                    <div id="ybocs-questions"></div>
+                    <div class="score-row"><span class="badge" id="res-ybocs">Wynik: 0 pkt</span></div>
+                </div>
+            </div>
+
+            <div style="padding: 30px 40px;">
+                <label class="q-label">Interpretacja wyników i zalecenia:</label>
+                <textarea id="clinician-notes" rows="5" placeholder="Miejsce na opisową ocenę stanu pacjenta..."></textarea>
             </div>
         </div>
 
-        <div style="text-align: right; gap: 10px; display: flex; justify-content: flex-end; margin-top: 20px;">
-            <button class="btn btn-save" onclick="generatePDF()">Zapisz do PDF</button>
-            <button class="btn btn-logout" onclick="location.reload()">Wyloguj</button>
+        <div class="footer no-print">
+            <button class="btn btn-outline" onclick="location.reload()">Wyloguj</button>
+            <button class="btn btn-primary" onclick="generatePDF()">Zapisz jako PDF</button>
         </div>
     </div>
 
     <script>
-        const PHQ_LABELS = ["Małe zainteresowanie wykonywaniem czynności", "Uczucie smutku, przygnębienia lub beznadziejności", "Problemy z zaśnięciem, przerywany sen lub zbyt długi sen", "Uczucie zmęczenia lub brak energii", "Brak apetytu lub przejadanie się", "Złe samopoczucie, poczucie zawodu lub poczucie winy", "Problemy z koncentracją (np. przy czytaniu lub oglądaniu TV)", "Poruszanie się lub mówienie tak wolno, że inni zauważyli, albo pobudzenie", "Myśli, że lepiej byłoby nie żyć lub chęć zrobienia sobie krzywdy"];
-        
-        const YBOCS_LABELS = ["Czas zajmowany przez myśli obsesyjne", "Wpływ obsesji na funkcjonowanie", "Cierpienie powodowane przez obsesje", "Opór wobec obsesji", "Kontrola nad obsesjami", "Czas poświęcany na czynności przymusowe", "Wpływ kompulsji na życie", "Cierpienie powodowane przez kompulsje", "Opór wobec kompulsji", "Kontrola nad kompulsjami"];
-
-        const DASS_ITEMS = [
-            {t: "Trudno mi było się uspokoić", s: "S"}, {t: "Miałem świadomość suchości w ustach", s: "A"}, {t: "W ogóle nie odczuwałem pozytywnych uczuć", s: "D"},
-            {t: "Miałem trudności z oddychaniem", s: "A"}, {t: "Trudno mi było zdobyć się na inicjatywę", s: "D"}, {t: "Miałem tendencję do przesadnego reagowania", s: "S"},
-            {t: "Doświadczałem drżenia rąk", s: "A"}, {t: "Czułem, że zużywam dużo energii na denerwowanie się", s: "S"}, {t: "Martwiłem się sytuacjami, w których mogłem wpaść w panikę", s: "A"},
-            {t: "Czułem, że nie mam na co czekać w przyszłości", s: "D"}, {t: "Stwierdzałem, że łatwo się denerwuję", s: "S"}, {t: "Czułem, że trudno mi się zrelaksować", s: "S"},
-            {t: "Czułem smutek i przygnębienie", s: "D"}, {t: "Niecierpliwiłem się, gdy coś mnie powstrzymywało", s: "S"}, {t: "Czułem, że bliski jestem paniki", s: "A"},
-            {t: "Nic nie potrafiło mnie entuzjazmować", s: "D"}, {t: "Czułem, że jestem mało wart jako osoba", s: "D"}, {t: "Byłem dość drażliwy", s: "S"},
-            {t: "Czułem bicie serca przy braku wysiłku", s: "A"}, {t: "Odczuwałem lęk bez wyraźnego powodu", s: "A"}, {t: "Czułem, że życie nie ma sensu", s: "D"},
-            {t: "Trudno mi było się odprężyć", s: "S"}, {t: "Miałem trudności z połykaniem", s: "A"}, {t: "Nie mogłem czerpać przyjemności z niczego", s: "D"},
-            {t: "Miałem świadomość pracy serca", s: "A"}, {t: "Czułem się przygnębiony i bez nastroju", s: "D"}, {t: "Czułem, że jestem bliski wybuchu", s: "S"},
-            {t: "Czułem się bliski paniki", s: "A"}, {t: "Trudno mi było uspokoić się po zdenerwowaniu", s: "S"}, {t: "Bałem się, że zostanę zaskoczony przez zadanie", s: "A"},
-            {t: "Nie byłem w stanie entuzjazmować się niczym", s: "D"}, {t: "Trudno mi było tolerować przeszkody", s: "S"}, {t: "Czułem się zdenerwowany", s: "S"},
-            {t: "Czułem się bezwartościowy", s: "D"}, {t: "Brakowało mi tolerancji na jakiekolwiek opóźnienie", s: "S"}, {t: "Byłem przerażony", s: "A"},
-            {t: "Widziałem przed sobą przyszłość bez nadziei", s: "D"}, {t: "Czułem, że życie jest puste", s: "D"}, {t: "Byłem poruszony", s: "S"},
-            {t: "Obawiałem się, że serce mi 'stanie'", s: "A"}, {t: "Drżałem (np. nogi)", s: "A"}, {t: "Trudno mi było znaleźć motywację", s: "D"}
+        // --- DANE TESTÓW ---
+        const BDI_DATA = [
+            {q: "Smutek", o: ["Nie czuję się smutny/a", "Często czuję się smutny/a", "Ciągle czuję się smutny/a i nie mogę się od tego uwolnić", "Jestem tak smutny/a i nieszczęśliwy/a, że nie mogę tego znieść"]},
+            {q: "Pesymizm", o: ["Nie czuję się zniechęcony/a przyszłością", "Czuję się bardziej zniechęcony/a niż dawniej", "Czuję, że nic mnie nie czeka w przyszłości", "Czuję, że przyszłość jest beznadziejna"]},
+            {q: "Poczucie porażki", o: ["Nie czuję, bym odnosił/a porażki", "Odniosłem/am więcej porażek niż inni", "Kiedy patrzę wstecz, widzę same porażki", "Czuję, że jako człowiek jestem kompletnym nieudacznikiem"]},
+            {q: "Utrata przyjemności", o: ["Czerpię z życia tyle samo przyjemności co dawniej", "Nie czerpię z życia tyle przyjemności co dawniej", "Czerpię bardzo mało przyjemności z rzeczy, które dawniej mnie cieszyły", "W ogóle nie czerpię przyjemności z niczego"]},
+            {q: "Poczucie winy", o: ["Nie mam poczucia winy", "Często mam poczucie winy z powodu różnych rzeczy", "Przez większość czasu mam silne poczucie winy", "Ciągle mam poczucie winy"]},
+            {q: "Poczucie kary", o: ["Nie czuję się karany/a", "Czuję, że mogę zostać ukarany/a", "Spodziewam się kary", "Czuję się karany/a"]},
+            {q: "Niechęć do siebie", o: ["Mój stosunek do siebie nie zmienił się", "Straciłem/am zaufanie do siebie", "Czuję do siebie niechęć", "Nienawidzę siebie"]},
+            {q: "Samokrytycyzm", o: ["Nie krytykuję siebie częściej niż zwykle", "Jestem bardziej krytyczny/a wobec siebie niż dawniej", "Krytykuję siebie za wszystkie swoje błędy", "Obwiniam siebie za wszystko, co złe"]},
+            {q: "Myśli samobójcze", o: ["Nie miewam myśli o odebraniu sobie życia", "Miewam takie myśli, ale nie potrafiłbym/ałabym ich zrealizować", "Chciałbym/ałabym odebrać sobie życie", "Zabiłbym/ałabym się, gdybym miał/a okazję"]},
+            {q: "Płacz", o: ["Płaczę tyle samo co dawniej", "Płaczę częściej niż dawniej", "Płaczę z powodu każdego drobiazgu", "Często chce mi się płakać, ale nie potrafię"]},
+            {q: "Pobudzenie", o: ["Nie jestem bardziej podenerwowany/a niż zwykle", "Jestem bardziej podenerwowany/a niż zwykle", "Jestem tak pobudzony/a, że trudno mi usiedzieć w miejscu", "Jestem ciągle pobudzony/a i w ruchu"]},
+            {q: "Utrata zainteresowań", o: ["Nie straciłem/am zainteresowania ludźmi i sprawami", "Mniej interesuję się ludźmi i sprawami niż dawniej", "Straciłem/am większość zainteresowań", "Nic mnie nie interesuje"]},
+            {q: "Niezdecydowanie", o: ["Podejmuję decyzje tak samo łatwo jak dawniej", "Częściej niż dawniej odkładam podjęcie decyzji", "Mam znacznie większe trudności z podjęciem decyzji niż dawniej", "Nie potrafię podjąć żadnej decyzji"]},
+            {q: "Poczucie bezwartościowości", o: ["Nie czuję się bezwartościowy/a", "Nie uważam się za tak wartościowego/ą jak dawniej", "Czuję się mniej wartościowy/a od innych", "Czuję się całkowicie bezwartościowy/a"]},
+            {q: "Utrata energii", o: ["Mam tyle samo energii co zawsze", "Mam mniej energii niż dawniej", "Mam bardzo mało energii", "Nie mam energii na nic"]},
+            {q: "Zmiany snu", o: ["Mój sen nie zmienił się", "Śpię nieco więcej/mniej niż zwykle", "Śpię znacznie więcej/mniej", "Śpię przez większość dnia / budzę się rano i nie mogę zasnąć"]},
+            {q: "Drażliwość", o: ["Nie jestem bardziej drażliwy/a niż zwykle", "Jestem bardziej drażliwy/a niż zwykle", "Jestem znacznie bardziej drażliwy/a niż zwykle", "Jestem stale drażliwy/a"]},
+            {q: "Zmiany apetytu", o: ["Mój apetyt nie zmienił się", "Mam nieco mniejszy/większy apetyt", "Mam znacznie mniejszy/większy apetyt", "W ogóle nie mam apetytu / jem stale"]},
+            {q: "Trudności z koncentracją", o: ["Mogę się koncentrować jak zwykle", "Nie mogę się koncentrować tak jak dawniej", "Trudno mi się skupić na czymkolwiek przez dłuższą chwilę", "W ogóle nie mogę się koncentrować"]},
+            {q: "Zmęczenie", o: ["Nie jestem bardziej zmęczony/a niż zwykle", "Szybciej się męczę", "Jestem zbyt zmęczony/a, by robić wiele rzeczy", "Jestem zbyt zmęczony/a, by cokolwiek robić"]},
+            {q: "Seks", o: ["Nie straciłem/am zainteresowania seksem", "Mniej interesuję się seksem niż dawniej", "Znacznie mniej interesuję się seksem", "Całkowicie straciłem/am zainteresowanie seksem"]}
         ];
 
-        function setupTests() {
-            // PHQ-9
-            const phq = document.getElementById('phq-questions');
-            PHQ_LABELS.forEach((l, i) => {
-                phq.innerHTML += `<div class="question"><span class="question-text">${i+1}. ${l}</span> <select class="phq-val" onchange="calc()"><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>`;
-            });
+        const PHQ9_L = ["Małe zainteresowanie", "Obniżony nastrój", "Sen", "Energia", "Apetyt", "Poczucie winy", "Koncentracja", "Spowolnienie", "Myśli samobójcze"];
+        const YBOCS_L = ["Czas (obsesje)", "Wpływ (obsesje)", "Cierpienie (obsesje)", "Opór (obsesje)", "Kontrola (obsesje)", "Czas (kompulsje)", "Wpływ (kompulsje)", "Cierpienie (kompulsje)", "Opór (kompulsje)", "Kontrola (kompulsje)"];
+        const DASS_ITEMS = [
+            {t: "Trudno mi było się uspokoić", s: "S"}, {t: "Suchość w ustach", s: "A"}, {t: "Brak pozytywnych uczuć", s: "D"},
+            {t: "Trudności z oddychaniem", s: "A"}, {t: "Trudności z inicjatywą", s: "D"}, {t: "Przesadne reagowanie", s: "S"},
+            {t: "Drżenie rąk", s: "A"}, {t: "Zużywanie energii na denerwowanie się", s: "S"}, {t: "Lęk przed paniką", s: "A"},
+            {t: "Brak nadziei na przyszłość", s: "D"}, {t: "Łatwe denerwowanie się", s: "S"}, {t: "Trudność w relaksacji", s: "S"},
+            {t: "Smutek i przygnębienie", s: "D"}, {t: "Niecierpliwość", s: "S"}, {t: "Bliskość paniki", s: "A"},
+            {t: "Brak entuzjazmu", s: "D"}, {t: "Niska wartość własna", s: "D"}, {t: "Drażliwość", s: "S"},
+            {t: "Bicie serca bez wysiłku", s: "A"}, {t: "Lęk bez powodu", s: "A"}, {t: "Życie bez sensu", s: "D"},
+            {t: "Trudność z odprężeniem", s: "S"}, {t: "Trudność z połykaniem", s: "A"}, {t: "Brak przyjemności", s: "D"},
+            {t: "Świadomość pracy serca", s: "A"}, {t: "Przygnębienie", s: "D"}, {t: "Bliskość wybuchu", s: "S"},
+            {t: "Poczucie paniki", s: "A"}, {t: "Trudność z uspokojeniem", s: "S"}, {t: "Lęk przed zadaniem", s: "A"},
+            {t: "Brak entuzjazmu (ponowne)", s: "D"}, {t: "Brak tolerancji na przeszkody", s: "S"}, {t: "Zdenerwowanie", s: "S"},
+            {t: "Bezwartościowość", s: "D"}, {t: "Brak tolerancji na zwłokę", s: "S"}, {t: "Przerażenie", s: "A"},
+            {t: "Brak nadziei", s: "D"}, {t: "Pustka życia", s: "D"}, {t: "Poruszenie", s: "S"},
+            {t: "Obawa o serce", s: "A"}, {t: "Drżenie ciała", s: "A"}, {t: "Brak motywacji", s: "D"}
+        ];
 
-            // Beck
-            const beck = document.getElementById('beck-questions');
-            for(let i=1; i<=21; i++) {
-                beck.innerHTML += `<div style="padding:5px; border:1px solid #ddd; border-radius:4px;">Pyt. ${i}: <select class="beck-val" onchange="calc()"><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>`;
-            }
-
-            // Y-BOCS
-            const ybocs = document.getElementById('ybocs-questions');
-            YBOCS_LABELS.forEach((l, i) => {
-                ybocs.innerHTML += `<div class="question"><span class="question-text">${i+1}. ${l}</span> <select class="ybocs-val" onchange="calc()"><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></div>`;
-            });
-
-            // DASS-42
-            const dass = document.getElementById('dass-questions');
-            DASS_ITEMS.forEach((item, i) => {
-                dass.innerHTML += `<div class="question"><span class="question-text">${i+1}. ${item.t}</span> <select class="dass-val" data-type="${item.s}" onchange="calc()"><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>`;
-            });
-
-            document.getElementById('p-date').value = new Date().toLocaleDateString('pl-PL');
-        }
-
-        function calc() {
-            const getSum = (selector) => Array.from(document.querySelectorAll(selector)).reduce((a, b) => a + parseInt(b.value), 0);
-            
-            // PHQ-9
-            const phq = getSum('.phq-val');
-            document.getElementById('phq-result').innerText = `Wynik PHQ-9: ${phq} pkt - ${interpret(phq, [5,10,15,20], ["Minimalna","Łagodna","Umiarkowana","Umiarkowanie ciężka","Ciężka"])}`;
-
-            // Beck
-            const beck = getSum('.beck-val');
-            document.getElementById('beck-result').innerText = `Wynik BDI-II: ${beck} pkt - ${interpret(beck, [14,20,29], ["Minimalna","Łagodna","Umiarkowana","Ciężka"])}`;
-
-            // Y-BOCS
-            const yb = getSum('.ybocs-val');
-            document.getElementById('ybocs-result').innerText = `Wynik Y-BOCS: ${yb} pkt - ${interpret(yb, [8,16,24,32], ["Podkliniczne","Łagodne","Umiarkowane","Ciężkie","Bardzo ciężkie"])}`;
-
-            // DASS-42
-            let d=0, a=0, s=0;
-            document.querySelectorAll('.dass-val').forEach(el => {
-                const val = parseInt(el.value);
-                if(el.dataset.type === 'D') d += val;
-                if(el.dataset.type === 'A') a += val;
-                if(el.dataset.type === 'S') s += val;
-            });
-
-            document.getElementById('dass-d-res').innerText = `Depresja (D): ${d} pkt (${interpret(d, [10,14,21,28], ["Normalny","Łagodny","Umiarkowany","Silny","Bardzo silny"])})`;
-            document.getElementById('dass-a-res').innerText = `Lęk (A): ${a} pkt (${interpret(a, [8,10,15,20], ["Normalny","Łagodny","Umiarkowany","Silny","Bardzo silny"])})`;
-            document.getElementById('dass-s-res').innerText = `Stres (S): ${s} pkt (${interpret(s, [15,19,26,34], ["Normalny","Łagodny","Umiarkowany","Silny","Bardzo silny"])})`;
-        }
-
-        function interpret(val, thresholds, labels) {
-            for(let i=0; i<thresholds.length; i++) {
-                if(val < thresholds[i]) return labels[i];
-            }
-            return labels[labels.length - 1];
+        // --- FUNKCJE SYSTEMOWE ---
+        function toggleAcc(btn) {
+            btn.parentElement.classList.toggle('active');
+            btn.querySelector('span').innerText = btn.parentElement.classList.contains('active') ? '−' : '+';
         }
 
         function checkPassword() {
             if(document.getElementById('password-input').value === 'Psycholog2026') {
                 document.getElementById('login-section').classList.add('hidden');
                 document.getElementById('main-section').classList.remove('hidden');
-                setupTests();
+                initForm();
             } else {
                 document.getElementById('error-msg').style.display = 'block';
             }
         }
 
+        function initForm() {
+            document.getElementById('p-date').value = new Date().toLocaleDateString('pl-PL');
+            
+            // Render BDI
+            const bdiCont = document.getElementById('beck-questions');
+            BDI_DATA.forEach((q, i) => {
+                let h = `<div class="q-block"><label class="q-label">${i+1}. ${q.q}</label><select class="bdi-v" onchange="calc()">`;
+                q.o.forEach((opt, idx) => h += `<option value="${idx}">${opt}</option>`);
+                bdiCont.innerHTML += h + `</select></div>`;
+            });
+
+            // Render PHQ-9
+            const phqCont = document.getElementById('phq-questions');
+            PHQ9_L.forEach((l, i) => {
+                phqCont.innerHTML += `<div class="q-block"><label class="q-label">${i+1}. ${l}</label><select class="phq-v" onchange="calc()"><option value="0">Wcale</option><option value="1">Kilka dni</option><option value="2">Połowa dni</option><option value="3">Prawie codziennie</option></select></div>`;
+            });
+
+            // Render YBOCS
+            const ybCont = document.getElementById('ybocs-questions');
+            YBOCS_L.forEach((l, i) => {
+                ybCont.innerHTML += `<div class="q-block"><label class="q-label">${i+1}. ${l}</label><select class="yb-v" onchange="calc()"><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></div>`;
+            });
+
+            // Render DASS
+            const dassCont = document.getElementById('dass-questions');
+            DASS_ITEMS.forEach((it, i) => {
+                dassCont.innerHTML += `<div class="q-block"><label class="q-label">${i+1}. ${it.t}</label><select class="dass-v" data-type="${it.s}" onchange="calc()"><option value="0">Wcale</option><option value="1">Mało</option><option value="2">Średnio</option><option value="3">Bardzo</option></select></div>`;
+            });
+            calc();
+        }
+
+        function calc() {
+            const sum = (cls) => Array.from(document.querySelectorAll('.'+cls)).reduce((a, b) => a + parseInt(b.value), 0);
+            
+            const bdi = sum('bdi-v');
+            document.getElementById('res-beck').innerText = `BDI-II: ${bdi} pkt (${interpret(bdi, [14,20,29], ["Minimalna","Łagodna","Umiarkowana","Ciężka"])})`;
+            
+            const phq = sum('phq-v');
+            document.getElementById('res-phq').innerText = `PHQ-9: ${phq} pkt (${interpret(phq, [5,10,15,20], ["Minimalna","Łagodna","Umiarkowana","Mod. Ciężka","Ciężka"])})`;
+
+            const yb = sum('yb-v');
+            document.getElementById('res-ybocs').innerText = `Y-BOCS: ${yb} pkt (${interpret(yb, [8,16,24,32], ["Subkliniczne","Łagodne","Umiarkowane","Ciężkie","Bardzo ciężkie"])})`;
+
+            let d=0, a=0, s=0;
+            document.querySelectorAll('.dass-v').forEach(el => {
+                let v = parseInt(el.value);
+                if(el.dataset.type==='D') d+=v;
+                if(el.dataset.type==='A') a+=v;
+                if(el.dataset.type==='S') s+=v;
+            });
+            document.getElementById('res-dass-d').innerText = `Depresja: ${d} (${interpret(d, [10,14,21,28], ["Norma","Łagodny","Umiark.","Silny","B. silny"])})`;
+            document.getElementById('res-dass-a').innerText = `Lęk: ${a} (${interpret(a, [8,10,15,20], ["Norma","Łagodny","Umiark.","Silny","B. silny"])})`;
+            document.getElementById('res-dass-s').innerText = `Stres: ${s} (${interpret(s, [15,19,26,34], ["Norma","Łagodny","Umiark.","Silny","B. silny"])})`;
+        }
+
+        function interpret(v, t, l) {
+            for(let i=0; i<t.length; i++) if(v<t[i]) return l[i];
+            return l[l.length-1];
+        }
+
         function generatePDF() {
+            // Rozwiń sekcje do druku
+            document.querySelectorAll('.accordion').forEach(a => a.classList.add('active'));
             const init = document.getElementById('p-initials').value || "Pacjent";
             const date = document.getElementById('p-date').value;
             const element = document.getElementById('pdf-content');
+            
             const opt = {
-                margin: 5,
+                margin: [10, 10, 10, 10],
                 filename: `Badanie_${init}_${date}.pdf`,
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 1.5, useCORS: true },
+                html2canvas: { scale: 2, useCORS: true },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak: { mode: 'avoid-all', before: '.test-card' }
+                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
             };
-            html2pdf().set(opt).from(element).save();
+
+            html2pdf().set(opt).from(element).save().then(() => {
+                // Opcjonalnie: przywróć zwinięte sekcje po zapisie
+            });
         }
     </script>
 </body>
