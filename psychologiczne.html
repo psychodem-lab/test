@@ -3,177 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Psychologa - Testy</title>
+    <title>Panel Psychologa - Zaawansowane Skale</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f7f6;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-        }
-
-        .container {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 800px;
-        }
-
-        #login-section {
-            text-align: center;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        input[type="password"], input[type="text"], textarea {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-
-        button {
-            background-color: #2c3e50;
-            color: white;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        button:hover {
-            background-color: #34495e;
-        }
-
-        .test-section {
-            margin-top: 20px;
-        }
-
-        .question {
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .patient-info {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        #pdf-content {
-            padding: 20px;
-        }
+        body { font-family: 'Arial', sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; }
+        .container { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 5px 25px rgba(0,0,0,0.1); max-width: 900px; margin: auto; }
+        .hidden { display: none !important; }
+        .test-card { border: 1px solid #e1e4e8; padding: 20px; border-radius: 8px; margin-bottom: 30px; background-color: #fff; }
+        h2, h3 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+        .question { margin-bottom: 15px; padding: 10px; background: #f9f9f9; border-radius: 5px; }
+        select, input[type="text"], input[type="number"], textarea { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .score-box { background: #e8f4fd; padding: 15px; border-left: 5px solid #3498db; font-weight: bold; margin-top: 10px; }
+        .btn { padding: 12px 25px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; transition: 0.3s; }
+        .btn-save { background: #27ae60; color: white; }
+        .btn-login { background: #2c3e50; color: white; width: 100%; }
+        .btn-logout { background: #e74c3c; color: white; }
+        .patient-header { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; }
+        @media print { .no-print { display: none; } }
     </style>
 </head>
 <body>
 
-    <div id="login-section" class="container">
-        <h2>Panel Autoryzacji</h2>
-        <input type="password" id="password-input" placeholder="Wpisz hasło dostępu">
-        <button onclick="checkPassword()">Zaloguj się</button>
-        <p id="error-msg" style="color: red; display: none;">Nieprawidłowe hasło!</p>
+    <div id="login-section" class="container" style="max-width: 400px; margin-top: 100px;">
+        <h2 style="text-align:center">Autoryzacja</h2>
+        <input type="password" id="password-input" placeholder="Hasło">
+        <button class="btn btn-login" onclick="checkPassword()">Zaloguj</button>
+        <p id="error-msg" style="color: red; display: none; text-align: center;">Błędne hasło.</p>
     </div>
 
     <div id="main-section" class="container hidden">
         <div id="pdf-content">
-            <h1 style="text-align: center; color: #2c3e50;">Arkusz Badania Psychologicznego</h1>
-            <hr>
+            <h1 style="text-align:center">Karta Badania Psychologicznego</h1>
             
-            <div class="patient-info">
+            <div class="patient-header">
                 <div>
-                    <label>Inicjały pacjenta:</label>
-                    <input type="text" id="initials" placeholder="np. J.K.">
+                    <label>Inicjały Pacjenta:</label>
+                    <input type="text" id="p-initials">
                 </div>
                 <div>
-                    <label>Data badania:</label>
-                    <input type="text" id="test-date">
+                    <label>Data:</label>
+                    <input type="text" id="p-date">
                 </div>
             </div>
 
-            <div class="test-section">
-                <h3>Kwestionariusz nastroju i objawów</h3>
-                
-                <div class="question">
-                    <p>1. Opis stanu ogólnego pacjenta:</p>
-                    <textarea id="q1" rows="3"></textarea>
-                </div>
+            <div class="test-card">
+                <h3>1. PHQ-9 (Patient Health Questionnaire)</h3>
+                <p><small>W ciągu ostatnich 2 tygodni, jak często dokuczały Ci poniższe problemy? (0-3)</small></p>
+                <div id="phq-questions"></div>
+                <div class="score-box" id="phq-result">Wynik PHQ-9: 0 pkt</div>
+            </div>
 
-                <div class="question">
-                    <p>2. Ocena nasilenia objawów (1-10):</p>
-                    <input type="text" id="q2" placeholder="Wpisz wynik">
-                </div>
+            <div class="test-card">
+                <h3>2. Inwentarz Depresji Becka (BDI-II)</h3>
+                <p><small>Wybierz wartość punktową (0-3) odpowiadającą nasileniu każdego z 21 objawów.</small></p>
+                <div id="beck-questions"></div>
+                <div class="score-box" id="beck-result">Wynik BDI-II: 0 pkt</div>
+            </div>
 
-                <div class="question">
-                    <p>3. Dodatkowe uwagi kliniczne:</p>
-                    <textarea id="q3" rows="3"></textarea>
-                </div>
+            <div class="test-card">
+                <h3>3. Skala Yale-Brown (Y-BOCS)</h3>
+                <p><small>Ocena nasilenia obsesji i kompulsji (Suma 10 pytań).</small></p>
+                <div id="ybocs-questions"></div>
+                <div class="score-box" id="ybocs-result">Wynik Y-BOCS: 0 pkt</div>
+            </div>
+
+            <div class="test-card">
+                <h3>Wnioski i zalecenia</h3>
+                <textarea id="clinical-notes" rows="5" placeholder="Uwagi psychologa..."></textarea>
             </div>
         </div>
 
-        <div style="text-align: right; margin-top: 20px;">
-            <button onclick="generatePDF()" style="background-color: #27ae60;">Zapisz jako PDF</button>
-            <button onclick="logout()" style="background-color: #e74c3c;">Wyloguj</button>
+        <div class="no-print" style="text-align: right; gap: 10px; display: flex; justify-content: flex-end;">
+            <button class="btn btn-save" onclick="generatePDF()">Generuj Dokument PDF</button>
+            <button class="btn btn-logout" onclick="location.reload()">Wyloguj</button>
         </div>
     </div>
 
     <script>
-        // Ustawienie dzisiejszej daty na starcie
-        document.getElementById('test-date').value = new Date().toISOString().split('T')[0];
+        const PHQ_LABELS = ["Małe zainteresowanie wykonywaniem czynności", "Uczucie smutku, przygnębienia", "Problemy ze snem", "Uczucie zmęczenia", "Brak apetytu lub przejadanie się", "Poczucie niskiej wartości", "Problemy z koncentracją", "Spowolnienie lub pobudzenie", "Myśli o samookaleczeniu"];
+        const YBOCS_LABELS = ["Czas zajmowany przez myśli obsesyjne", "Wpływ obsesji na funkcjonowanie", "Cierpienie z powodu obsesji", "Opór wobec obsesji", "Kontrola nad obsesjami", "Czas poświęcany na czynności przymusowe", "Wpływ kompulsji na życie", "Cierpienie z powodu kompulsji", "Opór wobec kompulsji", "Kontrola nad kompulsjami"];
+
+        function setupTests() {
+            // Generowanie pól PHQ-9
+            const phqContainer = document.getElementById('phq-questions');
+            PHQ_LABELS.forEach((label, i) => {
+                phqContainer.innerHTML += `<div class="question">${i+1}. ${label} <select class="phq-val" onchange="calc()"><option value="0">0 - Wcale</option><option value="1">1 - Kilka dni</option><option value="2">2 - Więcej niż połowa dni</option><option value="3">3 - Prawie codziennie</option></select></div>`;
+            });
+
+            // Generowanie pól Becka (21 pytań)
+            const beckContainer = document.getElementById('beck-questions');
+            for(let i=1; i<=21; i++) {
+                beckContainer.innerHTML += `<div style="display:inline-block; margin-right:10px; margin-bottom:10px;">Pyt. ${i}: <select class="beck-val" onchange="calc()"><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>`;
+            }
+
+            // Generowanie pól Y-BOCS
+            const ybocsContainer = document.getElementById('ybocs-questions');
+            YBOCS_LABELS.forEach((label, i) => {
+                ybocsContainer.innerHTML += `<div class="question">${i+1}. ${label} <select class="ybocs-val" onchange="calc()"><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></div>`;
+            });
+
+            document.getElementById('p-date').value = new Date().toLocaleDateString();
+        }
+
+        function calc() {
+            const sum = (selector) => Array.from(document.querySelectorAll(selector)).reduce((a, b) => a + parseInt(b.value), 0);
+            
+            const phq = sum('.phq-val');
+            const beck = sum('.beck-val');
+            const ybocs = sum('.ybocs-val');
+
+            document.getElementById('phq-result').innerText = `Wynik PHQ-9: ${phq} pkt (${interpretPHQ(phq)})`;
+            document.getElementById('beck-result').innerText = `Wynik BDI-II: ${beck} pkt (${interpretBeck(beck)})`;
+            document.getElementById('ybocs-result').innerText = `Wynik Y-BOCS: ${ybocs} pkt (${interpretYBOCS(ybocs)})`;
+        }
+
+        function interpretPHQ(s) {
+            if(s<=4) return "Minimalna depresja";
+            if(s<=9) return "Łagodna depresja";
+            if(s<=14) return "Umiarkowana depresja";
+            return "Ciężka depresja";
+        }
+
+        function interpretBeck(s) {
+            if(s<=13) return "Minimalna";
+            if(s<=19) return "Łagodna";
+            if(s<=28) return "Umiarkowana";
+            return "Ciężka";
+        }
+
+        function interpretYBOCS(s) {
+            if(s<=7) return "Podkliniczne";
+            if(s<=15) return "Łagodne";
+            if(s<=23) return "Umiarkowane";
+            return "Ciężkie";
+        }
 
         function checkPassword() {
-            const pass = document.getElementById('password-input').value;
-            // HASŁO: Psycholog2026
-            if (pass === 'Psycholog2026') {
+            if(document.getElementById('password-input').value === 'Psycholog2026') {
                 document.getElementById('login-section').classList.add('hidden');
                 document.getElementById('main-section').classList.remove('hidden');
-                document.body.style.alignItems = 'flex-start';
-                document.body.style.padding = '20px';
+                setupTests();
             } else {
                 document.getElementById('error-msg').style.display = 'block';
             }
         }
 
         function generatePDF() {
-            const initials = document.getElementById('initials').value || 'BRAK';
-            const date = document.getElementById('test-date').value;
+            const init = document.getElementById('p-initials').value || "Pacjent";
+            const date = document.getElementById('p-date').value;
             const element = document.getElementById('pdf-content');
-            
-            // Konfiguracja PDF
             const opt = {
-                margin:       10,
-                filename:     `Test_${initials}_${date}.pdf`,
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2 },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                margin: 10,
+                filename: `Badanie_${init}_${date}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
-
-            // Generowanie
             html2pdf().set(opt).from(element).save();
         }
-
-        function logout() {
-            location.reload();
-        }
-
-        // Obsługa klawisza Enter przy logowaniu
-        document.getElementById('password-input').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                checkPassword();
-            }
-        });
     </script>
 </body>
 </html>
