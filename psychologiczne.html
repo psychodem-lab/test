@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Psychologa - Testy</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 800px;
+        }
+
+        #login-section {
+            text-align: center;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        input[type="password"], input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #2c3e50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background-color: #34495e;
+        }
+
+        .test-section {
+            margin-top: 20px;
+        }
+
+        .question {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .patient-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        #pdf-content {
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="login-section" class="container">
+        <h2>Panel Autoryzacji</h2>
+        <input type="password" id="password-input" placeholder="Wpisz hasło dostępu">
+        <button onclick="checkPassword()">Zaloguj się</button>
+        <p id="error-msg" style="color: red; display: none;">Nieprawidłowe hasło!</p>
+    </div>
+
+    <div id="main-section" class="container hidden">
+        <div id="pdf-content">
+            <h1 style="text-align: center; color: #2c3e50;">Arkusz Badania Psychologicznego</h1>
+            <hr>
+            
+            <div class="patient-info">
+                <div>
+                    <label>Inicjały pacjenta:</label>
+                    <input type="text" id="initials" placeholder="np. J.K.">
+                </div>
+                <div>
+                    <label>Data badania:</label>
+                    <input type="text" id="test-date">
+                </div>
+            </div>
+
+            <div class="test-section">
+                <h3>Kwestionariusz nastroju i objawów</h3>
+                
+                <div class="question">
+                    <p>1. Opis stanu ogólnego pacjenta:</p>
+                    <textarea id="q1" rows="3"></textarea>
+                </div>
+
+                <div class="question">
+                    <p>2. Ocena nasilenia objawów (1-10):</p>
+                    <input type="text" id="q2" placeholder="Wpisz wynik">
+                </div>
+
+                <div class="question">
+                    <p>3. Dodatkowe uwagi kliniczne:</p>
+                    <textarea id="q3" rows="3"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: right; margin-top: 20px;">
+            <button onclick="generatePDF()" style="background-color: #27ae60;">Zapisz jako PDF</button>
+            <button onclick="logout()" style="background-color: #e74c3c;">Wyloguj</button>
+        </div>
+    </div>
+
+    <script>
+        // Ustawienie dzisiejszej daty na starcie
+        document.getElementById('test-date').value = new Date().toISOString().split('T')[0];
+
+        function checkPassword() {
+            const pass = document.getElementById('password-input').value;
+            // HASŁO: Psycholog2026
+            if (pass === 'Psycholog2026') {
+                document.getElementById('login-section').classList.add('hidden');
+                document.getElementById('main-section').classList.remove('hidden');
+                document.body.style.alignItems = 'flex-start';
+                document.body.style.padding = '20px';
+            } else {
+                document.getElementById('error-msg').style.display = 'block';
+            }
+        }
+
+        function generatePDF() {
+            const initials = document.getElementById('initials').value || 'BRAK';
+            const date = document.getElementById('test-date').value;
+            const element = document.getElementById('pdf-content');
+            
+            // Konfiguracja PDF
+            const opt = {
+                margin:       10,
+                filename:     `Test_${initials}_${date}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2 },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            // Generowanie
+            html2pdf().set(opt).from(element).save();
+        }
+
+        function logout() {
+            location.reload();
+        }
+
+        // Obsługa klawisza Enter przy logowaniu
+        document.getElementById('password-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+    </script>
+</body>
+</html>
