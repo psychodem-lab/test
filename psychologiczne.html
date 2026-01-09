@@ -3,276 +3,538 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Diagnostyczny Psychologa</title>
+    <title>Panel Psychologa - Diagnostyka i Interpretacja</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
     <style>
         :root {
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
-            --bg: #f8fafc;
-            --text: #1e293b;
-            --text-light: #64748b;
-            --border: #e2e8f0;
-            --white: #ffffff;
-            --accent: #eff6ff;
+            --primary-color: #2563eb;
+            --secondary-color: #475569;
+            --bg-color: #f1f5f9;
+            --surface-color: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --success-bg: #dcfce7;
+            --success-text: #166534;
+            --warning-bg: #fef9c3;
+            --warning-text: #854d0e;
+            --danger-bg: #fee2e2;
+            --danger-text: #991b1b;
         }
 
-        body { font-family: 'Inter', -apple-system, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; line-height: 1.6; }
-        .container { max-width: 900px; margin: 20px auto; background: var(--white); border-radius: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); overflow: hidden; }
-        
-        /* Logowanie */
-        #login-section { padding: 60px 40px; text-align: center; max-width: 400px; margin: 100px auto; }
-        .login-card { background: var(--white); padding: 30px; border-radius: 12px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
-        
-        /* Layout */
-        .header { padding: 40px; border-bottom: 1px solid var(--border); text-align: center; }
-        .patient-info { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 25px 40px; background: var(--accent); }
-        
-        /* Accordion */
-        .accordion { border-bottom: 1px solid var(--border); }
-        .accordion-header { width: 100%; padding: 20px 40px; background: none; border: none; text-align: left; font-size: 18px; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: var(--text); }
-        .accordion-header:hover { background: #f1f5f9; }
-        .accordion-content { display: none; padding: 10px 40px 30px 40px; border-top: 1px solid #f1f5f9; }
-        .accordion.active .accordion-content { display: block; }
-        .accordion.active .accordion-header { color: var(--primary); background: var(--accent); }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        /* Formularze */
-        .q-block { margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #f1f5f9; }
-        .q-label { font-size: 14px; font-weight: 600; margin-bottom: 8px; display: block; color: var(--text); }
-        select, input, textarea { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 15px; background: var(--white); transition: border 0.2s; }
-        select:focus, input:focus { border-color: var(--primary); outline: none; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
 
-        /* Wyniki */
-        .score-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
-        .badge { padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 700; background: #dbeafe; color: #1e40af; }
+        /* --- Login --- */
+        #login-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--bg-color);
+            display: flex; justify-content: center; align-items: center; z-index: 1000;
+        }
+        .login-box {
+            background: var(--surface-color); padding: 2.5rem; border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); width: 100%; max-width: 400px; text-align: center;
+        }
+        .login-box input {
+            width: 100%; padding: 0.75rem; margin: 1rem 0; border: 1px solid var(--border-color);
+            border-radius: 6px; font-size: 1rem;
+        }
+
+        /* --- Layout --- */
+        #dashboard {
+            display: none;
+            max-width: 1100px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 2rem;
+            flex: 1;
+        }
+
+        header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 2rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);
+        }
         
-        .footer { padding: 30px 40px; display: flex; justify-content: flex-end; gap: 12px; background: #f8fafc; }
-        .btn { padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; border: none; font-size: 15px; }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: var(--primary-hover); }
-        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-light); }
+        .header-inputs { display: flex; gap: 1rem; }
+        .header-inputs input {
+            padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 6px;
+        }
+
+        /* --- Tabs --- */
+        .tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .tab-btn {
+            background: var(--surface-color); border: 1px solid var(--border-color);
+            padding: 0.6rem 1.2rem; border-radius: 6px; cursor: pointer;
+            font-weight: 500; color: var(--secondary-color); transition: all 0.2s;
+        }
+        .tab-btn:hover { background: #e2e8f0; }
+        .tab-btn.active {
+            background: var(--primary-color); color: white; border-color: var(--primary-color);
+        }
+
+        /* --- Test Content --- */
+        .test-content {
+            display: none; background: var(--surface-color); padding: 2.5rem;
+            border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        .test-content.active { display: block; }
+
+        .test-header h2 { margin-bottom: 0.5rem; color: var(--text-main); }
+        .test-header .desc { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 2rem; }
+        .source-cite { font-size: 0.75rem; color: #94a3b8; margin-top: 5px; font-style: italic; }
+
+        /* --- Scales --- */
+        .scale-item {
+            margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid #f1f5f9;
+        }
+        .scale-question { font-weight: 500; margin-bottom: 0.75rem; display: block; }
         
-        .hidden { display: none !important; }
-        @media print { .no-print { display: none; } }
+        .options-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(50px, 1fr)); gap: 10px;
+        }
+        .radio-label {
+            display: flex; flex-direction: column; align-items: center; cursor: pointer;
+            padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 8px;
+            font-size: 0.85rem; text-align: center; transition: background 0.2s;
+        }
+        .radio-label:hover { background-color: #f8fafc; border-color: var(--primary-color); }
+        .radio-label input { margin-bottom: 0.4rem; }
+
+        /* --- Result Box --- */
+        .result-box {
+            margin-top: 2rem; padding: 1.5rem; border-radius: 8px;
+            background-color: #f8fafc; border: 1px solid var(--border-color);
+            display: none; /* Ukryte do momentu obliczenia */
+        }
+        .result-box h3 { margin-bottom: 1rem; border-bottom: 1px solid #cbd5e1; padding-bottom: 0.5rem; }
+        .result-row { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 1rem; }
+        .score-val { font-weight: 700; }
+        .interpretation { font-weight: 600; }
+
+        /* Kolory interpretacji */
+        .severity-low { color: var(--success-text); }
+        .severity-med { color: var(--warning-text); }
+        .severity-high { color: var(--danger-text); }
+
+        /* --- Buttons --- */
+        .btn {
+            background-color: var(--primary-color); color: white; border: none;
+            padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 500; cursor: pointer;
+        }
+        .btn:hover { background-color: #1d4ed8; }
+        .btn-action-group { margin-top: 2rem; display: flex; justify-content: flex-end; gap: 1rem; }
+        .btn-calc { background-color: #4f46e5; }
+        .btn-print { background-color: #059669; }
+
+        /* PDF Styling Helpers */
+        .pdf-header { display: none; border-bottom: 2px solid #000; margin-bottom: 20px; padding-bottom: 10px; }
+        
     </style>
 </head>
 <body>
 
-    <div id="login-section">
-        <div class="login-card">
-            <h2 style="margin-top:0">Autoryzacja</h2>
-            <p style="color: var(--text-light); font-size: 14px; margin-bottom: 20px;">Wymagany dostęp dla personelu medycznego</p>
-            <input type="password" id="password-input" placeholder="Hasło dostępu">
-            <button class="btn btn-primary" style="width:100%; margin-top: 10px;" onclick="checkPassword()">Zaloguj się</button>
-            <p id="error-msg" style="color: #ef4444; display: none; font-size: 13px; margin-top: 15px;">Nieprawidłowe hasło dostępu.</p>
+    <div id="login-screen">
+        <div class="login-box">
+            <h2>Panel Psychologa</h2>
+            <p style="color:var(--text-muted); margin-bottom: 1rem;">Dostęp do narzędzi psychometrycznych</p>
+            <input type="password" id="password-input" placeholder="Hasło (domyślne: psycholog2026)">
+            <button class="btn" onclick="checkPassword()">Zaloguj się</button>
+            <p id="login-error" style="color:red; display:none; margin-top:1rem;">Błędne hasło.</p>
         </div>
     </div>
 
-    <div id="main-section" class="container hidden">
-        <div id="pdf-content">
-            <div class="header">
-                <h1 style="margin:0; font-size: 26px; letter-spacing: -0.5px;">Arkusz Wyników Diagnostycznych</h1>
-                <p style="color: var(--text-light); margin-top: 8px;">Poufne • Dokumentacja Medyczna</p>
+    <div id="dashboard">
+        <header>
+            <div>
+                <h1>Narzędzia Diagnostyczne</h1>
+                <p style="color:var(--text-muted)">Panel zapisu i interpretacji</p>
             </div>
-
-            <div class="patient-info">
-                <div>
-                    <label class="q-label">Inicjały Pacjenta</label>
-                    <input type="text" id="p-initials" placeholder="Wpisz inicjały">
-                </div>
-                <div>
-                    <label class="q-label">Data Badania</label>
-                    <input type="text" id="p-date">
-                </div>
+            <div class="header-inputs">
+                <input type="text" id="patient-initials" placeholder="Inicjały Pacjenta">
+                <input type="date" id="exam-date">
             </div>
+        </header>
 
-            <div class="accordion">
-                <button class="accordion-header" onclick="toggleAcc(this)">1. Inwentarz Depresji Becka (BDI-II) <span>+</span></button>
-                <div class="accordion-content">
-                    <div id="beck-questions"></div>
-                    <div class="score-row"><span class="badge" id="res-beck">Wynik: 0 pkt</span></div>
+        <nav class="tabs">
+            <button class="tab-btn active" onclick="switchTab('dass')">DASS-21</button>
+            <button class="tab-btn" onclick="switchTab('phq9')">PHQ-9 (Depresja)</button>
+            <button class="tab-btn" onclick="switchTab('gad7')">GAD-7 (Lęk)</button>
+            <button class="tab-btn" onclick="switchTab('bdi')">BDI (Szablon)</button>
+            <button class="tab-btn" onclick="switchTab('ybocs')">Y-BOCS (Szablon)</button>
+        </nav>
+
+        <div id="dass" class="test-content active">
+            <div class="pdf-container">
+                <div class="pdf-header">
+                    <h2>Wyniki Badania: DASS-21</h2>
+                    <p>Pacjent: <span class="p-initials"></span> | Data: <span class="p-date"></span></p>
                 </div>
-            </div>
-
-            <div class="accordion">
-                <button class="accordion-header" onclick="toggleAcc(this)">2. Kwestionariusz Zdrowia Pacjenta (PHQ-9) <span>+</span></button>
-                <div class="accordion-content">
-                    <div id="phq-questions"></div>
-                    <div class="score-row"><span class="badge" id="res-phq">Wynik: 0 pkt</span></div>
+                <div class="test-header">
+                    <h2>Skala Depresji, Lęku i Stresu (DASS-21)</h2>
+                    <p class="desc">Proszę zaznaczyć liczbę (0-3), która najlepiej opisuje samopoczucie w ciągu ostatniego tygodnia.</p>
+                    <p class="source-cite">Źródło: Lovibond, S.H. & Lovibond, P.F. (1995). Manual for the Depression Anxiety Stress Scales.</p>
                 </div>
-            </div>
-
-            <div class="accordion">
-                <button class="accordion-header" onclick="toggleAcc(this)">3. Skala Depresji, Lęku i Stresu (DASS-42) <span>+</span></button>
-                <div class="accordion-content">
-                    <div id="dass-questions" style="display: grid; grid-template-columns: 1fr; gap: 10px;"></div>
-                    <div class="score-row">
-                        <span class="badge" id="res-dass-d">Depresja: 0</span>
-                        <span class="badge" id="res-dass-a">Lęk: 0</span>
-                        <span class="badge" id="res-dass-s">Stres: 0</span>
-                    </div>
+                <form id="form-dass"><div id="dass-questions"></div></form>
+                
+                <div id="dass-result" class="result-box">
+                    <h3>Interpretacja Wyników (x2)</h3>
+                    <div class="result-row"><span>Depresja:</span> <span id="dass-dep-score"></span></div>
+                    <div class="result-row"><span>Lęk:</span> <span id="dass-anx-score"></span></div>
+                    <div class="result-row"><span>Stres:</span> <span id="dass-str-score"></span></div>
+                    <p style="font-size:0.8rem; margin-top:10px; color:#64748b;">*Wyniki DASS-21 zostały pomnożone przez 2 zgodnie z kluczem, aby odnosiły się do norm pełnej skali DASS-42.</p>
                 </div>
             </div>
-
-            <div class="accordion">
-                <button class="accordion-header" onclick="toggleAcc(this)">4. Skala Yale-Brown (Y-BOCS) <span>+</span></button>
-                <div class="accordion-content">
-                    <div id="ybocs-questions"></div>
-                    <div class="score-row"><span class="badge" id="res-ybocs">Wynik: 0 pkt</span></div>
-                </div>
-            </div>
-
-            <div style="padding: 30px 40px;">
-                <label class="q-label">Interpretacja wyników i zalecenia:</label>
-                <textarea id="clinician-notes" rows="5" placeholder="Miejsce na opisową ocenę stanu pacjenta..."></textarea>
+            <div class="btn-action-group">
+                <button class="btn btn-calc" onclick="calculateDASS()">Oblicz Wynik</button>
+                <button class="btn btn-print" onclick="generatePDF('dass')">Zapisz PDF</button>
             </div>
         </div>
 
-        <div class="footer no-print">
-            <button class="btn btn-outline" onclick="location.reload()">Wyloguj</button>
-            <button class="btn btn-primary" onclick="generatePDF()">Zapisz jako PDF</button>
+        <div id="phq9" class="test-content">
+            <div class="pdf-container">
+                <div class="pdf-header">
+                    <h2>Wyniki Badania: PHQ-9</h2>
+                    <p>Pacjent: <span class="p-initials"></span> | Data: <span class="p-date"></span></p>
+                </div>
+                <div class="test-header">
+                    <h2>Kwestionariusz Zdrowia Pacjenta-9 (PHQ-9)</h2>
+                    <p class="desc">Jak często w ciągu ostatnich 2 tygodni dokuczały Ci poniższe problemy?</p>
+                    <p class="source-cite">Źródło: Kroenke K, et al. (2001). J Gen Intern Med. (Public Domain via Pfizer).</p>
+                </div>
+                <form id="form-phq9"><div id="phq9-questions"></div></form>
+
+                <div id="phq9-result" class="result-box">
+                    <h3>Interpretacja Wyników</h3>
+                    <div class="result-row"><span>Suma punktów:</span> <span id="phq9-score"></span></div>
+                    <div class="result-row"><span>Poziom depresji:</span> <span id="phq9-interp"></span></div>
+                </div>
+            </div>
+            <div class="btn-action-group">
+                <button class="btn btn-calc" onclick="calculatePHQ9()">Oblicz Wynik</button>
+                <button class="btn btn-print" onclick="generatePDF('phq9')">Zapisz PDF</button>
+            </div>
         </div>
+
+        <div id="gad7" class="test-content">
+            <div class="pdf-container">
+                <div class="pdf-header">
+                    <h2>Wyniki Badania: GAD-7</h2>
+                    <p>Pacjent: <span class="p-initials"></span> | Data: <span class="p-date"></span></p>
+                </div>
+                <div class="test-header">
+                    <h2>Skala Lęku Uogólnionego (GAD-7)</h2>
+                    <p class="desc">Jak często w ciągu ostatnich 2 tygodni dokuczały Ci poniższe problemy?</p>
+                    <p class="source-cite">Źródło: Spitzer RL, et al. (2006). Arch Intern Med.</p>
+                </div>
+                <form id="form-gad7"><div id="gad7-questions"></div></form>
+
+                <div id="gad7-result" class="result-box">
+                    <h3>Interpretacja Wyników</h3>
+                    <div class="result-row"><span>Suma punktów:</span> <span id="gad7-score"></span></div>
+                    <div class="result-row"><span>Poziom lęku:</span> <span id="gad7-interp"></span></div>
+                </div>
+            </div>
+            <div class="btn-action-group">
+                <button class="btn btn-calc" onclick="calculateGAD7()">Oblicz Wynik</button>
+                <button class="btn btn-print" onclick="generatePDF('gad7')">Zapisz PDF</button>
+            </div>
+        </div>
+
+        <div id="bdi" class="test-content">
+            <div class="pdf-container">
+                <div class="pdf-header">
+                    <h2>BDI (Szablon)</h2>
+                    <p>Pacjent: <span class="p-initials"></span> | Data: <span class="p-date"></span></p>
+                </div>
+                <div class="test-header">
+                    <h2>Inwentarz Depresji Becka (BDI) - Szablon</h2>
+                    <p class="desc" style="color:var(--danger-text)">*Uwaga: Treść chroniona prawem autorskim. Uzupełnij pytania ręcznie.</p>
+                </div>
+                <form id="form-bdi"><div id="bdi-questions"></div></form>
+            </div>
+            <div class="btn-action-group">
+                <button class="btn btn-print" onclick="generatePDF('bdi')">Zapisz PDF</button>
+            </div>
+        </div>
+
+        <div id="ybocs" class="test-content">
+            <div class="pdf-container">
+                <div class="pdf-header">
+                    <h2>Y-BOCS (Szablon)</h2>
+                    <p>Pacjent: <span class="p-initials"></span> | Data: <span class="p-date"></span></p>
+                </div>
+                <div class="test-header">
+                    <h2>Skala Y-BOCS - Szablon</h2>
+                    <p class="desc" style="color:var(--danger-text)">*Uwaga: Treść chroniona prawem autorskim. Uzupełnij pytania ręcznie.</p>
+                </div>
+                <form id="form-ybocs"><div id="ybocs-questions"></div></form>
+            </div>
+            <div class="btn-action-group">
+                <button class="btn btn-print" onclick="generatePDF('ybocs')">Zapisz PDF</button>
+            </div>
+        </div>
+
     </div>
 
     <script>
-        // --- DANE TESTÓW ---
-        const BDI_DATA = [
-            {q: "Smutek", o: ["Nie czuję się smutny/a", "Często czuję się smutny/a", "Ciągle czuję się smutny/a i nie mogę się od tego uwolnić", "Jestem tak smutny/a i nieszczęśliwy/a, że nie mogę tego znieść"]},
-            {q: "Pesymizm", o: ["Nie czuję się zniechęcony/a przyszłością", "Czuję się bardziej zniechęcony/a niż dawniej", "Czuję, że nic mnie nie czeka w przyszłości", "Czuję, że przyszłość jest beznadziejna"]},
-            {q: "Poczucie porażki", o: ["Nie czuję, bym odnosił/a porażki", "Odniosłem/am więcej porażek niż inni", "Kiedy patrzę wstecz, widzę same porażki", "Czuję, że jako człowiek jestem kompletnym nieudacznikiem"]},
-            {q: "Utrata przyjemności", o: ["Czerpię z życia tyle samo przyjemności co dawniej", "Nie czerpię z życia tyle przyjemności co dawniej", "Czerpię bardzo mało przyjemności z rzeczy, które dawniej mnie cieszyły", "W ogóle nie czerpię przyjemności z niczego"]},
-            {q: "Poczucie winy", o: ["Nie mam poczucia winy", "Często mam poczucie winy z powodu różnych rzeczy", "Przez większość czasu mam silne poczucie winy", "Ciągle mam poczucie winy"]},
-            {q: "Poczucie kary", o: ["Nie czuję się karany/a", "Czuję, że mogę zostać ukarany/a", "Spodziewam się kary", "Czuję się karany/a"]},
-            {q: "Niechęć do siebie", o: ["Mój stosunek do siebie nie zmienił się", "Straciłem/am zaufanie do siebie", "Czuję do siebie niechęć", "Nienawidzę siebie"]},
-            {q: "Samokrytycyzm", o: ["Nie krytykuję siebie częściej niż zwykle", "Jestem bardziej krytyczny/a wobec siebie niż dawniej", "Krytykuję siebie za wszystkie swoje błędy", "Obwiniam siebie za wszystko, co złe"]},
-            {q: "Myśli samobójcze", o: ["Nie miewam myśli o odebraniu sobie życia", "Miewam takie myśli, ale nie potrafiłbym/ałabym ich zrealizować", "Chciałbym/ałabym odebrać sobie życie", "Zabiłbym/ałabym się, gdybym miał/a okazję"]},
-            {q: "Płacz", o: ["Płaczę tyle samo co dawniej", "Płaczę częściej niż dawniej", "Płaczę z powodu każdego drobiazgu", "Często chce mi się płakać, ale nie potrafię"]},
-            {q: "Pobudzenie", o: ["Nie jestem bardziej podenerwowany/a niż zwykle", "Jestem bardziej podenerwowany/a niż zwykle", "Jestem tak pobudzony/a, że trudno mi usiedzieć w miejscu", "Jestem ciągle pobudzony/a i w ruchu"]},
-            {q: "Utrata zainteresowań", o: ["Nie straciłem/am zainteresowania ludźmi i sprawami", "Mniej interesuję się ludźmi i sprawami niż dawniej", "Straciłem/am większość zainteresowań", "Nic mnie nie interesuje"]},
-            {q: "Niezdecydowanie", o: ["Podejmuję decyzje tak samo łatwo jak dawniej", "Częściej niż dawniej odkładam podjęcie decyzji", "Mam znacznie większe trudności z podjęciem decyzji niż dawniej", "Nie potrafię podjąć żadnej decyzji"]},
-            {q: "Poczucie bezwartościowości", o: ["Nie czuję się bezwartościowy/a", "Nie uważam się za tak wartościowego/ą jak dawniej", "Czuję się mniej wartościowy/a od innych", "Czuję się całkowicie bezwartościowy/a"]},
-            {q: "Utrata energii", o: ["Mam tyle samo energii co zawsze", "Mam mniej energii niż dawniej", "Mam bardzo mało energii", "Nie mam energii na nic"]},
-            {q: "Zmiany snu", o: ["Mój sen nie zmienił się", "Śpię nieco więcej/mniej niż zwykle", "Śpię znacznie więcej/mniej", "Śpię przez większość dnia / budzę się rano i nie mogę zasnąć"]},
-            {q: "Drażliwość", o: ["Nie jestem bardziej drażliwy/a niż zwykle", "Jestem bardziej drażliwy/a niż zwykle", "Jestem znacznie bardziej drażliwy/a niż zwykle", "Jestem stale drażliwy/a"]},
-            {q: "Zmiany apetytu", o: ["Mój apetyt nie zmienił się", "Mam nieco mniejszy/większy apetyt", "Mam znacznie mniejszy/większy apetyt", "W ogóle nie mam apetytu / jem stale"]},
-            {q: "Trudności z koncentracją", o: ["Mogę się koncentrować jak zwykle", "Nie mogę się koncentrować tak jak dawniej", "Trudno mi się skupić na czymkolwiek przez dłuższą chwilę", "W ogóle nie mogę się koncentrować"]},
-            {q: "Zmęczenie", o: ["Nie jestem bardziej zmęczony/a niż zwykle", "Szybciej się męczę", "Jestem zbyt zmęczony/a, by robić wiele rzeczy", "Jestem zbyt zmęczony/a, by cokolwiek robić"]},
-            {q: "Seks", o: ["Nie straciłem/am zainteresowania seksem", "Mniej interesuję się seksem niż dawniej", "Znacznie mniej interesuję się seksem", "Całkowicie straciłem/am zainteresowanie seksem"]}
-        ];
+        const PASSWORD = "psycholog2026"; 
 
-        const PHQ9_L = ["Małe zainteresowanie", "Obniżony nastrój", "Sen", "Energia", "Apetyt", "Poczucie winy", "Koncentracja", "Spowolnienie", "Myśli samobójcze"];
-        const YBOCS_L = ["Czas (obsesje)", "Wpływ (obsesje)", "Cierpienie (obsesje)", "Opór (obsesje)", "Kontrola (obsesje)", "Czas (kompulsje)", "Wpływ (kompulsje)", "Cierpienie (kompulsje)", "Opór (kompulsje)", "Kontrola (kompulsje)"];
-        const DASS_ITEMS = [
-            {t: "Trudno mi było się uspokoić", s: "S"}, {t: "Suchość w ustach", s: "A"}, {t: "Brak pozytywnych uczuć", s: "D"},
-            {t: "Trudności z oddychaniem", s: "A"}, {t: "Trudności z inicjatywą", s: "D"}, {t: "Przesadne reagowanie", s: "S"},
-            {t: "Drżenie rąk", s: "A"}, {t: "Zużywanie energii na denerwowanie się", s: "S"}, {t: "Lęk przed paniką", s: "A"},
-            {t: "Brak nadziei na przyszłość", s: "D"}, {t: "Łatwe denerwowanie się", s: "S"}, {t: "Trudność w relaksacji", s: "S"},
-            {t: "Smutek i przygnębienie", s: "D"}, {t: "Niecierpliwość", s: "S"}, {t: "Bliskość paniki", s: "A"},
-            {t: "Brak entuzjazmu", s: "D"}, {t: "Niska wartość własna", s: "D"}, {t: "Drażliwość", s: "S"},
-            {t: "Bicie serca bez wysiłku", s: "A"}, {t: "Lęk bez powodu", s: "A"}, {t: "Życie bez sensu", s: "D"},
-            {t: "Trudność z odprężeniem", s: "S"}, {t: "Trudność z połykaniem", s: "A"}, {t: "Brak przyjemności", s: "D"},
-            {t: "Świadomość pracy serca", s: "A"}, {t: "Przygnębienie", s: "D"}, {t: "Bliskość wybuchu", s: "S"},
-            {t: "Poczucie paniki", s: "A"}, {t: "Trudność z uspokojeniem", s: "S"}, {t: "Lęk przed zadaniem", s: "A"},
-            {t: "Brak entuzjazmu (ponowne)", s: "D"}, {t: "Brak tolerancji na przeszkody", s: "S"}, {t: "Zdenerwowanie", s: "S"},
-            {t: "Bezwartościowość", s: "D"}, {t: "Brak tolerancji na zwłokę", s: "S"}, {t: "Przerażenie", s: "A"},
-            {t: "Brak nadziei", s: "D"}, {t: "Pustka życia", s: "D"}, {t: "Poruszenie", s: "S"},
-            {t: "Obawa o serce", s: "A"}, {t: "Drżenie ciała", s: "A"}, {t: "Brak motywacji", s: "D"}
-        ];
-
-        // --- FUNKCJE SYSTEMOWE ---
-        function toggleAcc(btn) {
-            btn.parentElement.classList.toggle('active');
-            btn.querySelector('span').innerText = btn.parentElement.classList.contains('active') ? '−' : '+';
-        }
-
+        // --- Logowanie ---
         function checkPassword() {
-            if(document.getElementById('password-input').value === 'Psycholog2026') {
-                document.getElementById('login-section').classList.add('hidden');
-                document.getElementById('main-section').classList.remove('hidden');
-                initForm();
+            if(document.getElementById('password-input').value === PASSWORD) {
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                document.getElementById('exam-date').valueAsDate = new Date();
+                renderAllTests();
             } else {
-                document.getElementById('error-msg').style.display = 'block';
+                document.getElementById('login-error').style.display = 'block';
             }
         }
+        document.getElementById('password-input').addEventListener('keypress', (e) => { if(e.key==='Enter') checkPassword(); });
 
-        function initForm() {
-            document.getElementById('p-date').value = new Date().toLocaleDateString('pl-PL');
+        // --- Nawigacja ---
+        function switchTab(id) {
+            document.querySelectorAll('.test-content').forEach(el => el.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
             
-            // Render BDI
-            const bdiCont = document.getElementById('beck-questions');
-            BDI_DATA.forEach((q, i) => {
-                let h = `<div class="q-block"><label class="q-label">${i+1}. ${q.q}</label><select class="bdi-v" onchange="calc()">`;
-                q.o.forEach((opt, idx) => h += `<option value="${idx}">${opt}</option>`);
-                bdiCont.innerHTML += h + `</select></div>`;
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if(btn.getAttribute('onclick').includes(id)) btn.classList.add('active');
             });
-
-            // Render PHQ-9
-            const phqCont = document.getElementById('phq-questions');
-            PHQ9_L.forEach((l, i) => {
-                phqCont.innerHTML += `<div class="q-block"><label class="q-label">${i+1}. ${l}</label><select class="phq-v" onchange="calc()"><option value="0">Wcale</option><option value="1">Kilka dni</option><option value="2">Połowa dni</option><option value="3">Prawie codziennie</option></select></div>`;
-            });
-
-            // Render YBOCS
-            const ybCont = document.getElementById('ybocs-questions');
-            YBOCS_L.forEach((l, i) => {
-                ybCont.innerHTML += `<div class="q-block"><label class="q-label">${i+1}. ${l}</label><select class="yb-v" onchange="calc()"><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></div>`;
-            });
-
-            // Render DASS
-            const dassCont = document.getElementById('dass-questions');
-            DASS_ITEMS.forEach((it, i) => {
-                dassCont.innerHTML += `<div class="q-block"><label class="q-label">${i+1}. ${it.t}</label><select class="dass-v" data-type="${it.s}" onchange="calc()"><option value="0">Wcale</option><option value="1">Mało</option><option value="2">Średnio</option><option value="3">Bardzo</option></select></div>`;
-            });
-            calc();
         }
 
-        function calc() {
-            const sum = (cls) => Array.from(document.querySelectorAll('.'+cls)).reduce((a, b) => a + parseInt(b.value), 0);
-            
-            const bdi = sum('bdi-v');
-            document.getElementById('res-beck').innerText = `BDI-II: ${bdi} pkt (${interpret(bdi, [14,20,29], ["Minimalna","Łagodna","Umiarkowana","Ciężka"])})`;
-            
-            const phq = sum('phq-v');
-            document.getElementById('res-phq').innerText = `PHQ-9: ${phq} pkt (${interpret(phq, [5,10,15,20], ["Minimalna","Łagodna","Umiarkowana","Mod. Ciężka","Ciężka"])})`;
+        // --- Generowanie Pytań (Renderowanie) ---
+        function renderAllTests() {
+            // 1. DASS-21 Data
+            const dassQ = [
+                "Trudno było mi się uspokoić", "Czułem(am) suchość w ustach", "Nie potrafiłem(am) odczuwać żadnych pozytywnych uczuć",
+                "Miałem(am) trudności z oddychaniem (np. szybki oddech)", "Trudno było mi nabrać inicjatywy do działania",
+                "Miałem(am) tendencję do przesadnego reagowania", "Czułem(am) drżenie (np. rąk)", "Czułem(am), że zużywam dużo nerwowej energii",
+                "Martwiłem(am) się sytuacjami, w których mogę wpaść w panikę", "Czułem(am), że nie mam na co czekać w przyszłości",
+                "Czułem(am), że staję się poddenerwowany(a)", "Trudno było mi się zrelaksować", "Czułem(am) się przygnębiony(a) i smutny(a)",
+                "Nie tolerowałem(am) niczego, co przeszkadzało mi w działaniu", "Czułem(am), że jestem bliski(a) paniki",
+                "Nie potrafiłem(am) się niczym entuzjazmować", "Czułem(am), że nie jestem wiele wart(a)", "Czułem(am), że jestem przewrażliwiony(a)",
+                "Byłem(am) świadomy(a) rytmu serca bez wysiłku", "Czułem(am) się wystraszony(a) bez powodu", "Czułem(am), że życie nie ma sensu"
+            ];
+            renderScale('dass-questions', dassQ, [0,1,2,3], "dass_q");
 
-            const yb = sum('yb-v');
-            document.getElementById('res-ybocs').innerText = `Y-BOCS: ${yb} pkt (${interpret(yb, [8,16,24,32], ["Subkliniczne","Łagodne","Umiarkowane","Ciężkie","Bardzo ciężkie"])})`;
+            // 2. PHQ-9 Data
+            const phq9Q = [
+                "Małe zainteresowanie lub odczuwanie przyjemności z wykonywania czynności",
+                "Uczucie przygnębienia, depresji lub beznadziejności",
+                "Kłopoty z zasypianiem/przerywany sen lub zbyt długi sen",
+                "Uczucie zmęczenia lub braku energii",
+                "Brak apetytu lub przejadanie się",
+                "Złe samopoczucie na swój temat, uczucie bycia zawiedzionym sobą",
+                "Kłopoty z koncentracją (np. czytanie, oglądanie TV)",
+                "Poruszanie się/mówienie tak wolne, że inni zauważają LUB pobudzenie ruchowe",
+                "Myśli, że lepiej byłoby nie żyć lub o zrobieniu sobie krzywdy"
+            ];
+            const phqOpts = ["Wcale (0)", "Kilka dni (1)", "Ponad połowę dni (2)", "Prawie codziennie (3)"];
+            renderLabeledScale('phq9-questions', phq9Q, phqOpts, "phq9_q");
 
-            let d=0, a=0, s=0;
-            document.querySelectorAll('.dass-v').forEach(el => {
-                let v = parseInt(el.value);
-                if(el.dataset.type==='D') d+=v;
-                if(el.dataset.type==='A') a+=v;
-                if(el.dataset.type==='S') s+=v;
-            });
-            document.getElementById('res-dass-d').innerText = `Depresja: ${d} (${interpret(d, [10,14,21,28], ["Norma","Łagodny","Umiark.","Silny","B. silny"])})`;
-            document.getElementById('res-dass-a').innerText = `Lęk: ${a} (${interpret(a, [8,10,15,20], ["Norma","Łagodny","Umiark.","Silny","B. silny"])})`;
-            document.getElementById('res-dass-s').innerText = `Stres: ${s} (${interpret(s, [15,19,26,34], ["Norma","Łagodny","Umiark.","Silny","B. silny"])})`;
+            // 3. GAD-7 Data
+            const gad7Q = [
+                "Czucie zdenerwowania, lęku lub bycie na krawędzi",
+                "Niezdolność do powstrzymania się od martwienia lub kontrolowania go",
+                "Martwienie się zbyt wieloma różnymi rzeczami",
+                "Trudności w zrelaksowaniu się",
+                "Bycie tak niespokojnym, że trudno usiedzieć w jednym miejscu",
+                "Łatwe wpadanie w irytację lub rozdrażnienie",
+                "Uczucie lęku, jakby miało wydarzyć się coś strasznego"
+            ];
+            renderLabeledScale('gad7-questions', gad7Q, phqOpts, "gad7_q");
+
+            // 4. BDI/Y-BOCS Placeholders
+            renderPlaceholder('bdi-questions', 21, 4);
+            renderPlaceholder('ybocs-questions', 10, 5);
         }
 
-        function interpret(v, t, l) {
-            for(let i=0; i<t.length; i++) if(v<t[i]) return l[i];
-            return l[l.length-1];
+        // Helper: Standard 0-3 grid
+        function renderScale(containerId, questions, values, namePrefix) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = questions.map((q, i) => `
+                <div class="scale-item">
+                    <span class="scale-question">${i+1}. ${q}</span>
+                    <div class="options-grid">
+                        ${values.map(v => `
+                            <label class="radio-label">
+                                <input type="radio" name="${namePrefix}${i}" value="${v}">
+                                <span>${v}</span>
+                            </label>`).join('')}
+                    </div>
+                </div>
+            `).join('');
         }
 
-        function generatePDF() {
-            // Rozwiń sekcje do druku
-            document.querySelectorAll('.accordion').forEach(a => a.classList.add('active'));
-            const init = document.getElementById('p-initials').value || "Pacjent";
-            const date = document.getElementById('p-date').value;
-            const element = document.getElementById('pdf-content');
-            
-            const opt = {
-                margin: [10, 10, 10, 10],
-                filename: `Badanie_${init}_${date}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+        // Helper: Labeled grid (e.g. PHQ9 text options)
+        function renderLabeledScale(containerId, questions, labels, namePrefix) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = questions.map((q, i) => `
+                <div class="scale-item">
+                    <span class="scale-question">${i+1}. ${q}</span>
+                    <div class="options-grid" style="grid-template-columns: repeat(4, 1fr);">
+                        ${labels.map((lbl, idx) => `
+                            <label class="radio-label">
+                                <input type="radio" name="${namePrefix}${i}" value="${idx}">
+                                <span style="font-size:0.75rem">${lbl}</span>
+                            </label>`).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Helper: Placeholders
+        function renderPlaceholder(containerId, count, optsCount) {
+            const container = document.getElementById(containerId);
+            let html = '';
+            for(let i=1; i<=count; i++) {
+                html += `<div class="scale-item"><span class="scale-question">Pytanie ${i} (Wpisz treść)</span>
+                <div class="options-grid">`;
+                for(let j=0; j<optsCount; j++) html += `<label class="radio-label"><input type="radio"><span>${j}</span></label>`;
+                html += `</div></div>`;
+            }
+            container.innerHTML = html;
+        }
+
+        // --- Logika Obliczeń (Scoring) ---
+
+        // 1. DASS-21 Calculation
+        function calculateDASS() {
+            const sDep = [3, 5, 10, 13, 16, 17, 21].map(i => i-1); // Indeksy (0-based)
+            const sAnx = [2, 4, 7, 9, 15, 19, 20].map(i => i-1);
+            const sStr = [1, 6, 8, 11, 12, 14, 18].map(i => i-1);
+
+            const getSum = (indices) => {
+                let sum = 0;
+                let missing = false;
+                indices.forEach(idx => {
+                    const el = document.querySelector(`input[name="dass_q${idx}"]:checked`);
+                    if(el) sum += parseInt(el.value);
+                    else missing = true;
+                });
+                return missing ? null : sum * 2; // DASS-21 mnożymy x2
             };
 
-            html2pdf().set(opt).from(element).save().then(() => {
-                // Opcjonalnie: przywróć zwinięte sekcje po zapisie
+            const dep = getSum(sDep);
+            const anx = getSum(sAnx);
+            const str = getSum(sStr);
+
+            if (dep === null || anx === null || str === null) {
+                alert("Proszę wypełnić wszystkie pytania DASS-21, aby obliczyć wynik.");
+                return;
+            }
+
+            const getInterp = (val, thresholds) => {
+                if (val <= thresholds[0]) return `<span class="severity-low">W normie</span>`;
+                if (val <= thresholds[1]) return `<span class="severity-med">Łagodny</span>`;
+                if (val <= thresholds[2]) return `<span class="severity-med">Umiarkowany</span>`;
+                if (val <= thresholds[3]) return `<span class="severity-high">Silny</span>`;
+                return `<span class="severity-high">Bardzo silny</span>`;
+            };
+
+            // Progi Lovibond & Lovibond (dla DASS-42 lub DASS-21*2)
+            document.getElementById('dass-dep-score').innerHTML = `${dep} (${getInterp(dep, [9, 13, 20, 27])})`;
+            document.getElementById('dass-anx-score').innerHTML = `${anx} (${getInterp(anx, [7, 9, 14, 19])})`;
+            document.getElementById('dass-str-score').innerHTML = `${str} (${getInterp(str, [14, 18, 25, 33])})`;
+
+            document.getElementById('dass-result').style.display = 'block';
+        }
+
+        // 2. PHQ-9 Calculation
+        function calculatePHQ9() {
+            let sum = 0;
+            let missing = false;
+            for(let i=0; i<9; i++) {
+                const el = document.querySelector(`input[name="phq9_q${i}"]:checked`);
+                if(el) sum += parseInt(el.value); else missing = true;
+            }
+
+            if(missing) { alert("Proszę wypełnić wszystkie pola."); return; }
+
+            let interp = "";
+            if (sum <= 4) interp = "Brak lub minimalna (Norma)";
+            else if (sum <= 9) interp = "Łagodna";
+            else if (sum <= 14) interp = "Umiarkowana";
+            else if (sum <= 19) interp = "Umiarkowanie ciężka";
+            else interp = "Ciężka";
+
+            const colorClass = sum > 9 ? "severity-high" : (sum > 4 ? "severity-med" : "severity-low");
+
+            document.getElementById('phq9-score').innerText = sum;
+            document.getElementById('phq9-interp').innerHTML = `<span class="${colorClass}">${interp}</span>`;
+            document.getElementById('phq9-result').style.display = 'block';
+        }
+
+        // 3. GAD-7 Calculation
+        function calculateGAD7() {
+            let sum = 0;
+            let missing = false;
+            for(let i=0; i<7; i++) {
+                const el = document.querySelector(`input[name="gad7_q${i}"]:checked`);
+                if(el) sum += parseInt(el.value); else missing = true;
+            }
+
+            if(missing) { alert("Proszę wypełnić wszystkie pola."); return; }
+
+            let interp = "";
+            if (sum <= 4) interp = "Brak lub minimalny lęk (Norma)";
+            else if (sum <= 9) interp = "Łagodny lęk";
+            else if (sum <= 14) interp = "Umiarkowany lęk";
+            else interp = "Silny lęk";
+
+            const colorClass = sum > 9 ? "severity-high" : (sum > 4 ? "severity-med" : "severity-low");
+
+            document.getElementById('gad7-score').innerText = sum;
+            document.getElementById('gad7-interp').innerHTML = `<span class="${colorClass}">${interp}</span>`;
+            document.getElementById('gad7-result').style.display = 'block';
+        }
+
+
+        // --- PDF Generation ---
+        function generatePDF(testId) {
+            const initials = document.getElementById('patient-initials').value;
+            const date = document.getElementById('exam-date').value;
+
+            if(!initials) { alert("Wpisz inicjały pacjenta."); return; }
+
+            const container = document.querySelector(`#${testId} .pdf-container`);
+            
+            // Wypełnij nagłówki
+            container.querySelectorAll('.p-initials').forEach(el => el.innerText = initials);
+            container.querySelectorAll('.p-date').forEach(el => el.innerText = date);
+            container.querySelector('.pdf-header').style.display = 'block';
+
+            // Jeśli jest wynik, upewnij się że jest widoczny
+            const resultBox = container.querySelector('.result-box');
+            if(resultBox && resultBox.style.display === 'none') {
+                // Jeśli użytkownik nie kliknął "Oblicz", zrób to teraz lub wydrukuj bez wyniku? 
+                // Lepiej zostawić puste jeśli nie obliczono, ale wymuśmy display block dla layoutu
+                // Tutaj zakładam, że psycholog najpierw klika oblicz.
+            }
+
+            const opt = {
+                margin: 10,
+                filename: `${testId.toUpperCase()}_${initials}_${date}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(container).save().then(() => {
+                container.querySelector('.pdf-header').style.display = 'none';
             });
         }
     </script>
