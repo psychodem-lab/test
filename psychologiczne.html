@@ -568,10 +568,10 @@ genForm('f-ciss', cissQuestions, 5, 'ci', ["1", "2", "3", "4", "5"]);
         document.getElementById('res-lsas').style.display = 'block';
     }
 
-function calcCISS() {
-    const gender = document.getElementById('p-gender').value;
+    function calcCISS() {
+        const gender = document.getElementById('p-gender').value;
     
-    const key = {
+        const key = {
         ssz: [0, 3, 6, 9, 11, 14, 18, 23, 27, 31, 34, 39, 42, 45, 47],
         sse: [1, 4, 7, 12, 19, 22, 26, 29, 32, 36, 40, 43, 46],
         ssu: [2, 5, 8, 10, 13, 15, 16, 17, 20, 21, 24, 25, 28, 30, 33, 35, 37, 38, 41, 44],
@@ -579,88 +579,88 @@ function calcCISS() {
         pkt: [8, 20, 25, 47]
     };
 
-    const getScore = (indices) => {
-        let sum = 0;
-        indices.forEach(idx => {
-            const r = document.querySelector(`input[name="ci${idx}"]:checked`);
-            if(r) sum += (parseInt(r.value) + 1);
-        });
-        return sum;
-    };
+        const getScore = (indices) => {
+            let sum = 0;
+            indices.forEach(idx => {
+                const r = document.querySelector(`input[name="ci${idx}"]:checked`);
+                if(r) sum += (parseInt(r.value) + 1);
+            });
+            return sum;
+        };
 
-    const raw = {
-        ssz: getScore(key.ssz),
-        sse: getScore(key.sse),
-        ssu: getScore(key.ssu)
-    };
+        const raw = {
+            ssz: getScore(key.ssz),
+            sse: getScore(key.sse),
+            ssu: getScore(key.ssu)
+        };
 
     // Tabele norm (uśrednione progi stenowe dla dorosłych)
     // Indeks tablicy + 1 = Sten
-    const norms = {
-        'K': {
-            ssz: [36, 42, 47, 52, 57, 61, 66, 70, 75], // progi dla stenów 1-9 (powyżej ostatniego jest 10)
-            sse: [25, 31, 36, 41, 46, 51, 56, 62, 68],
-            ssu: [28, 34, 38, 43, 47, 52, 57, 62, 67]
+        const norms = {
+            'K': {
+                ssz: [36, 42, 47, 52, 57, 61, 66, 70, 75], // progi dla stenów 1-9 (powyżej ostatniego jest 10)
+                sse: [25, 31, 36, 41, 46, 51, 56, 62, 68],
+                ssu: [28, 34, 38, 43, 47, 52, 57, 62, 67]
         },
         'M': {
             ssz: [34, 40, 46, 51, 56, 61, 66, 71, 76],
             sse: [22, 27, 32, 37, 42, 47, 52, 58, 64],
             ssu: [26, 31, 36, 40, 45, 49, 54, 59, 65]
         }
-    };
+        };
 
-    const calculateSten = (score, scaleNorms) => {
-        for (let i = 0; i < scaleNorms.length; i++) {
-            if (score <= scaleNorms[i]) return i + 1;
-        }
-        return 10;
-    };
-
-    const stens = {
-        ssz: calculateSten(raw.ssz, norms[gender].ssz),
-        sse: calculateSten(raw.sse, norms[gender].sse),
-        ssu: calculateSten(raw.ssu, norms[gender].ssu)
-    };
-
-    const getInterpretation = (sten) => {
-        if (sten <= 3) return "<span style='color:blue'>Wynik niski</span>";
-        if (sten <= 7) return "<span style='color:green'>Wynik przeciętny</span>";
-        return "<span style='color:red'>Wynik wysoki</span>";
-    };
-
-    document.getElementById('res-ciss').innerHTML = `
-        <h3>Wyniki CISS (Płeć: ${gender}):</h3>
-        <table style="width:100%; border-collapse: collapse; margin-top:10px;">
-            <tr style="border-bottom: 1px solid #ddd; text-align:left;">
-                <th style="padding:8px">Skala</th>
-                <th style="padding:8px">Surowy</th>
-                <th style="padding:8px">Sten</th>
-                <th style="padding:8px">Interpretacja</th>
-            </tr>
-            <tr>
-                <td style="padding:8px">Zadanie (SSZ)</td>
-                <td style="padding:8px">${raw.ssz}</td>
-                <td style="padding:8px"><strong>${stens.ssz}</strong></td>
-                <td style="padding:8px">${getInterpretation(stens.ssz)}</td>
-            </tr>
-            <tr>
-                <td style="padding:8px">Emocje (SSE)</td>
-                <td style="padding:8px">${raw.sse}</td>
-                <td style="padding:8px"><strong>${stens.sse}</strong></td>
-                <td style="padding:8px">${getInterpretation(stens.sse)}</td>
-            </tr>
-            <tr>
-                <td style="padding:8px">Unikanie (SSU)</td>
-                <td style="padding:8px">${raw.ssu}</td>
-                <td style="padding:8px"><strong>${stens.ssu}</strong></td>
-                <td style="padding:8px">${getInterpretation(stens.ssu)}</td>
-            </tr>
-        </table>
-        <p style="font-size:0.75rem; color:var(--muted); margin-top:15px;">
-            * Steny 1-3: wynik niski | 4-7: wynik przeciętny | 8-10: wynik wysoki.
-        </p>
-    `;
-    document.getElementById('res-ciss').style.display = 'block';
+        const calculateSten = (score, scaleNorms) => {
+            for (let i = 0; i < scaleNorms.length; i++) {
+                if (score <= scaleNorms[i]) return i + 1;
+            }
+            return 10;
+        };
+    
+        const stens = {
+            ssz: calculateSten(raw.ssz, norms[gender].ssz),
+            sse: calculateSten(raw.sse, norms[gender].sse),
+            ssu: calculateSten(raw.ssu, norms[gender].ssu)
+        };
+    
+        const getInterpretation = (sten) => {
+            if (sten <= 3) return "<span style='color:blue'>Wynik niski</span>";
+            if (sten <= 7) return "<span style='color:green'>Wynik przeciętny</span>";
+            return "<span style='color:red'>Wynik wysoki</span>";
+        };
+    
+        document.getElementById('res-ciss').innerHTML = `
+            <h3>Wyniki CISS (Płeć: ${gender}):</h3>
+            <table style="width:100%; border-collapse: collapse; margin-top:10px;">
+                <tr style="border-bottom: 1px solid #ddd; text-align:left;">
+                    <th style="padding:8px">Skala</th>
+                    <th style="padding:8px">Surowy</th>
+                    <th style="padding:8px">Sten</th>
+                    <th style="padding:8px">Interpretacja</th>
+                </tr>
+                <tr>
+                    <td style="padding:8px">Zadanie (SSZ)</td>
+                    <td style="padding:8px">${raw.ssz}</td>
+                    <td style="padding:8px"><strong>${stens.ssz}</strong></td>
+                    <td style="padding:8px">${getInterpretation(stens.ssz)}</td>
+                </tr>
+                <tr>
+                    <td style="padding:8px">Emocje (SSE)</td>
+                    <td style="padding:8px">${raw.sse}</td>
+                    <td style="padding:8px"><strong>${stens.sse}</strong></td>
+                    <td style="padding:8px">${getInterpretation(stens.sse)}</td>
+                </tr>
+                <tr>
+                    <td style="padding:8px">Unikanie (SSU)</td>
+                    <td style="padding:8px">${raw.ssu}</td>
+                    <td style="padding:8px"><strong>${stens.ssu}</strong></td>
+                    <td style="padding:8px">${getInterpretation(stens.ssu)}</td>
+                </tr>
+            </table>
+            <p style="font-size:0.75rem; color:var(--muted); margin-top:15px;">
+                * Steny 1-3: wynik niski | 4-7: wynik przeciętny | 8-10: wynik wysoki.
+            </p>
+        `;
+        document.getElementById('res-ciss').style.display = 'block';
 }
     
 </script>
