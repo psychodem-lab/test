@@ -165,6 +165,7 @@
         <button class="tab-link" onclick="openTab(event, 't-gad7')">GAD-7</button>
         <button class="tab-link" onclick="openTab(event, 't-bdi')">BDI-II</button>
         <button class="tab-link" onclick="openTab(event, 't-lsas')">LSAS (Leibowitz)</button>
+        <button class="tab-link" onclick="openTab(event, 't-ciss')">CISS</button>
     </nav>
 
     <div id="t-dass" class="test-section active">
@@ -220,6 +221,14 @@
         <form id="f-lsas"></form>
         <div id="res-lsas" class="result-panel"></div>
     </div>
+    <div id="t-ciss" class="test-section">
+    <div class="test-header">
+        <h2>CISS</h2>
+        <p>Kwestionariusz Radzenia Sobie w Sytuacjach Stresowych (1 - nigdy, 5 - bardzo często).</p>
+    </div>
+    <form id="f-ciss"></form>
+    <div id="res-ciss" class="result-panel"></div>
+</div>
 
     <div class="actions">
         <button class="btn btn-calc" onclick="calculateCurrent()">Oblicz wynik</button>
@@ -303,6 +312,60 @@
             "Rozmawianie przez telefon przy innych osobach", "Udział w małej grupie (parę osób)", "Jedzenie w miejscach publicznych", "Picie z innymi w miejscach publicznych", "Rozmowa z osobą na wyższym stanowisku", "Występowanie/przemawianie przed publicznością", "Pójście na imprezę", "Praca, gdy ktoś inny patrzy", "Pisanie, gdy ktoś inny patrzy", "Dzwonienie do kogoś, kogo słabo znasz", "Rozmowa z kimś, kogo słabo znasz", "Spotkanie z nieznajomymi", "Korzystanie z publicznej toalety", "Wejście do pokoju, w którym siedzą już inni", "Bycie w centrum zainteresowania", "Zabranie głosu na spotkaniu", "Przystąpienie do testu wiedzy/umiejętności", "Wyrażenie niezgody osobie mało znanej", "Patrzenie w oczy osobie mało znanej", "Przygotowany referat wygłaszany przed grupą", "Próba nawiązania bliższej relacji (podrywanie)", "Zwracanie towaru do sklepu", "Wydanie przyjęcia/imprezy", "Opieranie się presji sprzedawcy"
         ];
         genFormLSAS('f-lsas', lQ, 'l');
+        
+        const cissQuestions = [
+    "Skupiam się na rozwiązaniu problemu",
+    "Zastanawiam się, co bym zrobił, gdybym był w lepszej sytuacji",
+    "Staram się nie myśleć o problemie",
+    "Daję sobie czas na przemyślenie sprawy",
+    "Obwiniam się, że nie potrafię sobie poradzić",
+    "Idę do kina",
+    "Próbuję ustalić plan działania",
+    "Bardzo się denerwuję",
+    "Odwiedzam znajomych",
+    "Analizuję sytuację, by ją lepiej zrozumieć",
+    "Mówię sobie, że to nie jest prawda",
+    "Skupiam się na tym, co mam do zrobienia w następnej kolejności",
+    "Martwię się, że nie będę potrafił sobie z tym poradzić",
+    "Śpię więcej niż zwykle",
+    "Spoglądam na sytuację z innej strony niż dotychczas",
+    "Jem więcej niż zwykle",
+    "Mówię sobie, że to mi przejdzie",
+    "Zostaję w domu i po prostu nic nie robię",
+    "Koncentruję się na moich mocnych stronach",
+    "Wpadam w złość",
+    "Dzwonię do kogoś",
+    "Mówię sobie, że to właściwie nie jest problem",
+    "Żałuję, że nie potrafię zmienić tego, co się dzieje",
+    "Zastanawiam się, co jest najważniejsze do zrobienia",
+    "Ponosi mnie fantazja",
+    "Chcę być z innymi ludźmi",
+    "Wydaje mi się, że sytuacja jest bez wyjścia",
+    "Postępuję zgodnie z ustalonym planem",
+    "Staram się o tym nie myśleć",
+    "Żałuję, że nie jestem silniejszy",
+    "Wychodzę z domu",
+    "Podejmuję próby naprawienia sytuacji",
+    "Zastanawiam się nad swoimi błędami",
+    "Kupuję sobie coś",
+    "Postępuję tak, jak postępowałem w podobnych sytuacjach",
+    "Zastanawiam się, jak bym chciał, żeby to się skończyło",
+    "Myślę o tym, co się stało",
+    "Robię coś, na co zwykle nie mam czasu",
+    "Mówię sobie, że nic się nie stało",
+    "Próbuję zmienić sytuację",
+    "Czuję się winny",
+    "Robię zakupy",
+    "Zastanawiam się nad nowymi sposobami rozwiązania problemu",
+    "Marzę o tym, żeby sytuacja się zmieniła",
+    "Idę na spacer",
+    "Dążę do kompromisu",
+    "Wyolbrzymiam sytuację",
+    "Rozmawiam z kimś o tym, jak się czuję"
+];
+
+// Inicjalizacja formularza CISS (Skala 1-5)
+genForm('f-ciss', cissQuestions, 5, 'ci', ["1", "2", "3", "4", "5"]);
     }
 
     function genForm(id, qs, n, prefix, labels=null) {
@@ -367,6 +430,8 @@
         `).join('');
     }
 
+    
+
     function calculateCurrent() {
         const activeSection = document.querySelector('.test-section.active');
         const activeId = activeSection.id;
@@ -386,6 +451,7 @@
         if(activeId === 't-gad7') calcGAD();
         if(activeId === 't-bdi') calcBDI();
         if(activeId === 't-lsas') calcLSAS();
+        if(id === 't-ciss') calcCISS();
     }
 
     function calcDASS() {
@@ -493,6 +559,58 @@
         `;
         document.getElementById('res-lsas').style.display = 'block';
     }
+
+function calcCISS() {
+    // Oficjalny klucz CISS (indeksy pytań 0-47)
+    const key = {
+        ssz: [0, 3, 6, 9, 11, 14, 18, 23, 27, 31, 34, 39, 42, 45, 47], // Styl Zadania (16 pytań)
+        sse: [1, 4, 7, 12, 19, 22, 26, 29, 32, 36, 40, 43, 46],        // Styl Emocji (16 pytań)
+        ssu: [2, 5, 8, 10, 13, 15, 16, 17, 20, 21, 24, 25, 28, 30, 33, 35, 37, 38, 41, 44], // Styl Unikania (16 pytań)
+        acz: [5, 13, 15, 17, 24, 30, 33, 37],                          // Czynności Zastępcze (8 pytań)
+        pkt: [8, 20, 25, 47]                                           // Kontakty Towarzyskie (5 pytań)
+    };
+
+    // Funkcja sumująca wartości (pamiętając o przesunięciu +1, bo radio value zaczyna się od 0)
+    const getScore = (indices) => {
+        let sum = 0;
+        indices.forEach(idx => {
+            const r = document.querySelector(`input[name="ci${idx}"]:checked`);
+            if(r) sum += (parseInt(r.value) + 1);
+        });
+        return sum;
+    };
+
+    const res = {
+        ssz: getScore(key.ssz),
+        sse: getScore(key.sse),
+        ssu: getScore(key.ssu),
+        acz: getScore(key.acz),
+        pkt: getScore(key.pkt)
+    };
+
+    // Generowanie raportu
+    document.getElementById('res-ciss').innerHTML = `
+        <h3>Wyniki CISS (Surowe):</h3>
+        <div class="res-line">Styl Skoncentrowany na Zadaniu (SSZ): <span>${res.ssz} pkt</span></div>
+        <div class="res-line">Styl Skoncentrowany na Emocjach (SSE): <span>${res.sse} pkt</span></div>
+        <div class="res-line">Styl Skoncentrowany na Unikaniu (SSU): <span>${res.ssu} pkt</span></div>
+        
+        <div style="margin: 15px 0 0 15px; border-left: 3px solid var(--border); padding-left: 15px; font-size: 0.9rem;">
+            <p style="color: var(--muted); font-weight: 600; margin-bottom: 5px;">Podskale Unikania:</p>
+            <div class="res-line">Angażowanie w czynności zastępcze (ACZ): <span>${res.acz} pkt</span></div>
+            <div class="res-line">Poszukiwanie kontaktów towarzyskich (PKT): <span>${res.pkt} pkt</span></div>
+        </div>
+
+        <div style="margin-top: 20px; padding: 10px; background: #fff; border-radius: 6px; font-size: 0.8rem; color: #444;">
+            <strong>Krótka interpretacja:</strong><br>
+            • <strong>SSZ:</strong> Wysoki wynik wskazuje na tendencję do planowania i rozwiązywania problemów.<br>
+            • <strong>SSE:</strong> Wysoki wynik sugeruje skupienie na własnych przeżyciach i napięciu emocjonalnym.<br>
+            • <strong>SSU:</strong> Wysoki wynik oznacza unikanie myślenia i przeżywania sytuacji stresowej.
+        </div>
+    `;
+    document.getElementById('res-ciss').style.display = 'block';
+}
+    
 </script>
 
 </body>
