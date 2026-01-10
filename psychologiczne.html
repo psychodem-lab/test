@@ -162,6 +162,7 @@
         <button class="tab-link" onclick="openTab(event, 't-phq9')">PHQ-9</button>
         <button class="tab-link" onclick="openTab(event, 't-gad7')">GAD-7</button>
         <button class="tab-link" onclick="openTab(event, 't-bdi')">BDI-II</button>
+        <button class="tab-link" onclick="openTab(event, 't-lsas')">LSAS (Leibowitz)</button>
     </nav>
 
     <div id="t-dass" class="test-section active">
@@ -264,6 +265,12 @@
             {q: "Utrata zainteresowania seksem", o: ["Moje zainteresowanie seksem nie uległo zmianie.", "Jestem mniej zainteresowany seksem niż dotychczas.", "Jestem obecnie dużo mniej zainteresowany seksem niż dotychczas.", "Straciłem całkowite zainteresowanie seksem."]}
         ];
         genFormBDI('f-bdi', bQ, 'b');
+
+        // LSAS (Leibowitz)
+        const lQ = [
+            "Rozmawianie przez telefon przy innych osobach", "Udział w małej grupie (parę osób)", "Jedzenie w miejscach publicznych", "Picie z innymi w miejscach publicznych", "Rozmowa z osobą na wyższym stanowisku", "Występowanie/przemawianie przed publicznością", "Pójście na imprezę", "Praca, gdy ktoś inny patrzy", "Pisanie, gdy ktoś inny patrzy", "Dzwonienie do kogoś, kogo słabo znasz", "Rozmowa z kimś, kogo słabo znasz", "Spotkanie z nieznajomymi", "Korzystanie z publicznej toalety", "Wejście do pokoju, w którym siedzą już inni", "Bycie w centrum zainteresowania", "Zabranie głosu na spotkaniu", "Przystąpienie do testu wiedzy/umiejętności", "Wyrażenie niezgody osobie mało znanej", "Patrzenie w oczy osobie mało znanej", "Przygotowany referat wygłaszany przed grupą", "Próba nawiązania bliższej relacji (podrywanie)", "Zwracanie towaru do sklepu", "Wydanie przyjęcia/imprezy", "Opieranie się presji sprzedawcy"
+        ];
+        genFormLSAS('f-lsas', lQ, 'l');
     }
 
     function genForm(id, qs, n, prefix, labels=null) {
@@ -300,6 +307,34 @@
         `).join('');
     }
 
+    // Generator LSAS (Podwójna punktacja)
+    function genFormLSAS(id, qs, prefix) {
+        const f = document.getElementById(id);
+        f.innerHTML = qs.map((q, i) => `
+            <div class="question-row">
+                <span class="q-text">${i+1}. ${q}</span>
+                <div class="lsas-label-mini">Lęk / Strach:</div>
+                <div class="options-group">
+                    ${["Brak", "Łagodny", "Umiark.", "Silny"].map((lbl, v) => `
+                        <label class="opt-label">
+                            <input type="radio" name="${prefix}f${i}" value="${v}" required>
+                            <span>${lbl}</span>
+                        </label>
+                    `).join('')}
+                </div>
+                <div class="lsas-label-mini">Unikanie:</div>
+                <div class="options-group">
+                    ${["Nigdy", "Rzadko", "Często", "Zawsze"].map((lbl, v) => `
+                        <label class="opt-label">
+                            <input type="radio" name="${prefix}a${i}" value="${v}" required>
+                            <span>${lbl}</span>
+                        </label>
+                    `).join('')}
+                </div>
+            </div>
+        `).join('');
+    }
+
     function calculateCurrent() {
         const activeSection = document.querySelector('.test-section.active');
         const activeId = activeSection.id;
@@ -316,6 +351,7 @@
         if(activeId === 't-phq9') calcPHQ();
         if(activeId === 't-gad7') calcGAD();
         if(activeId === 't-bdi') calcBDI();
+        if(activeId === 't-lsas') calcLSAS();
     }
 
     function calcDASS() {
@@ -369,6 +405,21 @@
 
         document.getElementById('res-bdi').innerHTML = `<h3>Suma BDI-II: ${sum} pkt</h3><p>Interpretacja: ${interpretation}</p>`;
         document.getElementById('res-bdi').style.display = 'block';
+
+        // Obliczenia LSAS
+    function calcLSAS() {
+        let fSum = 0, aSum = 0;
+        document.querySelectorAll('#f-lsas input[name^="lf"]:checked').forEach(i => fSum += parseInt(i.value));
+        document.querySelectorAll('#f-lsas input[name^="la"]:checked').forEach(i => aSum += parseInt(i.value));
+        const total = fSum + aSum;
+        const interp = total<=54?"Brak fobii":total<=65?"Łagodna":total<=80?"Umiarkowana":total<=95?"Nasilona":"Bardzo silna";
+        document.getElementById('res-lsas').innerHTML = `
+            <h3>LSAS: ${total} pkt</h3>
+            <div class="res-line">Lęk (suma): <span>${fSum}</span></div>
+            <div class="res-line">Unikanie (suma): <span>${aSum}</span></div>
+            <div class="res-line">Interpretacja: <span>${interp}</span></div>
+        `;
+        document.getElementById('res-lsas').style.display = 'block';
     }
 </script>
 
