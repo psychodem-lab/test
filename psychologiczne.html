@@ -159,6 +159,8 @@
 
     <nav class="nav-tabs">
         <button class="tab-link active" onclick="openTab(event, 't-dass')">DASS-21</button>
+        <button class="tab-link" onclick="openTab(event, 't-dass42')">DASS-42</button>
+        <button class="tab-link" onclick="openTab(event, 't-dassy')">DASSY (Dzieci)</button>
         <button class="tab-link" onclick="openTab(event, 't-phq9')">PHQ-9</button>
         <button class="tab-link" onclick="openTab(event, 't-gad7')">GAD-7</button>
         <button class="tab-link" onclick="openTab(event, 't-bdi')">BDI-II</button>
@@ -172,6 +174,16 @@
         </div>
         <form id="f-dass"></form>
         <div id="res-dass" class="result-panel"></div>
+    </div>
+
+    <div id="t-dass42" class="test-section">
+        <div class="test-header"><h2>DASS-42</h2><p>Pełna Skala Depresji, Lęku i Stresu (42 pytania).</p></div>
+        <form id="f-dass42"></form><div id="res-dass42" class="result-panel"></div>
+    </div>
+
+    <div id="t-dassy" class="test-section">
+        <div class="test-header"><h2>DASSY</h2><p>Skala Depresji, Lęku i Stresu dla dzieci i młodzieży.</p></div>
+        <form id="f-dassy"></form><div id="res-dassy" class="result-panel"></div>
     </div>
 
     <div id="t-phq9" class="test-section">
@@ -240,6 +252,18 @@
         const dQ = ["Trudno było mi się uspokoić", "Czułem(am) suchość w ustach", "Nie potrafiłem(am) odczuwać żadnych pozytywnych uczuć", "Miałem(am) trudności z oddychaniem (np. szybki oddech)", "Trudno było mi nabrać inicjatywy do działania", "Miałem(am) tendencję do przesadnego reagowania", "Czułem(am) drżenie (np. rąk)", "Czułem(am), że zużywam dużo nerwowej energii", "Martwiłem(am) się sytuacjami, w których mogę wpaść w panikę", "Czułem(am), że nie mam na co czekać w przyszłości", "Czułem(am), że staję się poddenerwowany(a)", "Trudno było mi się zrelaksować", "Czułem(am) się przygnębiony(a) i smutny(a)", "Nie tolerowałem(am) niczego, co przeszkadzało mi w działaniu", "Czułem(am), że jestem bliski(a) paniki","Nie potrafiłem(am) się niczym entuzjazmować", "Czułem(am), że nie jestem wiele wart(a)", "Czułem(am), że jestem przewrażliwiony(a)", "Byłem(am) świadomy(a) rytmu serca bez wysiłku", "Czułem(am) się wystraszony(a) bez powodu", "Czułem(am), że życie nie ma sensu"];
         genForm('f-dass', dQ, 4, 'd');
 
+        // DASS-42
+        const d42Q = [
+            "Trudno było mi się uspokoić", "Czułem suchość w ustach", "Nie potrafiłem odczuwać pozytywnych uczuć", "Trudności z oddychaniem", "Trudno mi było zacząć jakąś czynność", "Przesadnie reagowałem na sytuacje", "Czułem drżenie (np. rąk)", "Czułem, że zużywam dużo energii", "Bałem się sytuacji paniki", "Nie miałem na co czekać", "Stawałem się poddenerwowany", "Trudno mi było się zrelaksować", "Czułem się przygnębiony", "Nie tolerowałem przeszkód", "Czułem, że jestem bliski paniki", "Brak entuzjazmu", "Czułem, że nie jestem wiele wart", "Byłem przewrażliwiony", "Świadomość rytmu serca", "Bałem się bez powodu", "Czułem, że życie nie ma sensu", "Trudno mi było się odprężyć", "Problemy z połykaniem", "Brak radości z czegokolwiek", "Świadomość bicia serca", "Czułem smutek i przygnębienie", "Byłem bardzo drażliwy", "Byłem bliski paniki", "Trudno mi było się wyciszyć", "Bałem się, że coś mnie przerazi", "Brak entuzjazmu dla planów", "Trudno mi było zacząć działanie", "Czułem, że jestem do niczego", "Byłem nietolerancyjny", "Czułem brak tchu", "Czułem brak nadziei", "Życie wydawało mi się bezwartościowe", "Łatwo wpadałem w irytację", "Pociłem się (bez upału/wysiłku)", "Bałem się bez konkretnego powodu", "Czułem, że życie jest bez sensu", "Trudno było mi się uspokoić po zdenerwowaniu"
+        ];
+        genForm('f-dass42', d42Q, 4, 'd42');
+
+        // DASSY
+        const dyQ = [
+            "Trudno mi było się uspokoić", "Czułem suchość w ustach", "Czułem, że nic dobrego mnie nie spotka", "Problemy z oddychaniem", "Nic mi się nie chciało", "Zbyt mocno reagowałem", "Czułem drżenie rąk", "Czułem duże napięcie", "Bałem się, że spanikuję", "Czułem, że nie mam na co czekać", "Łatwo się denerwowałem", "Trudno mi było odpocząć", "Byłem smutny", "Złościłem się na drobiazgi", "Czułem wielki strach", "Nic mnie nie cieszyło", "Czułem, że jestem do niczego", "Byłem bardzo drażliwy", "Czułem mocne bicie serca", "Bałem się bez powodu", "Czułem, że życie nie ma sensu"
+        ];
+        genForm('f-dassy', dyQ, 4, 'dy');
+        
         // PHQ-9
         const pQ = ["Małe zainteresowanie/radość", "Przygnębienie/beznadzieja", "Problemy ze snem", "Zmęczenie/brak energii", "Apetyt (brak/nadmiar)", "Poczucie porażki", "Problemy z koncentracją", "Spowolnienie/pobudzenie", "Myśli o samookaleczeniu"];
         genForm('f-phq9', pQ, 4, 'p', ["Wcale", "Kilka dni", "Połowa dni", "Codziennie"]);
@@ -356,6 +380,8 @@
         }
 
         if(activeId === 't-dass') calcDASS();
+        if(activeId === 't-dass42') calcD42();
+        if(activeId === 't-dassy') calcDassy();
         if(activeId === 't-phq9') calcPHQ();
         if(activeId === 't-gad7') calcGAD();
         if(activeId === 't-bdi') calcBDI();
@@ -384,6 +410,44 @@
             <div class="res-line">Stres: <span>${s} - ${interp(s, [14,18,25,33])}</span></div>
         `;
         document.getElementById('res-dass').style.display = 'block';
+    }
+    function calcD42() {
+        const getSum = (idx) => {
+            let s = 0;
+            idx.forEach(i => { const r = document.querySelector(`input[name="d42${i}"]:checked`); if(r) s += parseInt(r.value); });
+            return s;
+        };
+        // DASS-42 podział pytań (indeksy 0-41)
+        const d = getSum([2,4,9,12,15,16,20,23,25,30,33,35,36,40]);
+        const a = getSum([1,3,6,8,14,18,19,22,24,27,29,34,38,39]);
+        const s = getSum([0,5,7,10,11,13,17,21,26,28,31,32,37,41]);
+        renderDassRes('res-dass42', d, a, s, true);
+    }
+
+    function calcDassy() {
+        const getSum = (idx) => {
+            let s = 0;
+            idx.forEach(i => { const r = document.querySelector(`input[name="dy${i}"]:checked`); if(r) s += parseInt(r.value); });
+            return s;
+        };
+        const d = getSum([2,4,9,12,15,16,20]), a = getSum([1,3,6,8,14,18,19]), s = getSum([0,5,7,10,11,13,17]);
+        renderDassRes('res-dassy', d, a, s, false, true);
+    }
+
+    function renderDassRes(id, d, a, s, isFull=false, isDassy=false) {
+        // Normy dla DASS-21 i DASSY (Dzieci) są inne niż dla pełnego DASS-42
+        const interp = (v, th) => v<=th[0]?"Norma":v<=th[1]?"Łagodny":v<=th[2]?"Umiarkowany":v<=th[3]?"Silny":"B. Silny";
+        const thD = isFull ? [9,13,20,27] : [9,13,20,27]; // W DASS-21 mnożymy x2, więc progi te same
+        const thA = isFull ? [7,9,14,19] : [7,9,14,19];
+        const thS = isFull ? [14,18,25,33] : [14,18,25,33];
+
+        document.getElementById(id).innerHTML = `
+            <h3>Wyniki ${isDassy?'DASSY':(isFull?'DASS-42':'DASS-21')}:</h3>
+            <div class="res-line">Depresja: <span>${d} - ${interp(d, thD)}</span></div>
+            <div class="res-line">Lęk: <span>${a} - ${interp(a, thA)}</span></div>
+            <div class="res-line">Stres: <span>${s} - ${interp(s, thS)}</span></div>
+        `;
+        document.getElementById(id).style.display = 'block';
     }
 
     function calcPHQ() {
