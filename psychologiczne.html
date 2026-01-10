@@ -202,8 +202,8 @@
     </div>
     <div id="t-lsas" class="test-section">
         <div class="test-header">
-            <h2>LSAS (Leibowitz)</h2>
-            <p>Skala Lęku Społecznego.</p>
+            <h2>LSAS (Skala Leibowitza)</h2>
+            <p>Ocena lęku społecznego (Lęk: 0-3, Unikanie: 0-3).</p>
         </div>
         <form id="f-lsas"></form>
         <div id="res-lsas" class="result-panel"></div>
@@ -420,7 +420,7 @@
         document.querySelectorAll('#f-lsas input[name^="lf"]:checked').forEach(i => fSum += parseInt(i.value));
         document.querySelectorAll('#f-lsas input[name^="la"]:checked').forEach(i => aSum += parseInt(i.value));
         const total = fSum + aSum;
-        const interp = total<=54?"Brak fobii":total<=65?"Łagodna":total<=80?"Umiarkowana":total<=95?"Nasilona":"Bardzo silna";
+        const interp = total <= 54 ? "Brak fobii" : total <= 65 ? "Łagodna" : total <= 80 ? "Umiarkowana" : total <= 95 ? "Nasilona" : "Bardzo silna";
         document.getElementById('res-lsas').innerHTML = `
             <h3>LSAS: ${total} pkt</h3>
             <div class="res-line">Lęk (suma): <span>${fSum}</span></div>
