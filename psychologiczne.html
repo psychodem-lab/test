@@ -158,6 +158,14 @@
         </select>
     </div>
     <div>
+        <label style="font-size:0.7rem; color:var(--muted)">Grupa wiekowa</label>
+        <select id="p-age-group" style="width: 100%; padding: 0.6rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem;">
+            <option value="16-24">16 - 24 lata</option>
+            <option value="25-54">25 - 54 lata</option>
+            <option value="55-79">55 - 79 lat</option>
+        </select>
+    </div>
+    <div>
         <label style="font-size:0.7rem; color:var(--muted)">Data badania</label>
         <input type="date" id="p-date">
     </div>
@@ -557,13 +565,13 @@ genForm('f-ciss', cissQuestions, 5, 'ci', ["1", "2", "3", "4", "5"]);
     }
 
     function calcCISS() {
-        const gender = document.getElementById('p-gender').value;
+        const ageGroup = document.getElementById('p-age-group').value; // Pobieranie grupy wiekowej
         const key = {
             ssz: [0, 1, 5, 9, 14, 20, 23, 25, 26, 35, 38, 40, 41, 42, 44, 46],
             sse: [4, 6, 7, 12, 13, 15, 16, 18, 21, 24, 27, 29, 32, 33, 37, 44],
             ssu: [2, 3, 8, 10, 11, 17, 19, 22, 28, 30, 31, 34, 36, 39, 43, 47]
         };
-
+    
         const getScore = (indices) => {
             let sum = 0;
             indices.forEach(idx => {
@@ -572,43 +580,52 @@ genForm('f-ciss', cissQuestions, 5, 'ci', ["1", "2", "3", "4", "5"]);
             });
             return sum;
         };
-
+    
         const raw = { ssz: getScore(key.ssz), sse: getScore(key.sse), ssu: getScore(key.ssu) };
+    
+        // Nowa struktura norm oparta na wieku
         const norms = {
-            'K': {
-                ssz: [36, 42, 47, 52, 57, 61, 66, 70, 75],
-                sse: [25, 31, 36, 41, 46, 51, 56, 62, 68],
-                ssu: [28, 34, 38, 43, 47, 52, 57, 62, 67]
+            '16-24': {
+                ssz: [30, 39, 47, 52, 57, 61, 65, 68, 73],
+                sse: [21, 26, 32, 37, 42, 50, 55, 61, 69],
+                ssu: [30, 34, 39, 44, 50, 54, 59, 64, 68]
             },
-            'M': {
-                ssz: [34, 40, 46, 51, 56, 61, 66, 71, 76],
-                sse: [22, 27, 32, 37, 42, 47, 52, 58, 64],
-                ssu: [26, 31, 36, 40, 45, 49, 54, 59, 65]
+            '25-54': {
+                // Tutaj należy wprowadzić właściwe wartości dla tej grupy
+                ssz: [38, 43, 48, 52, 57, 61, 65, 68, 74], 
+                sse: [24, 30, 35, 39, 43, 51, 55, 60, 64],
+                ssu: [27, 30, 34, 38, 43, 47, 52, 56, 61]
+            },
+            '55-79': {
+                // Tutaj należy wprowadzić właściwe wartości dla tej grupy
+                ssz: [37, 42, 46, 50, 55, 60, 64, 68, 72],
+                sse: [26, 31, 36, 41, 45, 50, 56, 62, 69],
+                ssu: [25, 31, 35, 38, 44, 49, 53, 57, 61]
             }
         };
-
+    
         const calculateSten = (score, scaleNorms) => {
             for (let i = 0; i < scaleNorms.length; i++) {
                 if (score <= scaleNorms[i]) return i + 1;
             }
             return 10;
         };
-
+    
         const stens = {
-            ssz: calculateSten(raw.ssz, norms[gender].ssz),
-            sse: calculateSten(raw.sse, norms[gender].sse),
-            ssu: calculateSten(raw.ssu, norms[gender].ssu)
+            ssz: calculateSten(raw.ssz, norms[ageGroup].ssz),
+            sse: calculateSten(raw.sse, norms[ageGroup].sse),
+            ssu: calculateSten(raw.ssu, norms[ageGroup].ssu)
         };
-
+    
         const getInterp = (s) => s <= 3 ? "Niski" : s <= 7 ? "Przeciętny" : "Wysoki";
-
+    
         document.getElementById('res-ciss').innerHTML = `
-            <h3>Wyniki CISS (Płeć: ${gender}):</h3>
+            <h3>Wyniki CISS (Grupa wiekowa: ${ageGroup}):</h3>
             <table style="width:100%; border-collapse: collapse; margin-top:10px;">
                 <tr><th>Skala</th><th>Surowy</th><th>Sten</th><th>Interpretacja</th></tr>
-                <tr><td>Zadanie</td><td>${raw.ssz}</td><td>${stens.ssz}</td><td>${getInterp(stens.ssz)}</td></tr>
-                <tr><td>Emocje</td><td>${raw.sse}</td><td>${stens.sse}</td><td>${getInterp(stens.sse)}</td></tr>
-                <tr><td>Unikanie</td><td>${raw.ssu}</td><td>${stens.ssu}</td><td>${getInterp(stens.ssu)}</td></tr>
+                <tr><td>Zadanie (SSZ)</td><td>${raw.ssz}</td><td>${stens.ssz}</td><td>${getInterp(stens.ssz)}</td></tr>
+                <tr><td>Emocje (SSE)</td><td>${raw.sse}</td><td>${stens.sse}</td><td>${getInterp(stens.sse)}</td></tr>
+                <tr><td>Unikanie (SSU)</td><td>${raw.ssu}</td><td>${stens.ssu}</td><td>${getInterp(stens.ssu)}</td></tr>
             </table>
         `;
         document.getElementById('res-ciss').style.display = 'block';
