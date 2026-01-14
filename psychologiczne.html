@@ -28,18 +28,21 @@
 
         /* --- Login Screen --- */
         #login-screen {
-            position: fixed; inset: 0; background: var(--bg);
+            position: fixed;
+            inset: 0; background: var(--bg);
             display: flex; align-items: center; justify-content: center; z-index: 2000;
             padding: 20px;
         }
         .login-card {
-            background: var(--surface); padding: 2rem; border-radius: 16px;
+            background: var(--surface);
+            padding: 2rem; border-radius: 16px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.05); width: 100%; max-width: 400px;
             text-align: center;
         }
         .login-card h2 { margin-bottom: 1.5rem; }
         .login-card input {
-            width: 100%; padding: 0.8rem; margin-bottom: 1rem;
+            width: 100%;
+            padding: 0.8rem; margin-bottom: 1rem;
             border: 1px solid var(--border); border-radius: 8px; font-size: 1rem;
         }
 
@@ -47,32 +50,39 @@
         #dashboard { display: none; padding: 1rem; max-width: 900px; margin: 0 auto; }
         
         header {
-            background: var(--surface); padding: 1.5rem; border-radius: 12px;
+            background: var(--surface);
+            padding: 1.5rem; border-radius: 12px;
             margin-bottom: 1rem; border: 1px solid var(--border);
         }
         .patient-data {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 1rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 1rem;
         }
-        input[type="text"], input[type="date"] {
-            width: 100%; padding: 0.6rem; border: 1px solid var(--border); border-radius: 6px;
+        input[type="text"], input[type="date"], select {
+            width: 100%;
+            padding: 0.6rem; border: 1px solid var(--border); border-radius: 6px;
             font-family: inherit; font-size: 0.9rem;
         }
 
         /* --- Tabs --- */
         .nav-tabs {
-            display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px;
+            display: flex;
+            gap: 8px; overflow-x: auto; padding-bottom: 8px;
             margin-bottom: 1.5rem; scrollbar-width: none;
         }
         .nav-tabs::-webkit-scrollbar { display: none; }
         .tab-link {
-            flex: 0 0 auto; background: var(--surface); border: 1px solid var(--border);
+            flex: 0 0 auto;
+            background: var(--surface); border: 1px solid var(--border);
             padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 0.85rem;
             font-weight: 500; transition: 0.2s;
         }
         .tab-link.active { background: var(--primary); color: white; border-color: var(--primary); }
 
         /* --- Test Content --- */
-        .test-section { display: none; background: var(--surface); border-radius: 12px; padding: 1.5rem; border: 1px solid var(--border); }
+        .test-section { display: none;
+            background: var(--surface); border-radius: 12px; padding: 1.5rem; border: 1px solid var(--border);
+        }
         .test-section.active { display: block; }
         .test-header { margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem; }
         .test-header h2 { font-size: 1.25rem; }
@@ -84,9 +94,11 @@
         .options-group { display: flex; gap: 8px; flex-wrap: wrap; }
         
         .opt-label {
-            flex: 1; min-width: 60px; display: flex; flex-direction: column; align-items: center;
+            flex: 1;
+            min-width: 60px; display: flex; flex-direction: column; align-items: center;
             padding: 10px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer;
-            font-size: 0.8rem; transition: 0.2s; text-align: center;
+            font-size: 0.8rem;
+            transition: 0.2s; text-align: center;
         }
         .opt-label:hover { background: #f1f5f9; }
         .opt-label input { margin-bottom: 4px; }
@@ -94,7 +106,8 @@
 
         /* --- Result Styling --- */
         .result-panel {
-            margin-top: 2rem; padding: 1.5rem; background: #f1f5f9; border-radius: 8px;
+            margin-top: 2rem;
+            padding: 1.5rem; background: #f1f5f9; border-radius: 8px;
             border-left: 4px solid var(--primary); display: none;
         }
         .res-line { display: flex; justify-content: space-between; margin-bottom: 0.4rem; padding: 5px 0; border-bottom: 1px solid #e2e8f0; }
@@ -102,18 +115,33 @@
 
         /* --- Action Buttons --- */
         .actions {
-            position: sticky; bottom: 20px; left: 0; right: 0; 
+            position: sticky;
+            bottom: 20px; left: 0; right: 0; 
             display: flex; gap: 10px; justify-content: center; padding: 10px;
-            background: rgba(248, 250, 252, 0.8); backdrop-filter: blur(8px);
+            background: rgba(248, 250, 252, 0.8);
+            backdrop-filter: blur(8px);
         }
         .btn {
-            padding: 12px 24px; border-radius: 30px; border: none; font-weight: 600;
+            padding: 12px 24px;
+            border-radius: 30px; border: none; font-weight: 600;
             cursor: pointer; font-size: 0.9rem; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             transition: transform 0.1s;
         }
         .btn:active { transform: scale(0.95); }
         .btn-calc { background: var(--accent); color: white; }
         .btn-print { background: #10b981; color: white; }
+
+        /* --- CONTRACT STYLES (NEW) --- */
+        textarea {
+            width: 100%; padding: 0.8rem; border: 1px solid var(--border); border-radius: 8px;
+            font-family: inherit; font-size: 0.95rem; resize: vertical; margin-top: 5px; margin-bottom: 10px;
+        }
+        .contract-agreement {
+            background: #f1f5f9; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid var(--primary);
+        }
+        .sig-line {
+            margin-top: 10px; border-top: 1px dashed var(--muted); padding-top: 5px;
+        }
 
         /* --- PRINT STYLES --- */
         @media print {
@@ -123,7 +151,9 @@
             .test-section { display: none !important; }
             .test-section.active { display: block !important; border: none !important; }
             .result-panel { display: block !important; background: white !important; border: 1px solid #000 !important; }
-            input { border: none !important; font-weight: bold; }
+            input, textarea { border: none !important; font-weight: bold; font-family: 'Times New Roman', serif; }
+            textarea { resize: none; overflow: visible; }
+            .contract-agreement { border: 1px solid #ccc; background: white; }
         }
 
         @media (max-width: 600px) {
@@ -145,40 +175,41 @@
 <div id="dashboard">
     <header>
         <h1>System Diagnostyczny</h1>
-<div class="patient-data">
-    <div>
-        <label style="font-size:0.7rem; color:var(--muted)">Inicjały Pacjenta</label>
-        <input type="text" id="p-init" placeholder="np. A.B.">
-    </div>
-    <div>
-        <label style="font-size:0.7rem; color:var(--muted)">Płeć</label>
-        <select id="p-gender" style="width: 100%; padding: 0.6rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem;">
-            <option value="K">Kobieta</option>
-            <option value="M">Mężczyzna</option>
-        </select>
-    </div>
-    <div>
-        <label style="font-size:0.7rem; color:var(--muted)">Grupa wiekowa</label>
-        <select id="p-age-group" style="width: 100%; padding: 0.6rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem;">
-            <option value="16-24">16 - 24 lata</option>
-            <option value="25-54">25 - 54 lata</option>
-            <option value="55-79">55 - 79 lat</option>
-        </select>
-    </div>
-    <div>
-        <label style="font-size:0.7rem; color:var(--muted)">Data badania</label>
-        <input type="date" id="p-date">
-    </div>
-</div>
-       
+        <div class="patient-data">
+            <div>
+                <label style="font-size:0.7rem; color:var(--muted)">Inicjały Pacjenta</label>
+                <input type="text" id="p-init" placeholder="np. A.B.">
+            </div>
+            <div>
+                <label style="font-size:0.7rem; color:var(--muted)">Płeć</label>
+                <select id="p-gender">
+                    <option value="K">Kobieta</option>
+                    <option value="M">Mężczyzna</option>
+                </select>
+            </div>
+            <div>
+                <label style="font-size:0.7rem; color:var(--muted)">Grupa wiekowa</label>
+                <select id="p-age-group">
+                    <option value="16-24">16 - 24 lata</option>
+                    <option value="25-54">25 - 54 lata</option>
+                    <option value="55-79">55 - 79 lat</option>
+                </select>
+            </div>
+            <div>
+                <label style="font-size:0.7rem; color:var(--muted)">Data badania</label>
+                <input type="date" id="p-date">
+            </div>
+        </div>
     </header>
+
     <nav class="nav-tabs">
         <button class="tab-link active" onclick="openTab(event, 't-dass')">DASS-21</button>
         <button class="tab-link" onclick="openTab(event, 't-dass42')">DASS-42</button>
         <button class="tab-link" onclick="openTab(event, 't-dassy')">DASSY (Dzieci)</button>
         <button class="tab-link" onclick="openTab(event, 't-bdi')">BDI-II</button>
-        <button class="tab-link" onclick="openTab(event, 't-lsas')">LSAS (Leibowitz)</button>
+        <button class="tab-link" onclick="openTab(event, 't-lsas')">LSAS</button>
         <button class="tab-link" onclick="openTab(event, 't-ciss')">CISS</button>
+        <button class="tab-link" onclick="openTab(event, 't-contract')">Kontrakt na życie</button>
     </nav>
 
     <div id="t-dass" class="test-section active">
@@ -191,57 +222,133 @@
     </div>
 
     <div id="t-dass42" class="test-section">
-        <div class="test-header"><h2>DASS-42</h2><p>Pełna Skala Depresji, Lęku i Stresu (42 pytania).</p></div>
+        <div class="test-header"><h2>DASS-42</h2><p>Pełna Skala Depresji, Lęku i Stresu.</p></div>
         <form id="f-dass42"></form><div id="res-dass42" class="result-panel"></div>
     </div>
 
     <div id="t-dassy" class="test-section">
-        <div class="test-header"><h2>DASSY</h2><p>Skala Depresji, Lęku i Stresu dla dzieci i młodzieży.</p></div>
+        <div class="test-header"><h2>DASSY</h2><p>Skala dla dzieci i młodzieży.</p></div>
         <form id="f-dassy"></form><div id="res-dassy" class="result-panel"></div>
     </div>
 
     <div id="t-phq9" class="test-section">
-        <div class="test-header">
-            <h2>PHQ-9</h2>
-            <p>Kwestionariusz Zdrowia Pacjenta.</p>
-        </div>
-        <form id="f-phq9"></form>
-        <div id="res-phq9" class="result-panel"></div>
+        <div class="test-header"><h2>PHQ-9</h2><p>Kwestionariusz Zdrowia Pacjenta.</p></div>
+        <form id="f-phq9"></form><div id="res-phq9" class="result-panel"></div>
     </div>
 
     <div id="t-gad7" class="test-section">
-        <div class="test-header">
-            <h2>GAD-7</h2>
-            <p>Skala Lęku Uogólnionego.</p>
-        </div>
-        <form id="f-gad7"></form>
-        <div id="res-gad7" class="result-panel"></div>
+        <div class="test-header"><h2>GAD-7</h2><p>Skala Lęku Uogólnionego.</p></div>
+        <form id="f-gad7"></form><div id="res-gad7" class="result-panel"></div>
     </div>
 
     <div id="t-bdi" class="test-section">
-        <div class="test-header">
-            <h2>BDI-II</h2>
-            <p>Inwentarz Depresji Becka.</p>
-        </div>
-        <form id="f-bdi"></form>
-        <div id="res-bdi" class="result-panel"></div>
+        <div class="test-header"><h2>BDI-II</h2><p>Inwentarz Depresji Becka.</p></div>
+        <form id="f-bdi"></form><div id="res-bdi" class="result-panel"></div>
     </div>
+
     <div id="t-lsas" class="test-section">
-        <div class="test-header">
-            <h2>LSAS (Skala Leibowitza)</h2>
-            <p>Ocena lęku społecznego (Lęk: 0-3, Unikanie: 0-3).</p>
-        </div>
-        <form id="f-lsas"></form>
-        <div id="res-lsas" class="result-panel"></div>
+        <div class="test-header"><h2>LSAS (Leibowitz)</h2><p>Ocena lęku społecznego.</p></div>
+        <form id="f-lsas"></form><div id="res-lsas" class="result-panel"></div>
     </div>
+
     <div id="t-ciss" class="test-section">
-    <div class="test-header">
-        <h2>CISS</h2>
-        <p>Kwestionariusz Radzenia Sobie w Sytuacjach Stresowych (1 - nigdy, 5 - bardzo często).</p>
+        <div class="test-header">
+            <h2>CISS</h2>
+            <p>Radzenie Sobie w Sytuacjach Stresowych (1 - nigdy, 5 - bardzo często).</p>
+        </div>
+        <form id="f-ciss"></form>
+        <div id="res-ciss" class="result-panel"></div>
     </div>
-    <form id="f-ciss"></form>
-    <div id="res-ciss" class="result-panel"></div>
-</div>
+
+    <div id="t-contract" class="test-section">
+        <div class="test-header">
+            <h2>Kontrakt na życie</h2>
+            <p>Plan bezpieczeństwa i umowa terapeutyczna.</p>
+        </div>
+
+        <div class="question-row">
+            <label><strong>Miejscowość i data:</strong></label>
+            <input type="text" placeholder="Wpisz miejscowość i datę">
+        </div>
+
+        <div style="margin-bottom: 2rem; line-height: 1.6; font-size: 0.95rem;">
+            <p>Kiedy czujemy się przygnębieni, możemy myśleć o zadawaniu sobie bólu lub nawet zabiciu siebie. Faktycznie, myśli samobójcze są jednym z możliwych objawów depresji. Takie myśli czy impulsy mogą się zdarzyć, ale bardzo ważne jest to, żebyśmy mogli o nich rozmawiać. Najważniejsze jest twoje bezpieczeństwo. Dlatego będziemy rozmawiać o różnych trudnych sprawach, nawet o chęci odebrania sobie życia. Za chwilę umówimy się, że będziemy robić wszystko, żeby poradzić sobie w trudnej sytuacji. W umowie przyjrzymy się, kiedy miałeś/aś myśli samobójcze w przeszłości, jakiego rodzaju myśli pomogły Ci je przezwyciężyć i stworzymy plan reagowania w sytuacjach, kiedy takie myśli i impulsy pojawia się podczas trwania naszej wspólnej pracy.</p>
+        </div>
+
+        <div class="question-row">
+            <label class="q-text">Proszę opisz sytuację, jeżeli taka istnieje, w której poczułaś impuls do popełnienia samobójstwa w ostatnim okresie. Jeśli było ich kilka, pomyśl o najgorszej z nich.</label>
+            <textarea rows="3"></textarea>
+        </div>
+
+        <h3>Co umożliwiło Ci poczuć się lepiej w ostatnim czasie?</h3>
+        
+        <div class="question-row">
+            <label class="q-text">Jakie myśli pozwoliły Ci poczuć się lepiej?</label>
+            <textarea rows="2"></textarea>
+        </div>
+        <div class="question-row">
+            <label class="q-text">Jacy ludzie pomogli Ci poczuć się lepiej?</label>
+            <textarea rows="2"></textarea>
+        </div>
+        <div class="question-row">
+            <label class="q-text">Czy coś z rzeczy, które robiłeś/aś pomogło Ci poczuć się lepiej?</label>
+            <textarea rows="2"></textarea>
+        </div>
+
+        <h3>Co prawdopodobnie mogłoby Ci pomóc, gdybyś zaczął/ęła mieć myśli samobójcze?</h3>
+
+        <div class="question-row">
+            <label class="q-text">Jakie myśli mogłyby Ci pomóc, aby przezwyciężyć samobójcze myśli lub impulsy?</label>
+            <textarea rows="2"></textarea>
+        </div>
+        <div class="question-row">
+            <label class="q-text">Jakich ludzi mógłbyś /mogłabyś w to włączyć?</label>
+            <textarea rows="2"></textarea>
+        </div>
+        <div class="question-row">
+            <label class="q-text">Jaki może być plan działania, jeśli będziesz mieć myśli lub impulsy samobójcze?</label>
+            <textarea rows="3"></textarea>
+        </div>
+
+        <hr style="margin: 2rem 0; border: 0; border-top: 1px solid var(--border);">
+
+        <div class="contract-agreement">
+            <p>Obiecuję że nie popełnię samobójstwa i będę rozmawiał/a o myślach i tendencjach samobójczych z lekarzem/psychologiem/terapeutą/pracownikiem socjalnym.</p>
+            <div class="sig-line">
+                <label style="font-size: 0.85rem; color: var(--muted);">Zgoda (podpis):</label>
+                <input type="text" placeholder="Podpis pacjenta">
+            </div>
+        </div>
+
+        <div class="contract-agreement">
+            <p>Obiecuję że powiem innym dorosłym, że bardzo źle się czuję i poproszę, żeby zawiadomili mojego lekarza/terapeutę.</p>
+            <div class="sig-line">
+                <label style="font-size: 0.85rem; color: var(--muted);">Zgoda (podpis):</label>
+                <input type="text" placeholder="Podpis pacjenta">
+            </div>
+        </div>
+
+        <div class="contract-agreement">
+            <p>Obiecuję, że jeżeli nikogo nie będzie w pobliżu, to w przypadku ostrych myśli samobójczych sam/a zgłoszę się na ostry dyżur do szpitala.</p>
+            <div class="sig-line">
+                <label style="font-size: 0.85rem; color: var(--muted);">Zgoda (podpis):</label>
+                <input type="text" placeholder="Podpis pacjenta">
+            </div>
+        </div>
+
+        <div class="contract-agreement">
+            <p>Obiecuję że nie posiadam dostępu do broni ani innych zabójczych środków.</p>
+            <div class="sig-line">
+                <label style="font-size: 0.85rem; color: var(--muted);">Zgoda (podpis):</label>
+                <input type="text" placeholder="Podpis pacjenta">
+            </div>
+        </div>
+
+        <div class="question-row" style="margin-top: 2rem;">
+            <label><strong>Podpis osoby pomagającej:</strong></label>
+            <input type="text" style="margin-top: 5px;">
+        </div>
+    </div>
 
     <div class="actions">
         <button class="btn btn-calc" onclick="calculateCurrent()">Oblicz wynik</button>
@@ -251,7 +358,6 @@
 
 <script>
     const PASS = "psy26";
-
     function login() {
         if(document.getElementById('pass').value === PASS) {
             document.getElementById('login-screen').style.display = 'none';
@@ -302,7 +408,7 @@
             {q: "Odczuwanie przyjemności", o: ["Robienie rzeczy, które lubię dostarcza mi tyle samo przyjemności co w przeszłości.", "To co robię nie sprawia mi takiej samej przyjemności jak kiedyś.", "Odczuwam bardzo niewiele przyjemności z rzeczy, które kiedyś lubiłem.", "Nie odczuwam żadnej przyjemności z rzeczy, które kiedyś lubiłem."]},
             {q: "Poczucie winy", o: ["Nie czuje się szczególnie winien.", "Czuję się winny z powodu wielu rzeczy, które zrobiłem lub których nie zrobiłem.", "Czuję się winny przez większość czasu.", "Czuje się winny bez przerwy."]},
             {q: "Poczucie kary", o: ["Nie czuję żebym był karany.", "Czuję, że mogę zostać ukarany.", "Oczekuję kary.", "Czuję, że jestem karany."]},
-            {q: "Stosunek do samego siebie", o: ["Mam o sobie takie samo zdanie jak przedtem.", "Straciłem  wiarę w siebie.", "Zawiodłem się na sobie.", "Czuję do siebie niechęć."]},
+            {q: "Stosunek do samego siebie", o: ["Mam o sobie takie samo zdanie jak przedtem.", "Straciłem wiarę w siebie.", "Zawiodłem się na sobie.", "Czuję do siebie niechęć."]},
             {q: "Samokrytycyzm", o: ["Nie krytykuję siebie anie nie obwiniam więcej niż kiedyś.", "Jestem bardziej krytycznie nastawiony do siebie niż kiedyś.", "Krytykuję siebie za wszystkie swoje niepowodzenia.", "Obwiniam się za każde zło, które się wydarza."]},
             {q: "Myśli samobójcze", o: ["Nie myślę o zabiciu się.", "Myślę o tym, by się zabić, ale wiem, że bym tego nie zrobił.", "Pragnę się zabić.", "Zabije się jeśli tylko natrafi się odpowiednia do tego sposobność."]},
             {q: "Płacz", o: ["Nie płaczę częściej niż zazwyczaj.", "Płaczę częściej niż zazwyczaj.", "Płaczę ciągle, nawet z powodu drobnostek.", "Chciałbym płakać, ale nie jestem w stanie."]},
@@ -326,59 +432,12 @@
         ];
         genFormLSAS('f-lsas', lQ, 'l');
         
+        // CISS
         const cissQuestions = [
-    "Lepiej planuję swój czas",
-    "Koncentruję się na problemie i zastanawiam się, jak mogę go rozwiązać",
-    "Myślę o czasach gdy było mi lepiej",
-    "Staram się przebywać z innymi ludźmi",
-    "Oskarżam się o zwlekanie",
-    "Robię to co uważam za najlepsze",
-    "Jestem skupiony(a) na swoich dolegliwościach fizycznych",
-    "Winię siebie, że wpadłem(am) w taką sytuację",
-    "Włóczę się po sklepach lub przeglądam oferty",
-    "Ustalam, co w danej sytuacji jest najważniejsze",
-    "Staram się zasnąć",
-    "Objadam się ulubioną potrawą",
-    "Niepokoję się, że sobie nie poradzę",
-    "Staję się bardzo napięty(a)",
-    "Myślę o tym, jak rozwiązywałem(am) podobne problemy w przeszłości",
-    "Wmawiam sobie, że to w rzeczywistości nie dzieje się mnie",
-    "Winię siebie, że zbyt się tym przejmuję",
-    "Idę coś zjeść na mieście",
-    "Staje się bardzo przygnębiony(a)",
-    "Kupuję sobie coś",
-    "Wyznaczam sobie kierunek działania i postępuję zgodnie z nim",
-    "Obwiniam siebie za to, że nie wiem co zrobić",
-    "Idę się zabawić",
-    "Staram się zrozumieć sytuację",
-    "Zastygam w bezruchu i nie wiem co zrobić",
-    "Podejmuję natychmiast właściwe działanie",
-    "Analizuję sytuację i uczę się na własnych błędach",
-    "Żałuję, że nie mogę zmienić tego co się stało, lub tego, co odczuwałem(am) w związku z tym",
-    "Odwiedzam przyjaciela",
-    "Martwię się, jak sobie z tym poradzę",
-    "Spędzam czas z bliską osobą",
-    "Wychodzę na spacer",
-    "Wmawiam sobie, że to się nigdy więcej nie powtórzy",
-    "Skupiam się na swoich ogólnych brakach",
-    "Rozmawiam z kimś, kogo rady sobie cenię",
-    "Analizuję problem zanim zacznę działać",
-    "Dzwonię do kolegi lub koleżanki",
-    "Wpadam w złość",
-    "Zmieniam kolejność spraw do załatwienia",
-    "Oglądam film",
-    "Dążę do kontrolowania sytuacji",
-    "Podejmuję dodatkowy wysiłek, aby załatwić sprawę",
-    "Podchodzę do problemu z różnych stron",
-    "Robię sobie wolnę, by uciec od problemu",
-    "Wyładowuję się na innych",
-    "Wykorzystuję sytuację, aby udowodnić, że potrafię tego dokonać",
-    "Staram się tak zorganizować sprawy, aby zapanować nad sytuacją",
-    "Oglądam telewizję"      
-];
-
-// Inicjalizacja formularza CISS (Skala 1-5)
-genForm('f-ciss', cissQuestions, 5, 'ci', ["1", "2", "3", "4", "5"]);
+            "Lepiej planuję swój czas", "Koncentruję się na problemie i zastanawiam się, jak mogę go rozwiązać", "Myślę o czasach gdy było mi lepiej", "Staram się przebywać z innymi ludźmi", "Oskarżam się o zwlekanie", "Robię to co uważam za najlepsze", "Jestem skupiony(a) na swoich dolegliwościach fizycznych", "Winię siebie, że wpadłem(am) w taką sytuację", "Włóczę się po sklepach lub przeglądam oferty", "Ustalam, co w danej sytuacji jest najważniejsze", "Staram się zasnąć", "Objadam się ulubioną potrawą", "Niepokoję się, że sobie nie poradzę", "Staję się bardzo napięty(a)", "Myślę o tym, jak rozwiązywałem(am) podobne problemy w przeszłości", "Wmawiam sobie, że to w rzeczywistości nie dzieje się mnie", "Winię siebie, że zbyt się tym przejmuję", "Idę coś zjeść na mieście", "Staje się bardzo przygnębiony(a)", "Kupuję sobie coś", "Wyznaczam sobie kierunek działania i postępuję zgodnie z nim",
+            "Obwiniam siebie za to, że nie wiem co zrobić", "Idę się zabawić", "Staram się zrozumieć sytuację", "Zastygam w bezruchu i nie wiem co zrobić", "Podejmuję natychmiast właściwe działanie", "Analizuję sytuację i uczę się na własnych błędach", "Żałuję, że nie mogę zmienić tego co się stało, lub tego, co odczuwałem(am) w związku z tym", "Odwiedzam przyjaciela", "Martwię się, jak sobie z tym poradzę", "Spędzam czas z bliską osobą", "Wychodzę na spacer", "Wmawiam sobie, że to się nigdy więcej nie powtórzy", "Skupiam się na swoich ogólnych brakach", "Rozmawiam z kimś, kogo rady sobie cenię", "Analizuję problem zanim zacznę działać", "Dzwonię do kolegi lub koleżanki", "Wpadam w złość", "Zmieniam kolejność spraw do załatwienia", "Oglądam film", "Dążę do kontrolowania sytuacji", "Podejmuję dodatkowy wysiłek, aby załatwić sprawę", "Podchodzę do problemu z różnych stron", "Robię sobie wolnę, by uciec od problemu", "Wyładowuję się na innych", "Wykorzystuję sytuację, aby udowodnić, że potrafię tego dokonać", "Staram się tak zorganizować sprawy, aby zapanować nad sytuacją", "Oglądam telewizję"      
+        ];
+        genForm('f-ciss', cissQuestions, 5, 'ci', ["1", "2", "3", "4", "5"]);
     }
 
     function genForm(id, qs, n, prefix, labels=null) {
@@ -446,16 +505,22 @@ genForm('f-ciss', cissQuestions, 5, 'ci', ["1", "2", "3", "4", "5"]);
     function calculateCurrent() {
         const activeSection = document.querySelector('.test-section.active');
         const activeId = activeSection.id;
+
+        // Specjalna obsługa Kontraktu
+        if(activeId === 't-contract') {
+            const shouldPrint = confirm("Kontrakt na życie nie wymaga obliczeń. Czy chcesz go wydrukować?");
+            if(shouldPrint) window.print();
+            return;
+        }
+
         const inputs = activeSection.querySelectorAll('input[type="radio"]');
         const names = [...new Set([...inputs].map(i => i.name))];
         const checked = activeSection.querySelectorAll('input:checked');
-
         if(checked.length < names.length) {
             alert("Proszę odpowiedzieć na wszystkie pytania w tej sekcji!");
             return;
         }
 
-        // Poprawione warunki wywoływania
         if(activeId === 't-dass') calcDASS();
         else if(activeId === 't-dass42') calcD42();
         else if(activeId === 't-dassy') calcDassy();
@@ -463,7 +528,7 @@ genForm('f-ciss', cissQuestions, 5, 'ci', ["1", "2", "3", "4", "5"]);
         else if(activeId === 't-gad7') calcGAD();
         else if(activeId === 't-bdi') calcBDI();
         else if(activeId === 't-lsas') calcLSAS();
-        else if(activeId === 't-ciss') calcCISS(); 
+        else if(activeId === 't-ciss') calcCISS();
     }
 
     function calcDASS() {
@@ -565,7 +630,7 @@ genForm('f-ciss', cissQuestions, 5, 'ci', ["1", "2", "3", "4", "5"]);
     }
 
     function calcCISS() {
-        const ageGroup = document.getElementById('p-age-group').value; // Pobieranie grupy wiekowej
+        const ageGroup = document.getElementById('p-age-group').value;
         const key = {
             ssz: [0, 1, 5, 9, 14, 20, 23, 25, 26, 35, 38, 40, 41, 42, 44, 46],
             sse: [4, 6, 7, 12, 13, 15, 16, 18, 21, 24, 27, 29, 32, 33, 37, 44],
@@ -582,8 +647,8 @@ genForm('f-ciss', cissQuestions, 5, 'ci', ["1", "2", "3", "4", "5"]);
         };
     
         const raw = { ssz: getScore(key.ssz), sse: getScore(key.sse), ssu: getScore(key.ssu) };
-    
-        // Nowa struktura norm oparta na wieku
+        
+        // Normy uproszczone/przykładowe
         const norms = {
             '16-24': {
                 ssz: [30, 39, 47, 52, 57, 61, 65, 68, 73],
@@ -591,34 +656,32 @@ genForm('f-ciss', cissQuestions, 5, 'ci', ["1", "2", "3", "4", "5"]);
                 ssu: [30, 34, 39, 44, 50, 54, 59, 64, 68]
             },
             '25-54': {
-                // Tutaj należy wprowadzić właściwe wartości dla tej grupy
                 ssz: [38, 43, 48, 52, 57, 61, 65, 68, 74], 
                 sse: [24, 30, 35, 39, 43, 51, 55, 60, 64],
                 ssu: [27, 30, 34, 38, 43, 47, 52, 56, 61]
             },
             '55-79': {
-                // Tutaj należy wprowadzić właściwe wartości dla tej grupy
                 ssz: [37, 42, 46, 50, 55, 60, 64, 68, 72],
                 sse: [26, 31, 36, 41, 45, 50, 56, 62, 69],
                 ssu: [25, 31, 35, 38, 44, 49, 53, 57, 61]
             }
         };
-    
+
         const calculateSten = (score, scaleNorms) => {
             for (let i = 0; i < scaleNorms.length; i++) {
                 if (score <= scaleNorms[i]) return i + 1;
             }
             return 10;
         };
-    
+
         const stens = {
             ssz: calculateSten(raw.ssz, norms[ageGroup].ssz),
             sse: calculateSten(raw.sse, norms[ageGroup].sse),
             ssu: calculateSten(raw.ssu, norms[ageGroup].ssu)
         };
-    
+
         const getInterp = (s) => s <= 3 ? "Niski" : s <= 7 ? "Przeciętny" : "Wysoki";
-    
+
         document.getElementById('res-ciss').innerHTML = `
             <h3>Wyniki CISS (Grupa wiekowa: ${ageGroup}):</h3>
             <table style="width:100%; border-collapse: collapse; margin-top:10px;">
@@ -630,8 +693,6 @@ genForm('f-ciss', cissQuestions, 5, 'ci', ["1", "2", "3", "4", "5"]);
         `;
         document.getElementById('res-ciss').style.display = 'block';
     }
-
-
 </script>
 
 </body>
