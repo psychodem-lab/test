@@ -18,6 +18,23 @@
             --danger: #dc2626;
             --warning-bg: #fef2f2;
         }
+        /* Klasa aktywowana przez JavaScript */
+        body.dark-mode {
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --text: #f8fafc;
+            --muted: #94a3b8;
+            --border: #334155;
+            --accent: #818cf8;
+        }
+        
+        /* Dodatkowe dopasowanie dla czytelności w trybie nocnym */
+        body.dark-mode .opt-label:hover { background: #334155; }
+        body.dark-mode .opt-label.selected { background: #312e81; border-color: var(--primary); }
+        body.dark-mode .result-panel { background: #1e293b; border-color: #334155; }
+        body.dark-mode input, body.dark-mode select, body.dark-mode textarea { 
+            background: #0f172a; color: white; border-color: var(--border); 
+        }
 
         /* --- Global Reset & Mobile --- */
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -251,11 +268,14 @@
 <div id="dashboard">
     <header>
         <h1>System Diagnostyczny</h1>
+        <button onclick="toggleDarkMode()" class="btn" style="position: absolute; top: 15px; right: 15px; font-size: 0.7rem; padding: 5px 10px;">
+    Tryb Nocny 🌙 </button>
         <div class="patient-data">
             <div>
                 <label style="font-size:0.7rem; color:var(--muted)">Inicjały Pacjenta</label>
                 <input type="text" id="p-init" placeholder="np. A.B.">
             </div>
+            
             <div>
                 <label style="font-size:0.7rem; color:var(--muted)">Płeć</label>
                 <select id="p-gender">
@@ -1048,6 +1068,19 @@ function loadSignatures() {
         }
     }
 }
+    function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+    // Zapisz preferencję użytkownika w localStorage
+    const isDark = document.body.classList.contains('dark-mode');
+    localStorage.setItem('darkMode', isDark);
+}
+
+// Sprawdź zapisaną preferencję przy ładowaniu strony
+window.addEventListener('load', () => {
+    if (localStorage.getItem('darkMode') === 'true') {
+        document.body.classList.add('dark-mode');
+    }
+});
 
 </script>
 
