@@ -186,6 +186,35 @@
         .sig-line {
             margin-top: 10px; border-top: 1px dashed var(--muted); padding-top: 5px;
         }
+        .sig-container {
+            margin-top: 10px;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .sig-canvas {
+            display: block;
+            width: 100%; /* Dopasuje się do szerokości ekranu */
+            height: 150px;
+            cursor: crosshair;
+            touch-action: none; /* Kluczowe dla urządzeń mobilnych - blokuje przewijanie podczas podpisu */
+        }
+        .sig-actions {
+            background: #f8fafc;
+            padding: 5px 10px;
+            text-align: right;
+            border-top: 1px solid var(--border);
+        }
+        .btn-clear-sig {
+            background: none;
+            border: none;
+            color: var(--danger);
+            font-size: 0.7rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
 
         /* --- PRINT STYLES --- */
         @media print {
@@ -373,10 +402,13 @@
 
         <div class="contract-agreement">
             <p>Obiecuję że nie popełnię samobójstwa i będę rozmawiał/a o myślach i tendencjach samobójczych z lekarzem/psychologiem/terapeutą/pracownikiem socjalnym.</p>
-            <div class="sig-line">
-                <label style="font-size: 0.85rem; color: var(--muted);">Zgoda (podpis):</label>
-                <input type="text" id="cnt-sig1" placeholder="Podpis pacjenta">
+                        <div class="sig-container">
+                <canvas id="canvas-sig1" class="sig-canvas" width="400" height="150"></canvas>
+                <div class="sig-actions">
+                    <button type="button" class="btn-clear-sig" onclick="clearCanvas('canvas-sig1')">Wyczyść podpis</button>
+                </div>
             </div>
+            
         </div>
 
         <div class="contract-agreement">
@@ -941,7 +973,71 @@
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+        }
+        function initSignaturePads() {
+        const canvases = document.querySelectorAll('.sig-canvas');
+        
+        canvases.forEach(canvas => {
+            const ctx = canvas.getContext('2d');
+            let drawing = false;
+    
+            // Ustawienia pędzla
+            ctx.strokeStyle = "#000";
+            ctx.lineWidth = 2;
+            ctx.lineJoin = "round";
+            ctx.lineCap = "round";
+    
+            function getPos(e) {
+                const rect = canvas.getBoundingClientRect();
+                // Obsługa dotyku i myszy
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                return {
+                    x: (clientX - rect.left) * (canvas.width / rect.width),
+                    y: (clientY - rect.top) * (canvas.height / rect.height)
+                };
+            }
+    
+            const startDrawing = (e) => {
+                drawing = true;
+                const pos = getPos(e);
+                ctx.beginPath();
+                ctx.moveTo(pos.x, pos.y);
+                e.preventDefault();
+            };
+    
+            const draw = (e) => {
+                if (!drawing) return;
+                const pos = getPos(e);
+                ctx.lineTo(pos.x, pos.y);
+                ctx.stroke();
+                e.preventDefault();
+            };
+    
+            const stopDrawing = () => {
+                drawing = false;
+                saveData(); // Automatyczny zapis po puszczeniu pędzla
+            };
+    
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            window.addEventListener('mouseup', stopDrawing);
+    
+            canvas.addEventListener('touchstart', startDrawing, { passive: false });
+            canvas.addEventListener('touchmove', draw, { passive: false });
+            canvas.addEventListener('touchend', stopDrawing);
+        });
     }
+    
+    function clearCanvas(id) {
+        const canvas = document.getElementById(id);
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        saveData();
+    }
+    
+    // Wywołaj funkcję po zalogowaniu
+    // W funkcji login() dodaj: initSignaturePads();
 
 </script>
 
