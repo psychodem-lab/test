@@ -282,7 +282,7 @@
 
         // DASSY
         const dyQ = [
-            "Trudno mi było się uspokoić", "Czułem suchość w ustach", "Czułem, że nic dobrego mnie nie spotka", "Problemy z oddychaniem", "Nic mi się nie chciało", "Zbyt mocno reagowałem", "Czułem drżenie rąk", "Czułem duże napięcie", "Bałem się, że spanikuję", "Czułem, że nie mam na co czekać", "Łatwo się denerwowałem", "Trudno mi było odpocząć", "Byłem smutny", "Złościłem się na drobiazgi", "Czułem wielki strach", "Nic mnie nie cieszyło", "Czułem, że jestem do niczego", "Byłem bardzo drażliwy", "Czułem mocne bicie serca", "Bałem się bez powodu", "Czułem, że życie nie ma sensu"
+            "Denerwowałem/am się z powodu drobnych rzeczy", "Czułem/am zawroty głowy, jakbym miał/a zemdleć", "Nic mnie nie cieszyło", "Miałem/am trudności z oddychaniem (np. szybki oddech), mimo że nie ćwiczyłem/am i nie byłem/am chory", "Nienawidziłem/am swojego życia", "Reagowałem/am zbyt mocno na sytuacje", "Czułem drżenie rąk", "Martwiłem/am się o wiele rzeczy", "Byłem/am przerażony/a", "Nie było nic, na co mógłbym/mogłabym czekać z radością", "Szybko czułem irytację", "Trudno było mi się zrelaksować.", "Nie mogłem/am przestać czuć się smutny/a", "Denerwowało mnie, gdy ludzie mi przerywali.", "Miałem/am wrażenie, że zaraz spanikuję", "Nienawidziłem/am siebie", "Czułem/am, że jestem do niczego.", "Łatwo się irytowałem", "Czułem/am bardzo szybkie bicie serca, mimo że nie wykonywałem/am intensywnego wysiłku", "Czułem/am strach bez powodu", "Czułem/am, że życie jest okropne"
         ];
         genForm('f-dassy', dyQ, 4, 'dy');
         
@@ -513,9 +513,9 @@ genForm('f-ciss', cissQuestions, 5, 'ci', ["1", "2", "3", "4", "5"]);
 
     function renderDassRes(id, d, a, s, isFull=false, isDassy=false) {
         const interp = (v, th) => v<=th[0]?"Norma":v<=th[1]?"Łagodny":v<=th[2]?"Umiarkowany":v<=th[3]?"Silny":"B. Silny";
-        const thD = [9,13,20,27]; 
-        const thA = [7,9,14,19];
-        const thS = [14,18,25,33];
+        const thD = [6,8,13,16]; 
+        const thA = [5,7,12,15];
+        const thS = [11,13,16,18];
         document.getElementById(id).innerHTML = `
             <h3>Wyniki ${isDassy?'DASSY':(isFull?'DASS-42':'DASS-21')}:</h3>
             <div class="res-line">Depresja: <span>${d} - ${interp(d, thD)}</span></div>
