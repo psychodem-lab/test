@@ -760,9 +760,9 @@
             idx.forEach(i => { const r = document.querySelector(`input[name="d42${i}"]:checked`); if(r) s += parseInt(r.value); });
             return s;
         };
-        const d = getSum([2,4,9,12,15,16,20,23,25,30,33,35,36,40]);
-        const a = getSum([1,3,6,8,14,18,19,22,24,27,29,34,38,39]);
-        const s = getSum([0,5,7,10,11,13,17,21,26,28,31,32,37,41]);
+        const d = getSum([2,4,9,12,15,16,20,23,25,30,33,36,37,41]);
+        const a = getSum([1,3,6,8,14,18,19,22,24,27,29,35,39,40]);
+        const s = getSum([0,5,7,10,11,13,17,21,26,28,31,32,34,38]);
         renderDassRes('res-dass42', d, a, s, true);
     }
 
