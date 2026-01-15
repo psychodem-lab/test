@@ -754,40 +754,84 @@
         document.getElementById('res-dass').style.display = 'block';
     }
 
-    function calcD42() {
-        const getSum = (idx) => {
-            let s = 0;
-            idx.forEach(i => { const r = document.querySelector(`input[name="d42${i}"]:checked`); if(r) s += parseInt(r.value); });
-            return s;
+function calcDASS() {
+    const getSum = (idx) => {
+        let s = 0;
+        idx.forEach(i => {
+            const r = document.querySelector(`input[name="d${i}"]:checked`);
+            if(r) s += parseInt(r.value);
+        });
+        return s * 2; // DASS-21 mnożymy przez 2, aby odnieść do norm DASS-42
+    };
+    const d = getSum([2,4,9,12,15,16,20]);
+    const a = getSum([1,3,6,8,14,18,19]);
+    const s = getSum([0,5,7,10,11,13,17]);
+    
+    // Normy dla DASS-21 (po pomnożeniu x2) są identyczne jak w DASS-42
+    renderDassRes('res-dass', d, a, s, 'DASS-21');
+}
+
+function calcD42() {
+    const getSum = (idx) => {
+        let s = 0;
+        idx.forEach(i => { 
+            const r = document.querySelector(`input[name="d42${i}"]:checked`); 
+            if(r) s += parseInt(r.value); 
+        });
+        return s;
+    };
+    const d = getSum([2,4,9,12,15,16,20,23,25,30,33,36,37,41]);
+    const a = getSum([1,3,6,8,14,18,19,22,24,27,29,35,39,40]);
+    const s = getSum([0,5,7,10,11,13,17,21,26,28,31,32,34,38]);
+    
+    renderDassRes('res-dass42', d, a, s, 'DASS-42');
+}
+
+function calcDassy() {
+    const getSum = (idx) => {
+        let s = 0;
+        idx.forEach(i => { 
+            const r = document.querySelector(`input[name="dy${i}"]:checked`); 
+            if(r) s += parseInt(r.value); 
+        });
+        return s;
+    };
+    const d = getSum([2,4,9,12,15,16,20]);
+    const a = getSum([1,3,6,8,14,18,19]);
+    const s = getSum([0,5,7,10,11,13,17]);
+    
+    renderDassRes('res-dassy', d, a, s, 'DASSY');
+}
+
+function renderDassRes(id, d, a, s, type) {
+    const interp = (v, th) => v <= th[0] ? "Norma" : v <= th[1] ? "Łagodny" : v <= th[2] ? "Umiarkowany" : v <= th[3] ? "Silny" : "B. Silny";
+    
+    let norms;
+    
+    // Definicja oddzielnych norm
+    if (type === 'DASS-42' || type === 'DASS-21') {
+        norms = {
+            d: [9, 13, 20, 27],
+            a: [7, 9, 14, 19],
+            s: [14, 18, 25, 33]
         };
-        const d = getSum([2,4,9,12,15,16,20,23,25,30,33,36,37,41]);
-        const a = getSum([1,3,6,8,14,18,19,22,24,27,29,35,39,40]);
-        const s = getSum([0,5,7,10,11,13,17,21,26,28,31,32,34,38]);
-        renderDassRes('res-dass42', d, a, s, true);
+    } else if (type === 'DASSY') {
+        // Normy dla wersji młodzieżowej (DASS-Y) - oparte na percentylach dla młodzieży
+        norms = {
+            d: [6, 8, 13, 16],
+            a: [5, 7, 12, 15],
+            s: [11, 13, 16, 18]
+        };
     }
 
-    function calcDassy() {
-        const getSum = (idx) => {
-            let s = 0;
-            idx.forEach(i => { const r = document.querySelector(`input[name="dy${i}"]:checked`); if(r) s += parseInt(r.value); });
-            return s;
-        };
-        const d = getSum([2,4,9,12,15,16,20]), a = getSum([1,3,6,8,14,18,19]), s = getSum([0,5,7,10,11,13,17]);
-        renderDassRes('res-dassy', d, a, s, false, true);
-    }
-
-    function renderDassRes(id, d, a, s, isFull=false, isDassy=false) {
-        const interp = (v, th) => v<=th[0]?"Norma":v<=th[1]?"Łagodny":v<=th[2]?"Umiarkowany":v<=th[3]?"Silny":"B. Silny";
-        const thD = [6,8,13,16]; 
-        const thA = [5,7,12,15];
-        const thS = [11,13,16,18];
-        document.getElementById(id).innerHTML = `
-            <h3>Wyniki ${isDassy?'DASSY':(isFull?'DASS-42':'DASS-21')}:</h3>
-            <div class="res-line">Depresja: <span>${d} - ${interp(d, thD)}</span></div>
-            <div class="res-line">Lęk: <span>${a} - ${interp(a, thA)}</span></div>
-            <div class="res-line">Stres: <span>${s} - ${interp(s, thS)}</span></div>
-        `;
-        document.getElementById(id).style.display = 'block';
+    document.getElementById(id).innerHTML = `
+        <h3>Wyniki ${type}:</h3>
+        <div class="res-line">Depresja: <span>${d} - ${interp(d, norms.d)}</span></div>
+        <div class="res-line">Lęk: <span>${a} - ${interp(a, norms.a)}</span></div>
+        <div class="res-line">Stres: <span>${s} - ${interp(s, norms.s)}</span></div>
+    `;
+    document.getElementById(id).style.display = 'block';
+    
     }
 
     function calcPHQ() {
