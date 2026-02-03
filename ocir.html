@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="image/png" href="cbt.png" />
+    <title>Test OCI-R - Diagnostyka OCD</title>
+    
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            line-height: 1.6; 
+            margin: 20px; 
+            background-color: #FAFAFA;
+            color: #1a237e; 
+        }
+        
+        .container { 
+            max-width: 850px; 
+            margin: 0 auto; 
+            background-color: #ffffff; 
+            padding: 30px; 
+            border-radius: 15px; 
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1); 
+        }
+
+        h1 { color: #0d47a1; text-align: center; text-transform: uppercase; letter-spacing: 1px; }
+        p.intro { text-align: center; color: #555; margin-bottom: 30px; }
+
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th { background-color: #e3f2fd; color: #0d47a1; padding: 12px; text-align: left; border-bottom: 2px solid #bbdefb; }
+        td { padding: 12px; border-bottom: 1px solid #eee; }
+        
+        tr:hover { background-color: #f9f9f9; }
+
+        .radio-group { display: flex; justify-content: space-around; }
+        .radio-label { font-size: 0.8em; text-align: center; color: #777; }
+
+        .result-box {
+            display: none;
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #e8f5e9;
+            border: 2px solid #4caf50;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .action-buttons { text-align: center; margin-top: 30px; }
+        .calc-btn { background-color: #1565c0; color: white; padding: 15px 30px; border: none; border-radius: 30px; font-weight: bold; cursor: pointer; font-size: 1em; }
+        .calc-btn:hover { background-color: #0d47a1; }
+
+        .citation { font-size: 0.8em; color: #757575; margin-top: 40px; border-top: 1px solid #eee; padding-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Kwestionariusz OCI-R</h1>
+    <p class="intro">Poniższe pytania dotyczą Twoich doświadczeń z ostatniego miesiąca. Wybierz odpowiedź, która najlepiej opisuje, jak bardzo dany problem Ci przeszkadzał.</p>
+
+    <form id="oci-form">
+        <table>
+            <thead>
+                <tr>
+                    <th>W ostatnim miesiącu...</th>
+                    <th style="width: 40%;">Nasilenie (0-4)</th>
+                </tr>
+            </thead>
+            <tbody id="questions-body">
+                </tbody>
+        </table>
+
+        <div class="action-buttons">
+            <button type="button" class="calc-btn" onclick="calculateOCI()">Oblicz wynik</button>
+        </div>
+
+        <div id="result" class="result-box">
+            <h3 id="score-text">Twój wynik: 0</h3>
+            <p id="interpretation-text"></p>
+            <small>Pamiętaj: Ten wynik nie jest diagnozą lekarską. Jeśli wynik jest wysoki, skonsultuj się ze specjalistą.</small>
+        </div>
+    </form>
+
+    <div class="citation">
+        <strong>Źródło:</strong> Foa, E. B., Huppert, J. D., Leiberg, S., Langner, R., Kichic, R., Hajcak, G., & Salkovskis, P. M. (2002). <em>The Obsessive-Compulsive Inventory: Revised version: Reliability and validity.</em> Psychological Assessment, 14(4), 485–496.<br>
+        <strong>Norma kliniczna:</strong> Wynik 21 punktów lub więcej zazwyczaj sugeruje obecność OCD.
+    </div>
+</div>
+
+<script>
+    const questions = [
+        "Cofanie się do miejsc, aby sprawdzić, czy nie zrobiłem komuś krzywdy.",
+        "Częste i nadmierne mycie rąk.",
+        "Wkładanie rzeczy na ich miejsce, aż poczuję, że są ułożone idealnie.",
+        "Częste sprawdzanie drzwi, okien lub urządzeń elektrycznych.",
+        "Ciągłe liczenie podczas wykonywania rutynowych czynności.",
+        "Trudności z wyrzucaniem rzeczy, nawet jeśli są bezużyteczne.",
+        "Potrzeba powtarzania pewnych czynności, aż zostaną wykonane 'właściwie'.",
+        "Zdenerwowanie, gdy inni dotykają moich rzeczy.",
+        "Zdenerwowanie, gdy rzeczy nie są ułożone tak, jak lubię.",
+        "Wielokrotne sprawdzanie tego, co napisałem lub powiedziałem.",
+        "Obawa przed zanieczyszczeniem przez dotykanie przedmiotów.",
+        "Gromadzenie przedmiotów, których nie potrzebuję.",
+        "Potrzeba sprawdzania rzeczy częściej niż inni ludzie.",
+        "Nienawiść do brudu i zarazków.",
+        "Poczucie przymusu powtarzania pewnych liczb.",
+        "Częste sprawdzanie, czy nie popełniłem błędu.",
+        "Zdenerwowanie, gdy moje rzeczy są nieuporządkowane.",
+        "Poczucie, że muszę zachować rzeczy, których nie potrzebuję."
+    ];
+
+    const tbody = document.getElementById('questions-body');
+    questions.forEach((q, index) => {
+        let row = `<tr>
+            <td>${index + 1}. ${q}</td>
+            <td>
+                <div class="radio-group">
+                    ${[0,1,2,3,4].map(v => `
+                        <label class="radio-label">
+                            <input type="radio" name="q${index}" value="${v}" required><br>${v}
+                        </label>
+                    `).join('')}
+                </div>
+            </td>
+        </tr>`;
+        tbody.innerHTML += row;
+    });
+
+    function calculateOCI() {
+        let score = 0;
+        let answered = 0;
+        const form = document.getElementById('oci-form');
+        const formData = new FormData(form);
+
+        for(let value of formData.values()) {
+            score += parseInt(value);
+            answered++;
+        }
+
+        if(answered < 18) {
+            alert("Proszę odpowiedzieć na wszystkie pytania przed obliczeniem wyniku.");
+            return;
+        }
+
+        const resultBox = document.getElementById('result');
+        const scoreText = document.getElementById('score-text');
+        const interpretationText = document.getElementById('interpretation-text');
+
+        resultBox.style.display = 'block';
+        scoreText.innerText = "Twój wynik: " + score;
+
+        if (score >= 21) {
+            interpretationText.innerText = "Wynik powyżej progu klinicznego (21 pkt). Może to wskazywać na występowanie zaburzeń obsesyjno-kompulsyjnych.";
+            resultBox.style.backgroundColor = "#ffebee";
+            resultBox.style.borderColor = "#e53935";
+        } else {
+            interpretationText.innerText = "Wynik poniżej progu klinicznego. Prawdopodobieństwo występowania OCD jest niskie.";
+            resultBox.style.backgroundColor = "#e8f5e9";
+            resultBox.style.borderColor = "#4caf50";
+        }
+        
+        resultBox.scrollIntoView({ behavior: 'smooth' });
+    }
+</script>
+
+</body>
+</html>
