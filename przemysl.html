@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Związek - Instrukcja Obsługi</title>
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
+            --bg: #F3F4F6;
+            --card-bg: #FFFFFF;
+            --text-main: #1F2937;
+            --text-muted: #6B7280;
+            --success: #10B981;
+            --danger: #EF4444;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 1rem;
+            padding-bottom: 3rem;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 2rem 1rem;
+            background: linear-gradient(135deg, var(--primary), #8B5CF6);
+            color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+        header p { font-size: 1rem; opacity: 0.9; }
+
+        .module {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .module h2 {
+            font-size: 1.3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--bg);
+            padding-bottom: 0.5rem;
+        }
+
+        .instruction { font-size: 0.95rem; color: var(--text-muted); margin-bottom: 1rem; }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        input[type="text"], select, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #D1D5DB;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        button {
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover { background-color: var(--primary-hover); }
+
+        .result-box {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            background-color: #EEF2FF;
+            border-left: 4px solid var(--primary);
+            display: none;
+            font-size: 0.95rem;
+        }
+
+        .sources {
+            margin-top: 3rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            background: #E5E7EB;
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .sources a { color: var(--primary); text-decoration: none; }
+        .sources a:hover { text-decoration: underline; }
+        .sources ul { padding-left: 1.5rem; margin-top: 0.5rem; }
+        .sources li { margin-bottom: 0.5rem; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Związek: Instrukcja Obsługi</h1>
+        <p>Witaj na warsztatach! Używaj tej aplikacji do wykonywania zadań w trakcie zajęć.</p>
+    </header>
+
+    <section class="module" id="modul-1">
+        <h2>Filar I: Stop Przesadzie</h2>
+        <p class="instruction"><strong>Zadanie 1: Skaner Faktów.</strong> Twój układ nerwowy nie odróżnia wyobraźni od rzeczywistości. Przeanalizujmy sytuację: <em>"Twoja sympatia nie odpisuje na wiadomość od 3 godzin."</em></p>
+        
+        <label for="m1-katastrofa">Krok 1: Wpisz najgorszy możliwy scenariusz (Czytanie w myślach):</label>
+        <input type="text" id="m1-katastrofa" placeholder="np. Znalazł/a kogoś innego, ignoruje mnie...">
+        
+        <label for="m1-fakt">Krok 2: Wpisz chłodny, nudny fakt, który też może być prawdą:</label>
+        <input type="text" id="m1-fakt" placeholder="np. Zostawił/a telefon w kurtce, śpi...">
+        
+        <button onclick="checkModule1()">Zrób skanowanie faktów</button>
+        
+        <div class="result-box" id="m1-result"></div>
+    </section>
+
+    <section class="module" id="modul-2">
+        <h2>Filar II: Kanapka Komunikacyjna</h2>
+        <p class="instruction"><strong>Zadanie 2: Komunikat "JA".</strong> Zbuduj zdanie, które wyraża Twój problem, ale nie atakuje drugiej osoby. Atak (np. "Ty nigdy...") wywołuje biologiczną reakcję obronną w mózgu.</p>
+        
+        <label for="m2-emocja">Czuję (nazwij swoją emocję):</label>
+        <select id="m2-emocja">
+            <option value="">-- wybierz --</option>
+            <option value="złość">złość</option>
+            <option value="smutek">smutek</option>
+            <option value="bezradność">bezradność</option>
+            <option value="lekceważenie">lekceważenie</option>
+            <option value="strach">strach</option>
+        </select>
+
+        <label for="m2-fakt">Kiedy Ty (podaj suchy fakt, nagranie z kamery):</label>
+        <input type="text" id="m2-fakt" placeholder="np. gadasz z kimś innym, gdy do ciebie mówię">
+
+        <label for="m2-potrzeba">Ponieważ potrzebuję (czego Ci brakuje?):</label>
+        <input type="text" id="m2-potrzeba" placeholder="np. twojej pełnej uwagi / szacunku">
+
+        <button onclick="checkModule2()">Złóż komunikat</button>
+
+        <div class="result-box" id="m2-result"></div>
+    </section>
+
+    <section class="module" id="modul-3">
+        <h2>Filar III: Konto w Banku Emocji</h2>
+        <p class="instruction"><strong>Zadanie 3: Drobne Wpłaty.</strong> Związek to konto. Złośliwości to wypłaty, dobre gesty to wpłaty. Wymień 3 drobne rzeczy (koszt: 0 zł, czas: max 2 minuty), które zrobisz dzisiaj dla bliskiej osoby.</p>
+        
+        <input type="text" id="m3-wplata1" placeholder="1. np. Zrobię mamie herbatę bez pytania">
+        <input type="text" id="m3-wplata2" placeholder="2. np. Wyślę przyjacielowi śmiesznego mema z rana">
+        <input type="text" id="m3-wplata3" placeholder="3. np. Powiem 'dziękuję', gdy ktoś mi pomoże">
+
+        <button onclick="checkModule3()">Zatwierdź swoje wpłaty</button>
+
+        <div class="result-box" id="m3-result" style="background-color: #D1FAE5; border-color: var(--success);"></div>
+    </section>
+
+    <section class="sources">
+        <h3>Źródła i empiria warsztatów (dla głodnych wiedzy)</h3>
+        <p>Prezentowane narzędzia opierają się na badaniach klinicznych i psychologii empirycznej:</p>
+        <ul>
+            <li><strong>Zadanie 1 (Stop Przesadzie):</strong> Terapia poznawczo-behawioralna (CBT). Podstawa to rozpoznawanie błędów poznawczych (tzw. zniekształceń). <br>Źródło: Aaron T. Beck, <em>Love Is Never Enough</em>. Więcej o CBT: <a href="https://beckinstitute.org/about/intro-to-cbt/" target="_blank">Beck Institute</a>.</li>
+            <li><strong>Zadanie 2 (Komunikat JA):</strong> Metoda redukcji "Czterech Jeźdźców Apokalipsy" (szczególnie krytyki) poprzez stosowanie "Łagodnego Startu" (Softened Startup). <br>Źródło: Badania laboratoryjne Johna Gottmana. <a href="https://www.gottman.com/blog/the-four-horsemen-recognizing-criticism-and-finding-the-antidote/" target="_blank">The Gottman Institute Research</a>.</li>
+            <li><strong>Zadanie 3 (Konto Emocji):</strong> Teoria <em>Emotional Bank Account</em> oraz zasada proporcji 5:1 (na każdą negatywną interakcję przypada pięć pozytywnych). Technika wywodzi się również z behawioralnej terapii par (Richard Stuart - <em>Caring Days</em>). <br>Źródło: Gottman, J. M., & Levenson, R. W. (1992). <em>Marital processes predictive of later dissolution</em>. Journal of Personality and Social Psychology. Link do opisu badań: <a href="https://www.gottman.com/about/research/" target="_blank">Gottman Research</a>.</li>
+        </ul>
+    </section>
+
+</div>
+
+<script>
+    function checkModule1() {
+        const katastrofa = document.getElementById('m1-katastrofa').value;
+        const fakt = document.getElementById('m1-fakt').value;
+        const result = document.getElementById('m1-result');
+
+        if(katastrofa && fakt) {
+            result.style.display = 'block';
+            result.innerHTML = `<strong>Wynik analizy:</strong> Zobacz różnicę. Wyobraźnia podpowiada Ci:<br> <em>"${katastrofa}"</em> (co generuje silny stres i złość).<br><br>Gdy skupiasz się na fakcie:<br> <em>"${fakt}"</em> (reakcja jest znacznie spokojniejsza). <br><strong>Wniosek: Twoje myśli tworzą Twoje emocje, a nie sama sytuacja!</strong>`;
+        } else {
+            alert('Wypełnij oba pola, aby zobaczyć magię skanera faktów!');
+        }
+    }
+
+    function checkModule2() {
+        const emocja = document.getElementById('m2-emocja').value;
+        const fakt = document.getElementById('m2-fakt').value;
+        const potrzeba = document.getElementById('m2-potrzeba').value;
+        const result = document.getElementById('m2-result');
+
+        if(emocja && fakt && potrzeba) {
+            result.style.display = 'block';
+            result.innerHTML = `<strong>Twój bezpieczny komunikat brzmi:</strong><br><br> "Czuję <strong>${emocja}</strong>, kiedy Ty <strong>${fakt}</strong>, ponieważ potrzebuję <strong>${potrzeba}</strong>."<br><br><em>Spróbuj użyć tej konstrukcji przy następnej kłótni. Zobaczysz, że nikt nie zacznie na Ciebie krzyczeć w obronie własnej.</em>`;
+        } else {
+            alert('Wypełnij wszystkie pola (emocja, fakt i potrzeba)!');
+        }
+    }
+
+    function checkModule3() {
+        const w1 = document.getElementById('m3-wplata1').value;
+        const w2 = document.getElementById('m3-wplata2').value;
+        const w3 = document.getElementById('m3-wplata3').value;
+        const result = document.getElementById('m3-result');
+
+        if(w1 || w2 || w3) {
+            result.style.display = 'block';
+            result.innerHTML = `<strong>Konto zasilone!</strong> Pamiętaj, zasada 5:1 mówi, że potrzeba aż pięciu małych pozytywów, aby zrównoważyć jedną kłótnię. Twoje dzisiejsze małe kroki budują mocny fundament na przyszłość.`;
+        } else {
+            alert('Wpisz chociaż jedną drobną rzecz, którą dziś zrobisz!');
+        }
+    }
+</script>
+
+</body>
+</html>
