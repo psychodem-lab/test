@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Związek - Instrukcja Obsługi (Warsztaty)</title>
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
+            --bg: #F3F4F6;
+            --card-bg: #FFFFFF;
+            --text-main: #1F2937;
+            --text-muted: #6B7280;
+            --success: #10B981;
+            --danger: #EF4444;
+            --lock-bg: #F9FAFB;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 1rem;
+            padding-bottom: 3rem;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 2rem 1rem;
+            background: linear-gradient(135deg, var(--primary), #8B5CF6);
+            color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+        header p { font-size: 1rem; opacity: 0.9; }
+
+        .module {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            position: relative;
+        }
+
+        .module h2 {
+            font-size: 1.3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--bg);
+            padding-bottom: 0.5rem;
+        }
+
+        .password-screen {
+            background-color: var(--lock-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px dashed #D1D5DB;
+        }
+
+        .password-screen p { margin-bottom: 1rem; font-size: 0.95rem; color: var(--text-muted); }
+        
+        .error-msg {
+            color: var(--danger) !important;
+            font-weight: bold;
+            font-size: 0.85rem !important;
+            margin-top: 0.5rem !important;
+            display: none;
+        }
+
+        .locked-content { display: none; }
+
+        .instruction { font-size: 0.95rem; color: var(--text-muted); margin-bottom: 1rem; }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+
+        input[type="text"], input[type="password"], select, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #D1D5DB;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus, input[type="password"]:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        button {
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 1rem;
+        }
+
+        button:hover { background-color: var(--primary-hover); }
+
+        .unlock-btn { background-color: #374151; }
+        .unlock-btn:hover { background-color: #1F2937; }
+
+        .result-box {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            background-color: #EEF2FF;
+            border-left: 4px solid var(--primary);
+            display: none;
+            font-size: 0.95rem;
+        }
+
+        .sources {
+            margin-top: 3rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            background: #E5E7EB;
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .sources a { color: var(--primary); text-decoration: none; font-weight: bold;}
+        .sources a:hover { text-decoration: underline; }
+        .sources ul { padding-left: 1.5rem; margin-top: 0.5rem; }
+        .sources li { margin-bottom: 0.5rem; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Relacje: Instrukcja Obsługi</h1>
+        <p>Witaj na warsztatach! Używaj tej aplikacji do wykonywania zadań w trakcie zajęć.</p>
+    </header>
+
+    <section class="module" id="modul-1">
+        <h2>Moduł 1: Transformacja od "TY" do "JA"</h2>
+        
+        <div class="password-screen" id="lock-1">
+            <p>🔒 Wprowadź hasło podane przez prowadzącego, aby odblokować Moduł 1.</p>
+            <input type="password" id="pass-1" placeholder="Hasło (podpowiem: komunikacja)">
+            <button class="unlock-btn" onclick="unlockModule(1, 'komunikacja')">Odblokuj Moduł 1</button>
+            <p class="error-msg" id="error-1">Nieprawidłowe hasło!</p>
+        </div>
+
+        <div class="locked-content" id="content-1">
+            <p class="instruction"><strong>Zadanie:</strong> Słowa oceniające niszczą relację, ponieważ generują postawę obronną. Zastąpmy komunikat "TY" komunikatem "JA". Pomyśl o sytuacji z bliską osobą, która Cię zirytowała.</p>
+            
+            <label for="m1-ty">Krok 1: Jak brzmiałby atak (komunikat "TY")?</label>
+            <input type="text" id="m1-ty" placeholder="np. Znowu mnie ignorujesz, myślisz tylko o sobie!">
+            
+            <label for="m1-ja-uczucie">Krok 2: Jak się czujesz w tej sytuacji (komunikat "JA")?</label>
+            <input type="text" id="m1-ja-uczucie" placeholder="np. Czuję się sfrustrowany i smutny...">
+            
+            <label for="m1-ja-sytuacja">Krok 3: Jaki jest chłodny, mierzalny fakt, który to wywołał?</label>
+            <input type="text" id="m1-ja-sytuacja" placeholder="np. ...gdy przez 3 godziny nie odpisujesz, a widzę Cię online.">
+            
+            <button onclick="checkModule1()">Wykonaj transformację</button>
+            
+            <div class="result-box" id="m1-result"></div>
+        </div>
+    </section>
+
+    <section class="module" id="modul-2">
+        <h2>Moduł 2: Emocje i Potrzeby</h2>
+        
+        <div class="password-screen" id="lock-2">
+            <p>🔒 Wprowadź hasło podane przez prowadzącego, aby odblokować Moduł 2.</p>
+            <input type="password" id="pass-2" placeholder="Hasło (podpowiem: emocja)">
+            <button class="unlock-btn" onclick="unlockModule(2, 'emocja')">Odblokuj Moduł 2</button>
+            <p class="error-msg" id="error-2">Nieprawidłowe hasło!</p>
+        </div>
+
+        <div class="locked-content" id="content-2">
+            <p class="instruction"><strong>Zadanie:</strong> Każda emocja niesie informację o Twojej potrzebie. Zbuduj most między tym, co czujesz, a tym, czego potrzebujesz, proponując rozwiązanie.</p>
+            
+            <label for="m2-emocja">Co teraz (lub ostatnio) czujesz?</label>
+            <select id="m2-emocja">
+                <option value="">-- wybierz dominującą emocję --</option>
+                <option value="złość">Złość (komunikuje: chcę zmiany, stawiam granice)</option>
+                <option value="smutek">Smutek (komunikuje: straciłem coś ważnego)</option>
+                <option value="strach">Strach (komunikuje: potrzebuję bezpieczeństwa)</option>
+                <option value="radość">Radość (komunikuje: zyskałem coś cennego)</option>
+            </select>
+
+            <label for="m2-potrzeba">Jaka ważna potrzeba za tym stoi?</label>
+            <input type="text" id="m2-potrzeba" placeholder="np. potrzebuję wsparcia, szacunku, szczerości...">
+
+            <label for="m2-prosba">Sformułuj otwartą prośbę (nie żądanie!):</label>
+            <input type="text" id="m2-prosba" placeholder="np. Czy moglibyśmy wspólnie ustalić plan na jutro?">
+
+            <button onclick="checkModule2()">Zbuduj most</button>
+
+            <div class="result-box" id="m2-result"></div>
+        </div>
+    </section>
+
+    <section class="module" id="modul-3">
+        <h2>Moduł 3: Wartościowy Stół (Stabilność)</h2>
+        
+        <div class="password-screen" id="lock-3">
+            <p>🔒 Wprowadź hasło podane przez prowadzącego, aby odblokować Moduł 3.</p>
+            <input type="password" id="pass-3" placeholder="Hasło (podpowiem: wartosc)">
+            <button class="unlock-btn" onclick="unlockModule(3, 'wartosc')">Odblokuj Moduł 3</button>
+            <p class="error-msg" id="error-3">Nieprawidłowe hasło!</p>
+        </div>
+
+        <div class="locked-content" id="content-3">
+            <p class="instruction"><strong>Zadanie:</strong> Wyobraź sobie, że Twoje życie to stół. Aby stał stabilnie, potrzebuje 4 mocnych nóg. Te nogi to Twoje najistotniejsze wartości z wielkiej wykreślanki.</p>
+            
+            <label>Wpisz 4 najważniejsze dla Ciebie wartości:</label>
+            <input type="text" id="m3-v1" placeholder="Noga 1 (np. Autentyczność)">
+            <input type="text" id="m3-v2" placeholder="Noga 2 (np. Rodzina)">
+            <input type="text" id="m3-v3" placeholder="Noga 3 (np. Rozwój)">
+            <input type="text" id="m3-v4" placeholder="Noga 4 (np. Niezależność)">
+
+            <label for="m3-refleksja">Refleksja: Co stałoby się z Twoim życiem, gdyby ktoś siłą odciął jedną z tych nóg?</label>
+            <textarea id="m3-refleksja" rows="3" placeholder="Zapisz swoje wnioski..."></textarea>
+
+            <button onclick="checkModule3()">Zbuduj swój stół</button>
+
+            <div class="result-box" id="m3-result" style="background-color: #D1FAE5; border-color: var(--success);"></div>
+        </div>
+    </section>
+
+    <section class="sources">
+        <h3>Źródła badawcze i empiryczne (Evidence-Based)</h3>
+        <p>Aplikacja opiera się na udokumentowanych badaniach z zakresu psychologii klinicznej i komunikacji:</p>
+        <ul>
+            <li><strong>Moduł 1 (Komunikat "JA"):</strong> Technika opracowana przez dr. Thomasa Gordona, trzykrotnie nominowanego do Pokojowej Nagrody Nobla. Opisana w <em>Parent Effectiveness Training (P.E.T.)</em> (1970). Dowody empiryczne potwierdzają redukcję reakcji obronnych u odbiorcy.<br>Więcej informacji: <a href="https://www.gordontraining.com" target="_blank">Gordon Training International</a></li>
+            <li><strong>Moduł 2 (Emocje i Potrzeby):</strong> Koncepcja Porozumienia bez Przemocy (NVC). Empiryczne połączenie emocji z niezaspokojonymi podstawowymi potrzebami ( Rosenberg, M.B., 2003, <em>Nonviolent Communication: A Language of Life</em>).<br>Baza wiedzy: <a href="https://www.cnvc.org" target="_blank">Center for Nonviolent Communication</a></li>
+            <li><strong>Moduł 3 (Wartości):</strong> Ćwiczenia oparte na Terapii Akceptacji i Zaangażowania (ACT - Acceptance and Commitment Therapy). Badania kliniczne dr. Stevena C. Hayesa wskazują, że klaryfikacja wartości to kluczowy proces zwiększania elastyczności psychologicznej i rezyliencji.<br>Rejestr badań ACT: <a href="https://contextualscience.org/act" target="_blank">Association for Contextual Behavioral Science (ACBS)</a></li>
+        </ul>
+    </section>
+
+</div>
+
+<script>
+    // System odblokowywania
+    function unlockModule(moduleNumber, correctPassword) {
+        const inputPass = document.getElementById(`pass-${moduleNumber}`).value.trim().toLowerCase();
+        const errorMsg = document.getElementById(`error-${moduleNumber}`);
+        const lockScreen = document.getElementById(`lock-${moduleNumber}`);
+        const content = document.getElementById(`content-${moduleNumber}`);
+        
+        if (inputPass === correctPassword) {
+            lockScreen.style.display = 'none';
+            content.style.display = 'block';
+            errorMsg.style.display = 'none';
+        } else {
+            errorMsg.style.display = 'block';
+        }
+    }
+
+    // Logika Moduł 1
+    function checkModule1() {
+        const ty = document.getElementById('m1-ty').value;
+        const jaUczucie = document.getElementById('m1-ja-uczucie').value;
+        const jaSytuacja = document.getElementById('m1-ja-sytuacja').value;
+        const result = document.getElementById('m1-result');
+
+        if(ty && jaUczucie && jaSytuacja) {
+            result.style.display = 'block';
+            result.innerHTML = `<strong>Wynik transformacji:</strong><br><br>
+            ❌ <em>Zamiast atakować i budować mur:</em> "${ty}"<br><br>
+            ✅ <em>Mówisz o sobie i zachęcasz do rozmowy:</em> "<strong>${jaUczucie}</strong>, <strong>${jaSytuacja}</strong>."<br><br>
+            Ten sposób zmniejsza szansę, że osoba poczuje się zaatakowana i przejdzie do kontrataku.`;
+        } else {
+            alert('Wypełnij wszystkie 3 kroki, aby zobaczyć wynik!');
+        }
+    }
+
+    // Logika Moduł 2
+    function checkModule2() {
+        const emocja = document.getElementById('m2-emocja').value;
+        const potrzeba = document.getElementById('m2-potrzeba').value;
+        const prosba = document.getElementById('m2-prosba').value;
+        const result = document.getElementById('m2-result');
+        
+        if(emocja && potrzeba && prosba) {
+            result.style.display = 'block';
+            result.innerHTML = `<strong>Świetnie! Połączyłeś kropki:</strong><br><br>
+            Twoja emocja (<strong>${emocja}</strong>) to tylko burczenie w brzuchu układu nerwowego.<br>
+            Prawdziwym problemem jest brak zaspokojenia: <strong>${potrzeba}</strong>.<br><br>
+            Zamiast oskarżać, zadajesz pytanie otwarte: <em>"${prosba}"</em>, co zaprasza drugą osobę do współpracy.`;
+        } else {
+            alert('Wybierz emocję, wpisz potrzebę i sformułuj prośbę!');
+        }
+    }
+
+    // Logika Moduł 3
+    function checkModule3() {
+        const v1 = document.getElementById('m3-v1').value;
+        const v2 = document.getElementById('m3-v2').value;
+        const v3 = document.getElementById('m3-v3').value;
+        const v4 = document.getElementById('m3-v4').value;
+        const refleksja = document.getElementById('m3-refleksja').value;
+        const result = document.getElementById('m3-result');
+        
+        if(v1 && v2 && v3 && v4 && refleksja) {
+            result.style.display = 'block';
+            result.innerHTML = `<strong>Twój stół jest kompletny!</strong><br><br>
+            Opierasz swoje decyzje na: <strong>${v1}, ${v2}, ${v3}, ${v4}</strong>.<br><br>
+            Gdy w relacji musisz podjąć trudną decyzję (np. postawić granicę), przypomnij sobie ten fundament. Wartości są jak drogowskazy – działanie wbrew nim zawsze prowadzi do zachwiania Twojego "stołu" i poczucia wewnętrznego dyskomfortu.`;
+        } else {
+            alert('Wpisz 4 nogi swojego stołu i krótką refleksję!');
+        }
+    }
+</script>
+
+</body>
+</html>
