@@ -1,1 +1,508 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Platforma Testowa JSON / CSV</title>
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --success: #10b981;
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 2rem 1rem;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: var(--card-bg);
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 1.5rem;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        .file-controls {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-secondary {
+            background-color: #94a3b8;
+        }
+
+        .btn-secondary:hover {
+            background-color: #64748b;
+        }
+
+        .btn-success {
+            background-color: var(--success);
+        }
+
+        .btn-success:hover {
+            background-color: #059669;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .file-label {
+            background-color: #f1f5f9;
+            color: var(--text-main);
+            padding: 0.6rem 1.2rem;
+            border: 1px dashed #cbd5e1;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        .file-label:hover {
+            background-color: #e2e8f0;
+            border-color: var(--primary);
+        }
+
+        .user-info-card, .quiz-card {
+            background: var(--card-bg);
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            font-size: 0.95rem;
+        }
+
+        .form-group input[type="text"] {
+            width: 100%;
+            padding: 0.6rem 0.8rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.95rem;
+        }
+
+        .question-block {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .question-block:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .question-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            color: var(--text-main);
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.5rem 0.8rem;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .option-item:hover {
+            background-color: #f8fafc;
+        }
+
+        .option-item input {
+            cursor: pointer;
+        }
+
+        textarea.open-answer {
+            width: 100%;
+            min-height: 80px;
+            padding: 0.6rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            resize: vertical;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.5rem;
+        }
+
+        .quiz-title-header {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .quiz-desc {
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        #statusMessage {
+            margin-top: 1rem;
+            padding: 0.8rem;
+            border-radius: 6px;
+            display: none;
+            font-size: 0.9rem;
+        }
+
+        .status-success {
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .status-error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Platforma Testowa</h1>
+        <p class="subtitle">Wgraj plik testu w formacie JSON, wypełnij go i pobierz wyniki do pliku CSV.</p>
+        
+        <div class="file-controls">
+            <label class="file-label" for="jsonInput">
+                📁 Wczytaj plik JSON z testem
+            </label>
+            <input type="file" id="jsonInput" accept=".json">
+            <button class="btn btn-secondary" id="btnDownloadSample">📥 Pobierz szablon JSON</button>
+        </div>
+        <div id="statusMessage"></div>
+    </header>
+
+    <div class="user-info-card">
+        <div class="form-group">
+            <label for="userName">Imię i Nazwisko / Identyfikator:</label>
+            <input type="text" id="userName" placeholder="np. Jan Kowalski">
+        </div>
+    </div>
+
+    <div class="quiz-card" id="quizCard">
+        <h2 class="quiz-title-header" id="quizTitle">Tytuł Testu</h2>
+        <p class="quiz-desc" id="quizDescription">Opis testu pojawi się w tym miejscu.</p>
+        
+        <form id="quizForm">
+            <div id="questionsContainer"></div>
+
+            <div class="actions">
+                <button type="button" class="btn btn-secondary" id="btnReset">Resetuj odpowiedzi</button>
+                <button type="submit" class="btn btn-success" id="btnSubmit">Zakończ i pobierz wyniki (.CSV)</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Domyślny / przykładowy test JSON
+    const defaultQuiz = {
+        "title": "Przykładowy Test Wiedzy Ogólnej",
+        "description": "To jest przykładowy test. Wybierz odpowiednie opcje lub wpisz odpowiedzi, a następnie pobierz wynik jako CSV.",
+        "questions": [
+            {
+                "id": "Q1",
+                "question": "Jaka jest stolica Polski?",
+                "type": "single",
+                "options": ["Kraków", "Warszawa", "Gdańsk", "Wrocław"]
+            },
+            {
+                "id": "Q2",
+                "question": "Które z poniższych są językami programowania? (Wybierz wszystkie poprawne)",
+                "type": "multiple",
+                "options": ["Python", "HTML", "Java", "CSS"]
+            },
+            {
+                "id": "Q3",
+                "question": "Opisz krótko, czym różni się testowanie jednostkowe od integracyjnego.",
+                "type": "text"
+            }
+        ]
+    };
+
+    let currentQuizData = defaultQuiz;
+
+    // Elementy DOM
+    const jsonInput = document.getElementById('jsonInput');
+    const btnDownloadSample = document.getElementById('btnDownloadSample');
+    const quizTitle = document.getElementById('quizTitle');
+    const quizDescription = document.getElementById('quizDescription');
+    const questionsContainer = document.getElementById('questionsContainer');
+    const quizForm = document.getElementById('quizForm');
+    const btnReset = document.getElementById('btnReset');
+    const statusMessage = document.getElementById('statusMessage');
+
+    // Inicjalizacja
+    document.addEventListener('DOMContentLoaded', () => {
+        renderQuiz(currentQuizData);
+    });
+
+    // Obsługa wczytywania własnego JSON
+    jsonInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            try {
+                const parsed = JSON.parse(event.target.result);
+                if (!parsed.questions || !Array.isArray(parsed.questions)) {
+                    throw new Error("Plik JSON musi zawierać tablicę 'questions'.");
+                }
+                currentQuizData = parsed;
+                renderQuiz(currentQuizData);
+                showMessage("Pomyślnie załadowano test: " + (parsed.title || "Bez tytułu"), "success");
+            } catch (err) {
+                showMessage("Błąd odczytu pliku JSON: " + err.message, "error");
+            }
+        };
+        reader.readAsText(file);
+    });
+
+    // Pobieranie szablonu JSON
+    btnDownloadSample.addEventListener('click', () => {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(defaultQuiz, null, 2));
+        const downloadAnchor = document.createElement('a');
+        downloadAnchor.setAttribute("href", dataStr);
+        downloadAnchor.setAttribute("download", "szablon_testu.json");
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        downloadAnchor.remove();
+    });
+
+    // Renderowanie pytań
+    function renderQuiz(quiz) {
+        quizTitle.textContent = quiz.title || "Test bez tytułu";
+        quizDescription.textContent = quiz.description || "";
+        questionsContainer.innerHTML = "";
+
+        quiz.questions.forEach((q, index) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = 'question-block';
+
+            const qTitle = document.createElement('div');
+            qTitle.className = 'question-title';
+            qTitle.textContent = `${index + 1}. ${q.question}`;
+            qDiv.appendChild(qTitle);
+
+            if (q.type === 'single' && q.options) {
+                const optionsDiv = document.createElement('div');
+                optionsDiv.className = 'options-list';
+                q.options.forEach((opt, optIndex) => {
+                    const label = document.createElement('label');
+                    label.className = 'option-item';
+                    
+                    const radio = document.createElement('input');
+                    radio.type = 'radio';
+                    radio.name = `q_${q.id || index}`;
+                    radio.value = opt;
+
+                    label.appendChild(radio);
+                    label.appendChild(document.createTextNode(opt));
+                    optionsDiv.appendChild(label);
+                });
+                qDiv.appendChild(optionsDiv);
+            } else if (q.type === 'multiple' && q.options) {
+                const optionsDiv = document.createElement('div');
+                optionsDiv.className = 'options-list';
+                q.options.forEach((opt, optIndex) => {
+                    const label = document.createElement('label');
+                    label.className = 'option-item';
+                    
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.name = `q_${q.id || index}`;
+                    checkbox.value = opt;
+
+                    label.appendChild(checkbox);
+                    label.appendChild(document.createTextNode(opt));
+                    optionsDiv.appendChild(label);
+                });
+                qDiv.appendChild(optionsDiv);
+            } else if (q.type === 'text') {
+                const textarea = document.createElement('textarea');
+                textarea.className = 'open-answer';
+                textarea.name = `q_${q.id || index}`;
+                textarea.placeholder = "Wpisz tutaj swoją odpowiedź...";
+                qDiv.appendChild(textarea);
+            }
+
+            questionsContainer.appendChild(qDiv);
+        });
+    }
+
+    // Resetowanie formularza
+    btnReset.addEventListener('click', () => {
+        quizForm.reset();
+    });
+
+    // Generowanie i pobieranie CSV po zatwierdzeniu
+    quizForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const userName = document.getElementById('userName').value.trim() || "Anonim";
+        const dateStr = new Date().toLocaleString('pl-PL');
+        
+        let csvRows = [];
+        
+        // Nagłówek CSV (używamy ';' jako separatora optymalnego dla polskiego Excela)
+        csvRows.push(["Użytkownik", "Data wykonania", "ID Pytania", "Pytanie", "Odpowiedź"].map(escapeCsvField).join(";"));
+
+        currentQuizData.questions.forEach((q, index) => {
+            const fieldName = `q_${q.id || index}`;
+            let answer = "";
+
+            if (q.type === 'single') {
+                const checked = quizForm.querySelector(`input[name="${fieldName}"]:checked`);
+                answer = checked ? checked.value : "[Brak odpowiedzi]";
+            } else if (q.type === 'multiple') {
+                const checkedList = quizForm.querySelectorAll(`input[name="${fieldName}"]:checked`);
+                const answers = Array.from(checkedList).map(cb => cb.value);
+                answer = answers.length > 0 ? answers.join(" | ") : "[Brak odpowiedzi]";
+            } else if (q.type === 'text') {
+                const textarea = quizForm.querySelector(`textarea[name="${fieldName}"]`);
+                answer = textarea && textarea.value.trim() ? textarea.value.trim() : "[Brak odpowiedzi]";
+            }
+
+            const row = [
+                userName,
+                dateStr,
+                q.id || `Pytanie_${index + 1}`,
+                q.question,
+                answer
+            ];
+
+            csvRows.push(row.map(escapeCsvField).join(";"));
+        });
+
+        const csvContent = csvRows.join("
+");
+        downloadCSV(csvContent, `wyniki_${(currentQuizData.title || "test").toLowerCase().replace(/[^a-z0-9]/gi, '_')}.csv`);
+        showMessage("Wyniki zostały pomyślnie wygenerowane i pobrane!", "success");
+    });
+
+    // Pomocnicze funkcje do CSV
+    function escapeCsvField(field) {
+        if (field === null || field === undefined) return '""';
+        let stringField = String(field);
+        stringField = stringField.replace(/"/g, '""');
+        stringField = stringField.replace(/
+?
+|
+/g, ' ');
+        return `"${stringField}"`;
+    }
+
+    function downloadCSV(content, filename) {
+        // UTF-8 BOM dociągany do poprawnego otwierania polskich znaków w Excelu
+        const bom = '﻿';
+        const blob = new Blob([bom + content], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        
+        link.setAttribute('href', url);
+        link.setAttribute('download', filename);
+        link.style.visibility = 'hidden';
+        
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    function showMessage(text, type) {
+        statusMessage.textContent = text;
+        statusMessage.className = type === 'success' ? 'status-success' : 'status-error';
+        statusMessage.style.display = 'block';
+        setTimeout(() => {
+            statusMessage.style.display = 'none';
+        }, 5000);
+    }
+</script>
+
+</body>
+</html>
