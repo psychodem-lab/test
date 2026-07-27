@@ -3,17 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Platforma Testowa JSON / CSV</title>
+    <title>Obsługa Testów i Kwestionariuszy - Eksport CSV</title>
     <style>
         :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
             --bg-color: #f8fafc;
             --card-bg: #ffffff;
-            --primary: #4f46e5;
-            --primary-hover: #4338ca;
-            --text-main: #1e293b;
+            --text-main: #0f172a;
             --text-muted: #64748b;
             --border-color: #e2e8f0;
+            --accent-light: #eff6ff;
+            --accent-border: #bfdbfe;
             --success: #10b981;
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
         }
 
         * {
@@ -26,482 +30,460 @@
         body {
             background-color: var(--bg-color);
             color: var(--text-main);
-            padding: 2rem 1rem;
-            line-height: 1.5;
-        }
-
-        .container {
-            max-width: 800px;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 900px;
             margin: 0 auto;
         }
 
         header {
             background: var(--card-bg);
-            padding: 1.5rem 2rem;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            margin-bottom: 1.5rem;
+            padding: 24px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 24px;
+            border: 1px solid var(--border-color);
         }
 
         h1 {
             font-size: 1.5rem;
             color: var(--text-main);
-            margin-bottom: 0.5rem;
+            margin-bottom: 8px;
         }
 
-        p.subtitle {
+        p.desc {
             color: var(--text-muted);
             font-size: 0.95rem;
-            margin-bottom: 1rem;
         }
 
-        .file-controls {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-            align-items: center;
-            padding-top: 1rem;
-            border-top: 1px solid var(--border-color);
+        .upload-section {
+            background: var(--card-bg);
+            border: 2px dashed var(--accent-border);
+            border-radius: var(--radius);
+            padding: 35px 20px;
+            text-align: center;
+            margin-bottom: 24px;
+            transition: border-color 0.2s, background-color 0.2s;
+            cursor: pointer;
+        }
+
+        .upload-section:hover, .upload-section.dragover {
+            border-color: var(--primary);
+            background-color: var(--accent-light);
+        }
+
+        .upload-section input[type="file"] {
+            display: none;
         }
 
         .btn {
+            display: inline-block;
             background-color: var(--primary);
             color: white;
-            padding: 0.6rem 1.2rem;
+            padding: 10px 20px;
+            border-radius: 8px;
             border: none;
-            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.95rem;
             cursor: pointer;
-            font-weight: 500;
-            font-size: 0.9rem;
-            transition: background 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
+            transition: background-color 0.2s;
+            margin-top: 10px;
         }
 
         .btn:hover {
             background-color: var(--primary-hover);
         }
 
-        .btn-secondary {
-            background-color: #94a3b8;
-        }
-
-        .btn-secondary:hover {
-            background-color: #64748b;
-        }
-
         .btn-success {
             background-color: var(--success);
         }
-
         .btn-success:hover {
             background-color: #059669;
         }
 
-        input[type="file"] {
-            display: none;
-        }
-
-        .file-label {
-            background-color: #f1f5f9;
-            color: var(--text-main);
-            padding: 0.6rem 1.2rem;
-            border: 1px dashed #cbd5e1;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: border-color 0.2s, background 0.2s;
-        }
-
-        .file-label:hover {
-            background-color: #e2e8f0;
-            border-color: var(--primary);
-        }
-
-        .user-info-card, .quiz-card {
+        .sticky-toolbar {
+            position: sticky;
+            top: 12px;
+            z-index: 100;
             background: var(--card-bg);
-            padding: 1.5rem 2rem;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.2rem;
-        }
-
-        .form-group label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 0.4rem;
-            font-size: 0.95rem;
-        }
-
-        .form-group input[type="text"] {
-            width: 100%;
-            padding: 0.6rem 0.8rem;
+            padding: 16px 24px;
+            border-radius: var(--radius);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
             border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 0.95rem;
-        }
-
-        .question-block {
-            margin-bottom: 2rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .question-block:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-
-        .question-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 0.8rem;
-            color: var(--text-main);
-        }
-
-        .options-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.6rem;
-        }
-
-        .option-item {
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            padding: 0.5rem 0.8rem;
-            border-radius: 6px;
-            border: 1px solid var(--border-color);
-            cursor: pointer;
-            transition: background 0.15s;
-        }
-
-        .option-item:hover {
-            background-color: #f8fafc;
-        }
-
-        .option-item input {
-            cursor: pointer;
-        }
-
-        textarea.open-answer {
-            width: 100%;
-            min-height: 80px;
-            padding: 0.6rem;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 0.95rem;
-            resize: vertical;
-        }
-
-        .actions {
+            margin-bottom: 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 1.5rem;
+            flex-wrap: wrap;
+            gap: 12px;
         }
 
-        .quiz-title-header {
-            font-size: 1.3rem;
-            margin-bottom: 0.5rem;
+        .progress-container {
+            flex-grow: 1;
+            min-width: 200px;
         }
 
-        .quiz-desc {
+        .progress-bar-bg {
+            background: var(--border-color);
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+
+        .progress-bar-fill {
+            background: var(--primary);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 0.85rem;
+            font-weight: 600;
             color: var(--text-muted);
-            margin-bottom: 1.5rem;
-            font-size: 0.95rem;
         }
 
-        #statusMessage {
-            margin-top: 1rem;
-            padding: 0.8rem;
-            border-radius: 6px;
-            display: none;
+        .question-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            transition: border-color 0.2s;
+        }
+
+        .question-card.answered {
+            border-left: 5px solid var(--success);
+        }
+
+        .question-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 14px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .question-number {
+            color: var(--primary);
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 10px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 10px 12px;
+            background: #f1f5f9;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
             font-size: 0.9rem;
+            user-select: none;
+            transition: all 0.15s ease;
+            min-height: 48px;
         }
 
-        .status-success {
-            background-color: #d1fae5;
-            color: #065f46;
-            border: 1px solid #a7f3d0;
+        .option-label:hover {
+            background: var(--accent-light);
+            border-color: var(--accent-border);
         }
 
-        .status-error {
-            background-color: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #fecaca;
+        .option-label input[type="radio"] {
+            display: none;
+        }
+
+        .option-label.selected {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            font-weight: 600;
+        }
+
+        .actions-footer {
+            margin-top: 30px;
+            text-align: center;
+            padding: 20px;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 600px) {
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+            .sticky-toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
     <header>
-        <h1>Platforma Testowa</h1>
-        <p class="subtitle">Wgraj plik testu w formacie JSON, wypełnij go i pobierz wyniki do pliku CSV.</p>
-        
-        <div class="file-controls">
-            <label class="file-label" for="jsonInput">
-                📁 Wczytaj plik JSON z testem
-            </label>
-            <input type="file" id="jsonInput" accept=".json">
-            <button class="btn btn-secondary" id="btnDownloadSample">📥 Pobierz szablon JSON</button>
-        </div>
-        <div id="statusMessage"></div>
+        <h1 id="test-title">Wczytaj kwestionariusz / test JSON</h1>
+        <p class="desc" id="test-desc">Wgraj plik JSON z pytaniami, aby rozpocząć wypełnianie. Po wygenerowaniu formularza będziesz mógł pobrać plik CSV z punktacją.</p>
     </header>
 
-    <div class="user-info-card">
-        <div class="form-group">
-            <label for="userName">Imię i Nazwisko / Identyfikator:</label>
-            <input type="text" id="userName" placeholder="np. Jan Kowalski">
+    <div class="upload-section" id="drop-zone">
+        <p style="font-size: 1.1rem; font-weight: 500; margin-bottom: 8px;">Przeciągnij i upuść plik JSON tutaj</p>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 12px;">lub</p>
+        <label for="json-input" class="btn">Wybierz plik z dysku</label>
+        <input type="file" id="json-input" accept=".json">
+    </div>
+
+    <div id="test-container" class="hidden">
+        <div class="sticky-toolbar">
+            <div class="progress-container">
+                <div class="progress-text">Postęp: <span id="answered-count">0</span> / <span id="total-count">0</span></div>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" id="progress-fill"></div>
+                </div>
+            </div>
+            <button class="btn btn-success" id="export-btn">Pobierz wyniki CSV</button>
+        </div>
+
+        <div id="questions-list"></div>
+
+        <div class="actions-footer">
+            <button class="btn btn-success" id="export-btn-footer" style="padding: 12px 30px; font-size: 1rem;">Pobierz wyniki CSV</button>
         </div>
     </div>
 
-    <div class="quiz-card" id="quizCard">
-        <h2 class="quiz-title-header" id="quizTitle">Tytuł Testu</h2>
-        <p class="quiz-desc" id="quizDescription">Opis testu pojawi się w tym miejscu.</p>
-        
-        <form id="quizForm">
-            <div id="questionsContainer"></div>
+    <script>
+        let currentTestData = null;
+        let userAnswers = {}; // { questionIndex: { points: Number, optionText: String } }
 
-            <div class="actions">
-                <button type="button" class="btn btn-secondary" id="btnReset">Resetuj odpowiedzi</button>
-                <button type="submit" class="btn btn-success" id="btnSubmit">Zakończ i pobierz wyniki (.CSV)</button>
-            </div>
-        </form>
-    </div>
-</div>
+        const dropZone = document.getElementById('drop-zone');
+        const jsonInput = document.getElementById('json-input');
+        const testContainer = document.getElementById('test-container');
+        const questionsList = document.getElementById('questions-list');
+        const testTitle = document.getElementById('test-title');
+        const testDesc = document.getElementById('test-desc');
+        const answeredCountEl = document.getElementById('answered-count');
+        const totalCountEl = document.getElementById('total-count');
+        const progressFill = document.getElementById('progress-fill');
+        const exportBtn = document.getElementById('export-btn');
+        const exportBtnFooter = document.getElementById('export-btn-footer');
 
-<script>
-    // Domyślny / przykładowy test JSON
-    const defaultQuiz = {
-        "title": "Przykładowy Test Wiedzy Ogólnej",
-        "description": "To jest przykładowy test. Wybierz odpowiednie opcje lub wpisz odpowiedzi, a następnie pobierz wynik jako CSV.",
-        "questions": [
-            {
-                "id": "Q1",
-                "question": "Jaka jest stolica Polski?",
-                "type": "single",
-                "options": ["Kraków", "Warszawa", "Gdańsk", "Wrocław"]
-            },
-            {
-                "id": "Q2",
-                "question": "Które z poniższych są językami programowania? (Wybierz wszystkie poprawne)",
-                "type": "multiple",
-                "options": ["Python", "HTML", "Java", "CSS"]
-            },
-            {
-                "id": "Q3",
-                "question": "Opisz krótko, czym różni się testowanie jednostkowe od integracyjnego.",
-                "type": "text"
+        // Obsługa przeciągania i upuszczania plików
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            if (e.dataTransfer.files.length > 0) {
+                handleFile(e.dataTransfer.files[0]);
             }
-        ]
-    };
+        });
 
-    let currentQuizData = defaultQuiz;
+        jsonInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
 
-    // Elementy DOM
-    const jsonInput = document.getElementById('jsonInput');
-    const btnDownloadSample = document.getElementById('btnDownloadSample');
-    const quizTitle = document.getElementById('quizTitle');
-    const quizDescription = document.getElementById('quizDescription');
-    const questionsContainer = document.getElementById('questionsContainer');
-    const quizForm = document.getElementById('quizForm');
-    const btnReset = document.getElementById('btnReset');
-    const statusMessage = document.getElementById('statusMessage');
-
-    // Inicjalizacja
-    document.addEventListener('DOMContentLoaded', () => {
-        renderQuiz(currentQuizData);
-    });
-
-    // Obsługa wczytywania własnego JSON
-    jsonInput.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            try {
-                const parsed = JSON.parse(event.target.result);
-                if (!parsed.questions || !Array.isArray(parsed.questions)) {
-                    throw new Error("Plik JSON musi zawierać tablicę 'questions'.");
+        function handleFile(file) {
+            if (!file.name.endsWith('.json')) {
+                alert('Proszę wybrać plik w formacie .json');
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    if (!parsed.questions || !Array.isArray(parsed.questions)) {
+                        alert('Nieprawidłowy format JSON: brak tablicy "questions".');
+                        return;
+                    }
+                    loadTest(parsed);
+                } catch (err) {
+                    alert('Błąd podczas odczytu pliku JSON: ' + err.message);
                 }
-                currentQuizData = parsed;
-                renderQuiz(currentQuizData);
-                showMessage("Pomyślnie załadowano test: " + (parsed.title || "Bez tytułu"), "success");
-            } catch (err) {
-                showMessage("Błąd odczytu pliku JSON: " + err.message, "error");
-            }
-        };
-        reader.readAsText(file);
-    });
+            };
+            reader.readAsText(file);
+        }
 
-    // Pobieranie szablonu JSON
-    btnDownloadSample.addEventListener('click', () => {
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(defaultQuiz, null, 2));
-        const downloadAnchor = document.createElement('a');
-        downloadAnchor.setAttribute("href", dataStr);
-        downloadAnchor.setAttribute("download", "szablon_testu.json");
-        document.body.appendChild(downloadAnchor);
-        downloadAnchor.click();
-        downloadAnchor.remove();
-    });
+        function loadTest(data) {
+            currentTestData = data;
+            userAnswers = {};
 
-    // Renderowanie pytań
-    function renderQuiz(quiz) {
-        quizTitle.textContent = quiz.title || "Test bez tytułu";
-        quizDescription.textContent = quiz.description || "";
-        questionsContainer.innerHTML = "";
+            testTitle.textContent = data.title || 'Kwestionariusz / Test';
+            testDesc.textContent = data.description || '';
 
-        quiz.questions.forEach((q, index) => {
-            const qDiv = document.createElement('div');
-            qDiv.className = 'question-block';
+            renderQuestions();
+            updateProgress();
 
-            const qTitle = document.createElement('div');
-            qTitle.className = 'question-title';
-            const questionText = q.question || q.text || `Pytanie ${index + 1}`;
-            qTitle.textContent = `${index + 1}. ${questionText}`;
-            qDiv.appendChild(qTitle);
+            dropZone.classList.add('hidden');
+            testContainer.classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
 
-            if (q.type === 'single' && q.options) {
-                const optionsDiv = document.createElement('div');
-                optionsDiv.className = 'options-list';
-                q.options.forEach((opt, optIndex) => {
+        function renderQuestions() {
+            questionsList.innerHTML = '';
+            totalCountEl.textContent = currentTestData.questions.length;
+
+            currentTestData.questions.forEach((q, qIndex) => {
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `q-card-${qIndex}`;
+
+                const title = document.createElement('div');
+                title.className = 'question-title';
+                title.innerHTML = `<span class="question-number">${qIndex + 1}.</span><span>${escapeHtml(q.text)}</span>`;
+                card.appendChild(title);
+
+                const optionsGrid = document.createElement('div');
+                optionsGrid.className = 'options-grid';
+
+                const options = q.options || [];
+                const pointsMap = q.points || {};
+
+                options.forEach((optText, oIndex) => {
                     const label = document.createElement('label');
-                    label.className = 'option-item';
+                    label.className = 'option-label';
                     
-                    const radio = document.createElement('input');
-                    radio.type = 'radio';
-                    radio.name = `q_${q.id || index}`;
-                    radio.value = opt;
+                    // Odczytanie liczby punktów dla danej opcji z mapy 'points' w JSON
+                    let ptValue = 0;
+                    if (pointsMap && pointsMap[optText] !== undefined) {
+                        ptValue = pointsMap[optText];
+                    } else {
+                        ptValue = oIndex + 1; // domyślne narastające punktowanie w razie braku mapy
+                    }
 
-                    label.appendChild(radio);
-                    label.appendChild(document.createTextNode(opt));
-                    optionsDiv.appendChild(label);
-                });
-                qDiv.appendChild(optionsDiv);
-            } else if (q.type === 'multiple' && q.options) {
-                const optionsDiv = document.createElement('div');
-                optionsDiv.className = 'options-list';
-                q.options.forEach((opt, optIndex) => {
-                    const label = document.createElement('label');
-                    label.className = 'option-item';
-                    
-                    const checkbox = document.createElement('input');
-                    checkbox.type = 'checkbox';
-                    checkbox.name = `q_${q.id || index}`;
-                    checkbox.value = opt;
+                    label.innerHTML = `
+                        <input type="radio" name="q_${qIndex}" value="${escapeHtml(optText)}" data-points="${ptValue}">
+                        <span>${escapeHtml(optText)}</span>
+                    `;
 
-                    label.appendChild(checkbox);
-                    label.appendChild(document.createTextNode(opt));
-                    optionsDiv.appendChild(label);
+                    label.addEventListener('click', () => {
+                        selectOption(qIndex, optText, ptValue, card, optionsGrid, label);
+                    });
+
+                    optionsGrid.appendChild(label);
                 });
-                qDiv.appendChild(optionsDiv);
-            } else if (q.type === 'text') {
-                const textarea = document.createElement('textarea');
-                textarea.className = 'open-answer';
-                textarea.name = `q_${q.id || index}`;
-                textarea.placeholder = "Wpisz tutaj swoją odpowiedź...";
-                qDiv.appendChild(textarea);
+
+                card.appendChild(optionsGrid);
+                questionsList.appendChild(card);
+            });
+        }
+
+        function selectOption(qIndex, optionText, points, cardEl, gridEl, selectedLabel) {
+            userAnswers[qIndex] = {
+                questionNum: qIndex + 1,
+                questionText: currentTestData.questions[qIndex].text,
+                selectedOption: optionText,
+                points: points
+            };
+
+            // Zmiana wyglądu zaktualizowanego pytania
+            const labels = gridEl.querySelectorAll('.option-label');
+            labels.forEach(l => l.classList.remove('selected'));
+            selectedLabel.classList.add('selected');
+            cardEl.classList.add('answered');
+
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const answeredCount = Object.keys(userAnswers).length;
+            const totalCount = currentTestData ? currentTestData.questions.length : 0;
+            
+            answeredCountEl.textContent = answeredCount;
+            const percentage = totalCount > 0 ? (answeredCount / totalCount) * 100 : 0;
+            progressFill.style.width = `${percentage}%`;
+        }
+
+        function downloadCSV() {
+            if (!currentTestData) return;
+
+            const totalCount = currentTestData.questions.length;
+            const answeredCount = Object.keys(userAnswers).length;
+
+            if (answeredCount < totalCount) {
+                const confirmExport = confirm(`Uzupełniono ${answeredCount} z ${totalCount} pytań. Czy na pewno chcesz pobrać plik CSV z dotychczasowymi odpowiedziami?`);
+                if (!confirmExport) return;
             }
 
-            questionsContainer.appendChild(qDiv);
-        });
-    }
+            let csvRows = [];
+            // Nagłówki pliku CSV
+            csvRows.push(['Numer pytania', 'Punkty (Cyfrowo)', 'Treść pytania', 'Wybrana odpowiedź']);
 
-    // Resetowanie formularza
-    btnReset.addEventListener('click', () => {
-        quizForm.reset();
-    });
+            for (let i = 0; i < totalCount; i++) {
+                const ans = userAnswers[i];
+                const qNum = i + 1;
+                const qText = currentTestData.questions[i].text;
 
-    // Generowanie i pobieranie CSV po zatwierdzeniu
-    quizForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-
-        const userName = document.getElementById('userName').value.trim() || "Anonim";
-        const dateStr = new Date().toLocaleString('pl-PL');
-        
-        let csvRows = [];
-        
-        // Nagłówek CSV (używamy ';' jako separatora optymalnego dla polskiego Excela)
-        csvRows.push(["Użytkownik", "Data wykonania", "ID Pytania", "Pytanie", "Odpowiedź"].map(escapeCsvField).join(";"));
-
-        currentQuizData.questions.forEach((q, index) => {
-            const fieldName = `q_${q.id || index}`;
-            let answer = "";
-
-            if (q.type === 'single') {
-                const checked = quizForm.querySelector(`input[name="${fieldName}"]:checked`);
-                answer = checked ? checked.value : "[Brak odpowiedzi]";
-            } else if (q.type === 'multiple') {
-                const checkedList = quizForm.querySelectorAll(`input[name="${fieldName}"]:checked`);
-                const answers = Array.from(checkedList).map(cb => cb.value);
-                answer = answers.length > 0 ? answers.join(" | ") : "[Brak odpowiedzi]";
-            } else if (q.type === 'text') {
-                const textarea = quizForm.querySelector(`textarea[name="${fieldName}"]`);
-                answer = textarea && textarea.value.trim() ? textarea.value.trim() : "[Brak odpowiedzi]";
+                if (ans) {
+                    csvRows.push([
+                        qNum,
+                        ans.points,
+                        `"${qText.replace(/"/g, '""')}"`,
+                        `"${ans.selectedOption.replace(/"/g, '""')}"`
+                    ]);
+                } else {
+                    csvRows.push([
+                        qNum,
+                        'Brak odpowiedzi',
+                        `"${qText.replace(/"/g, '""')}"`,
+                        '--'
+                    ]);
+                }
             }
 
-            const questionText = q.question || q.text || `Pytanie ${index + 1}`;
+            // UTF-8 BOM (\uFEFF) gwarantuje poprawne wyświetlanie polskich znaków w Excelu
+            const csvString = '\uFEFF' + csvRows.map(e => e.join(';')).join('\n');
+            const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+            
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            const safeTitle = (currentTestData.title || 'wynik_testu').toLowerCase().replace(/[^a-z0-9aząśęćżźńół]+/gi, '_');
+            link.setAttribute('href', url);
+            link.setAttribute('download', `wyniki_${safeTitle}.csv`);
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
 
-            const row = [
-                userName,
-                dateStr,
-                q.id || `Pytanie_${index + 1}`,
-                questionText,
-                answer
-            ];
+        exportBtn.addEventListener('click', downloadCSV);
+        exportBtnFooter.addEventListener('click', downloadCSV);
 
-            csvRows.push(row.map(escapeCsvField).join(";"));
-        });
-
-        const csvContent = csvRows.join("\n");
-        downloadCSV(csvContent, `wyniki_${(currentQuizData.title || "test").toLowerCase().replace(/[^a-z0-9]/gi, '_')}.csv`);
-        showMessage("Wyniki zostały pomyślnie wygenerowane i pobrane!", "success");
-    });
-
-    // Pomocnicze funkcje do CSV
-    function escapeCsvField(field) {
-        if (field === null || field === undefined) return '""';
-        let stringField = String(field);
-        stringField = stringField.replace(/"/g, '""');
-        stringField = stringField.replace(/\r?\n/g, ' ');
-        return `"${stringField}"`;
-    }
-
-    function downloadCSV(content, filename) {
-        // UTF-8 BOM dociągany do poprawnego otwierania polskich znaków w Excelu
-        const bom = '\uFEFF';
-        const blob = new Blob([bom + content], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement('a');
-        const url = URL.createObjectURL(blob);
-        
-        link.setAttribute('href', url);
-        link.setAttribute('download', filename);
-        link.style.visibility = 'hidden';
-        
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
-
-    function showMessage(text, type) {
-        statusMessage.textContent = text;
-        statusMessage.className = type === 'success' ? 'status-success' : 'status-error';
-        statusMessage.style.display = 'block';
-        setTimeout(() => {
-            statusMessage.style.display = 'none';
-        }, 5000);
-    }
-</script>
-
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
 </body>
 </html>
