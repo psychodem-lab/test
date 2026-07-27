@@ -367,7 +367,8 @@
 
             const qTitle = document.createElement('div');
             qTitle.className = 'question-title';
-            qTitle.textContent = `${index + 1}. ${q.question}`;
+            const questionText = q.question || q.text || `Pytanie ${index + 1}`;
+            qTitle.textContent = `${index + 1}. ${questionText}`;
             qDiv.appendChild(qTitle);
 
             if (q.type === 'single' && q.options) {
@@ -449,11 +450,13 @@
                 answer = textarea && textarea.value.trim() ? textarea.value.trim() : "[Brak odpowiedzi]";
             }
 
+            const questionText = q.question || q.text || `Pytanie ${index + 1}`;
+
             const row = [
                 userName,
                 dateStr,
                 q.id || `Pytanie_${index + 1}`,
-                q.question,
+                questionText,
                 answer
             ];
 
@@ -473,7 +476,6 @@
         stringField = stringField.replace(/"/g, '""');
         stringField = stringField.replace(/
 ?
-|
 /g, ' ');
         return `"${stringField}"`;
     }
