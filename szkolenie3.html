@@ -42,27 +42,31 @@
 
         .slide-wrapper {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100%;
+            inset: 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden; /* Ważne: przycina powiększony obraz */
-            position: relative;
             transform-style: preserve-3d;
-            backface-visibility: hidden;
             transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
                         opacity 0.6s ease;
             will-change: transform, opacity;
         }
 
-        .slide {
+        .slide-clip {
             max-width: 95%;
             max-height: 95%;
-            object-fit: contain;
+            overflow: hidden; /* Przycina powiększony obraz */
+            display: flex;
+            justify-content: center;
+            align-items: center;
             box-shadow: 0 10px 50px rgba(0,0,0,0.7);
+            border-radius: 4px;
+        }
+
+        .slide {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
             pointer-events: none;
             user-select: none;
             transition: transform 0.1s ease-out;
@@ -164,11 +168,11 @@
 
     <div class="viewport" id="viewport">
         <div class="slider-track" id="track">
-            <div class="slide-wrapper" data-link="https://psychodem-lab.github.io/CBT/index.html"><img src="prezentacja/slajd1.JPG" class="slide"></div>
-            <div class="slide-wrapper"><img src="prezentacja/slajd2.JPG" class="slide"></div>
-            <div class="slide-wrapper" data-link="https://wikipedia.org"><img src="prezentacja/slajd3.JPG" class="slide"></div>
-            <div class="slide-wrapper"><img src="prezentacja/slajd2.JPG" class="slide"></div>
-            <div class="slide-wrapper"><img src="prezentacja/slajd2.JPG" class="slide"></div>
+            <div class="slide-wrapper" data-link="https://psychodem-lab.github.io/CBT/index.html"><div class="slide-clip"><img src="prezentacja/slajd1.JPG" class="slide"></div></div>
+            <div class="slide-wrapper"><div class="slide-clip"><img src="prezentacja/slajd2.JPG" class="slide"></div></div>
+            <div class="slide-wrapper" data-link="https://wikipedia.org"><div class="slide-clip"><img src="prezentacja/slajd3.JPG" class="slide"></div></div>
+            <div class="slide-wrapper"><div class="slide-clip"><img src="prezentacja/slajd2.JPG" class="slide"></div></div>
+            <div class="slide-wrapper"><div class="slide-clip"><img src="prezentacja/slajd2.JPG" class="slide"></div></div>
         </div>
     </div>
 
@@ -199,10 +203,10 @@
             resetTransform();
             // Pozycjonowanie slajdów z efektem convex (obrót 3D na osi Y)
             slides.forEach((s, i) => {
-                let offset = 0, rotY = 0;
-                if (i < currentSlide) { offset = -100; rotY = 60; }
-                else if (i > currentSlide) { offset = 100; rotY = -60; }
-                s.style.transform = `translateX(${offset}%) rotateY(${rotY}deg) scale(0.85)`;
+                let offset = 0, rotY = 0, scl = 1;
+                if (i < currentSlide) { offset = -100; rotY = 60; scl = 0.85; }
+                else if (i > currentSlide) { offset = 100; rotY = -60; scl = 0.85; }
+                s.style.transform = `translateX(${offset}%) rotateY(${rotY}deg) scale(${scl})`;
                 s.style.opacity = (i === currentSlide) ? '1' : '0';
                 s.style.zIndex = (i === currentSlide) ? '2' : '1';
             });
