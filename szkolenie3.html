@@ -31,23 +31,31 @@
             height: 85vh;
             overflow: hidden;
             position: relative;
+            perspective: 1500px; /* Efekt wypukłości (convex) z reveal.js */
         }
 
         .slider-track {
-            display: flex;
+            position: relative;
             height: 100%;
-            transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            will-change: transform;
+            transform-style: preserve-3d;
         }
 
         .slide-wrapper {
-            min-width: 100vw;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
             height: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
             overflow: hidden; /* Ważne: przycina powiększony obraz */
             position: relative;
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+            transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                        opacity 0.6s ease;
+            will-change: transform, opacity;
         }
 
         .slide {
@@ -131,7 +139,15 @@
         }
         .btn { padding: 12px 20px; background: #2a2a2a; color: white; border: 1px solid #444; border-radius: 8px; min-width: 120px; }
         .btn:disabled { opacity: 0.15; }
-        .fs-btn { background: var(--primary-color); border: none; }
+        .fs-btn { background: var(--primary-color); border: none; transition: background 0.2s, transform 0.1s; }
+        .fs-btn:hover { background: #008ff0; transform: translateY(-1px); }
+        .fs-btn:active { transform: translateY(1px); }
+
+        /* Wygląd w trybie pełnoekranowym */
+        :fullscreen { background: var(--bg-color); }
+        :-webkit-full-screen { background: var(--bg-color); }
+        :fullscreen .viewport { height: calc(100vh - 80px); }
+        :fullscreen .controls-bar { box-shadow: 0 -2px 20px rgba(0,0,0,0.6); }
     </style>
 </head>
 <body>
@@ -158,7 +174,7 @@
 
     <div class="controls-bar">
         <button id="prevBtn" class="btn" onclick="changeSlide(-1)">❮ Poprzedni</button>
-        <button class="btn fs-btn" onclick="toggleFullScreen()">⛶</button>
+        <button id="fsBtn" class="btn fs-btn" onclick="toggleFullScreen()" title="Pełny ekran (F)">⛶</button>
         <button id="nextBtn" class="btn" onclick="changeSlide(1)">Następny ❯</button>
     </div>
 
@@ -181,7 +197,15 @@
         function updateSlider() {
             scale = 1; pointX = 0; pointY = 0; // Reset przy zmianie
             resetTransform();
-            track.style.transform = `translateX(-${currentSlide * 100}vw)`;
+            // Pozycjonowanie slajdów z efektem convex (obrót 3D na osi Y)
+            slides.forEach((s, i) => {
+                let offset = 0, rotY = 0;
+                if (i < currentSlide) { offset = -100; rotY = 60; }
+                else if (i > currentSlide) { offset = 100; rotY = -60; }
+                s.style.transform = `translateX(${offset}%) rotateY(${rotY}deg) scale(0.85)`;
+                s.style.opacity = (i === currentSlide) ? '1' : '0';
+                s.style.zIndex = (i === currentSlide) ? '2' : '1';
+            });
             counter.innerText = `SLAJD ${currentSlide + 1} / ${slides.length}`;
             const url = slides[currentSlide].getAttribute('data-link');
             linkBtn.style.display = url ? 'block' : 'none';
@@ -262,9 +286,29 @@
 
         function toggleGrid(show) { document.getElementById('gridOverlay').classList.toggle('active', show); }
         function toggleFullScreen() {
-            if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-            else document.exitFullscreen();
+            const elem = document.documentElement;
+            const isFs = document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement;
+            if (!isFs) {
+                if (elem.requestFullscreen) elem.requestFullscreen();
+                else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+                else if (elem.msRequestFullscreen) elem.msRequestFullscreen();
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+                else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+                else if (document.msExitFullscreen) document.msExitFullscreen();
+            }
         }
+
+        function updateFsButton() {
+            const fsBtn = document.getElementById('fsBtn');
+            const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement);
+            fsBtn.innerText = isFs ? '⤫' : '⛶';
+            fsBtn.title = isFs ? 'Wyjdź z pełnego ekranu (F)' : 'Pełny ekran (F)';
+        }
+
+        document.addEventListener('fullscreenchange', updateFsButton);
+        document.addEventListener('webkitfullscreenchange', updateFsButton);
+        document.addEventListener('MSFullscreenChange', updateFsButton);
 
         document.addEventListener('keydown', e => {
             if (e.key === "ArrowRight") changeSlide(1);
@@ -274,6 +318,7 @@
 
         generateGrid();
         updateSlider();
+        updateFsButton();
     </script>
 </body>
 </html>
