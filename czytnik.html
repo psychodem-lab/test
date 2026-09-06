@@ -144,6 +144,7 @@
                 <button onclick="loadFeed('cnn')" id="btn-cnn">Świat</button>
                 <button onclick="loadFeed('gazetaru')" id="btn-gazetaru">Ruskie</button>
                 <button onclick="loadFeed('psychologia')" id="btn-psychologia">Psychologia</button>
+                <button onclick="loadFeed('kalendarz')" id="btn-kalendarz">Kalendarz</button>
             </nav>
         </header>
         
@@ -172,13 +173,17 @@
             'https://www.reutersagency.com/feed/?best-topics=political-general-news&post_type=best': 'Reuters Agency',
             'https://www.gazeta.ru/export/rss/first.xml': 'Gazeta.ru',
             'https://www.polsatnews.pl/rss/wszystkie.xml': 'Polsat News',
-            'https://news.google.com/rss?hl=pl&gl=PL&ceid=PL:pl': 'Google News',
+            'https://news.google.com/rss/search?q=kalendarz+swiat+polska&hl=pl&gl=PL&ceid=PL:pl': 'Google News',
             'https://rss.dw.com/xml/rss-pl-pol': 'DW Polska',
             'https://www.polsatsport.pl/rss/wszystkie.xml': 'Polsat Sport',
             'https://www.rynekzdrowia.pl/Kanal/all.xml': 'Rynek Zdrowia',
             'https://news.google.com/rss/search?q=psychologia&hl=pl&gl=PL&ceid=PL:pl': 'Psychologia (Google News)',
             'https://news.google.com/rss/search?q=psychoterapia+OR+pttpb&hl=pl&gl=PL&ceid=PL:pl': 'PTTPB / Psychoterapia',
-            'https://news.google.com/rss/search?q=zdrowie+psychiczne&hl=pl&gl=PL&ceid=PL:pl': 'Zdrowie Psychiczne'
+            'https://news.google.com/rss/search?q=zdrowie+psychiczne&hl=pl&gl=PL&ceid=PL:pl': 'Zdrowie Psychiczne',
+            'https://news.google.com/rss/search?q=%C5%9bwieta+nietypowe+dzisiaj+kalendarz&hl=pl&gl=PL&ceid=PL:pl': 'Kalendarz Świąt',
+            'https://news.google.com/rss/search?q=imieniny+dzisiaj+kalendarz&hl=pl&gl=PL&ceid=PL:pl': 'Imieniny i Święta',
+            'https://news.google.com/rss/search?q=wydarzenia+historyczne+dnia+kalendarz&hl=pl&gl=PL&ceid=PL:pl': 'Wydarzenia Historyczne',
+            'https://news.google.com/rss/search?q=%C5%9bwieta+pa%C5%84stwowe+i+ko%C5%bccielne&hl=pl&gl=PL&ceid=PL:pl': 'Kalendarz Państwowy'
         };
 
         const feeds = {
@@ -209,7 +214,7 @@
             ],
             pl2: [
                 'https://www.polsatnews.pl/rss/wszystkie.xml',  
-                'https://news.google.com/rss?hl=pl&gl=PL&ceid=PL:pl',
+                'https://news.google.com/rss/search?q=kalendarz+swiat+polska&hl=pl&gl=PL&ceid=PL:pl',
                 'https://rss.dw.com/xml/rss-pl-pol',
                 'https://www.polsatsport.pl/rss/wszystkie.xml',
                 'https://www.rynekzdrowia.pl/Kanal/all.xml'
@@ -218,6 +223,12 @@
                 'https://news.google.com/rss/search?q=psychologia&hl=pl&gl=PL&ceid=PL:pl',
                 'https://news.google.com/rss/search?q=psychoterapia+OR+pttpb&hl=pl&gl=PL&ceid=PL:pl',
                 'https://news.google.com/rss/search?q=zdrowie+psychiczne&hl=pl&gl=PL&ceid=PL:pl'
+            ],
+            kalendarz: [
+                'https://news.google.com/rss/search?q=%C5%9bwieta+nietypowe+dzisiaj+kalendarz&hl=pl&gl=PL&ceid=PL:pl',
+                'https://news.google.com/rss/search?q=imieniny+dzisiaj+kalendarz&hl=pl&gl=PL&ceid=PL:pl',
+                'https://news.google.com/rss/search?q=wydarzenia+historyczne+dnia+kalendarz&hl=pl&gl=PL&ceid=PL:pl',
+                'https://news.google.com/rss/search?q=%C5%9bwieta+pa%C5%84stwowe+i+ko%C5%bccielne&hl=pl&gl=PL&ceid=PL:pl'
             ]
         };
 
@@ -225,6 +236,7 @@
         const feedCache = {};
         let currentItems = [];
         let displayedCount = 0;
+        let currentSourceKey = '';
         const batchSize = 10;
 
         // --- AUTOMATYCZNE TŁUMACZENIE NA JĘZYK POLSKI ---
@@ -240,6 +252,145 @@
                 }
             } catch (e) {}
             return text;
+        }
+
+        // --- POMOCNICZE FUNKCJE KALENDARZOWE NA ŻYWO ---
+        function getDayOfYear(date) {
+            const start = new Date(date.getFullYear(), 0, 0);
+            const diff = date - start;
+            const oneDay = 1000 * 60 * 60 * 24;
+            return Math.floor(diff / oneDay);
+        }
+
+        function getWeekNumber(date) {
+            const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+            const dayNum = d.getUTCDay() || 7;
+            d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+            const yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+            return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+        }
+
+        function getZodiacSign(day, month) {
+            if ((month == 3 && day >= 21) || (month == 4 && day <= 19)) return "Baran ♈︎";
+            if ((month == 4 && day >= 20) || (month == 5 && day <= 20)) return "Byk ♉︎";
+            if ((month == 5 && day >= 21) || (month == 6 && day <= 20)) return "Bliźnięta ♊︎";
+            if ((month == 6 && day >= 21) || (month == 7 && day <= 22)) return "Rak ♋︎";
+            if ((month == 7 && day >= 23) || (month == 8 && day <= 22)) return "Lew ♌︎";
+            if ((month == 8 && day >= 23) || (month == 9 && day <= 22)) return "Panna ♍︎";
+            if ((month == 9 && day >= 23) || (month == 10 && day <= 22)) return "Waga ♎︎";
+            if ((month == 10 && day >= 23) || (month == 11 && day <= 21)) return "Skorpion ♏︎";
+            if ((month == 11 && day >= 22) || (month == 12 && day <= 21)) return "Strzelec ♐︎";
+            if ((month == 12 || month == 1) && (month == 12 ? day >= 22 : day <= 19)) return "Koziorożec ♑︎";
+            if ((month == 1 && day >= 20) || (month == 2 && day <= 18)) return "Wodnik ♒︎";
+            return "Ryby ♓︎";
+        }
+
+        function getYearStats(date) {
+            const year = date.getFullYear();
+            const end = new Date(year, 11, 31);
+            const diffDays = Math.ceil((end - date) / (1000 * 60 * 60 * 24));
+            return { diffDays };
+        }
+
+        function getMoonPhase(date) {
+            // Obliczenia astronomiczne: cykl synodyczny 29.53058867 dni od nowiu 2000-01-06 18:14 UTC
+            const synodic = 29.53058867;
+            const known = Date.UTC(2000, 0, 6, 18, 14) / 86400000;
+            const days = date.getTime() / 86400000 - known;
+            let age = days % synodic;
+            if (age < 0) age += synodic;
+            const illum = Math.round((1 - Math.cos(2 * Math.PI * age / synodic)) / 2 * 100);
+            let name = '';
+            if (age < 1.5 || age > synodic - 1.5) name = 'Nów 🌑';
+            else if (age < 7.4) name = 'Dąży do pierwszej kwadry 🌒';
+            else if (age < 8.9) name = 'Pierwsza kwadra 🌓';
+            else if (age < 14.8) name = 'Dąży do pełni 🌔';
+            else if (age < 16.3) name = 'Pełnia 🌕';
+            else if (age < 22.2) name = 'Dąży do ostatniej kwadry 🌖';
+            else if (age < 23.7) name = 'Ostatnia kwadra 🌗';
+            else name = 'Dąży do nowiu 🌘';
+            return { name, illum, age: Math.round(age * 10) / 10 };
+        }
+
+        const przyslowia = [
+            '„Jak we wrześniu krety kopią po nizinach, będzie wietrzno, ale lekka zima.”',
+            '„Kto w lecie nie gromadzi, w zimie głodem marudzi.”',
+            '„Lepszy wróbel w garści niż gołąb na dachu.”',
+            '„Bez pracy nie ma kołaczy.”',
+            '„Cicha woda brzegi rwie.”',
+            '„Gdzie dwóch się bije, tam trzeci korzysta.”',
+            '„Jaka pogoda w dzień, taka i w noc.”',
+            '„Mądry Polak po szkodzie.”',
+            '„Nie chwal dnia przed zachodem słońca.”',
+            '„Prawda w oczy kole.”',
+            '„Rano wstawać, a wieczorem się kłaść — to droga do zdrowia.”',
+            '„Słowo się rzekło, kobyłka u płota.”'
+        ];
+
+        const cytaty = [
+            { t: '„Miłość nie leży po prostu jak kamień; trzeba ją robić jak chleb — wciąż od nowa, wciąż na nowo.”', a: 'Ursula K. Le Guin' },
+            { t: '„Bądź zmianą, którą chcesz widzieć w świecie.”', a: 'Mahatma Gandhi' },
+            { t: '„Wszystko, co możesz sobie wyobrazić, jest prawdziwe.”', a: 'Pablo Picasso' },
+            { t: '„Sukces to iść od porażki do porażki bez utraty entuzjazmu.”', a: 'Winston Churchill' },
+            { t: '„Najlepszy czas na działanie jest teraz.”', a: 'przysłowie' },
+            { t: '„Życie to 10% tego, co ci się przydarza, i 90% tego, jak na to reagujesz.”', a: 'Charles R. Swindoll' },
+            { t: '„Nie licz dni, spraw, by dni się liczyły.”', a: 'Muhammad Ali' }
+        ];
+
+        async function fetchSunPL(date) {
+            const iso = date.toISOString().split('T')[0];
+            try {
+                const r = await fetch(`https://api.sunrise-sunset.org/json?lat=49.784&lng=22.767&date=${iso}&formatted=0`);
+                const d = await r.json();
+                if (d?.status === 'OK' && d.results) {
+                    const fmt = (s) => new Date(s).toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' });
+                    const sunrise = fmt(d.results.sunrise);
+                    const sunset = fmt(d.results.sunset);
+                    const secs = d.results.day_length;
+                    const h = Math.floor(secs / 3600), m = Math.round((secs % 3600) / 60);
+                    return { sunrise, sunset, len: `${h} godz. ${m} min` };
+                }
+            } catch (e) {}
+            return null;
+        }
+
+        async function fetchHolidaysPL(date) {
+            const year = date.getFullYear();
+            try {
+                const r = await fetch(`https://date.nager.at/api/v3/PublicHolidays/${year}/PL`);
+                const d = await r.json();
+                if (Array.isArray(d)) {
+                    const todayStr = date.toISOString().split('T')[0];
+                    const todayHol = d.filter(h => h.date === todayStr);
+                    const upcoming = d.filter(h => h.date > todayStr).slice(0, 5).map(h => {
+                        const hd = new Date(h.date + 'T00:00:00');
+                        const diff = Math.ceil((hd - date) / 86400000);
+                        const label = hd.toLocaleDateString('pl-PL', { day: 'numeric', month: 'short' });
+                        return { label, name: h.localName || h.name, diff };
+                    });
+                    return { todayHol, upcoming };
+                }
+            } catch (e) {}
+            return { todayHol: [], upcoming: [] };
+        }
+
+        async function fillCalendarWidget(today) {
+            // Słońce na żywo (Przemyśl, podkarpackie)
+            try {
+                const sun = await fetchSunPL(today);
+                const el = document.getElementById('cal-sun');
+                if (el && sun) el.innerHTML = `🌅 Wschód: ${sun.sunrise} &nbsp;|&nbsp; 🌇 Zachód: ${sun.sunset}<br>⏳ Długość dnia: ${sun.len}`;
+            } catch (e) {}
+            // Najbliższe święta państwowe na żywo
+            try {
+                const hol = await fetchHolidaysPL(today);
+                const elN = document.getElementById('cal-najblizsze');
+                if (elN && hol.upcoming.length > 0) {
+                    elN.innerHTML = hol.upcoming.map(h => `<li><strong>${h.label}:</strong> ${h.name} (za ${h.diff} dni)</li>`).join('');
+                } else if (elN) {
+                    elN.innerHTML = '<li>Brak danych o nadchodzących świętach.</li>';
+                }
+            } catch (e) {}
         }
 
         // --- OBSŁUGA GESTÓW ---
@@ -318,10 +469,61 @@
         }
 
         // --- RENDEROWANIE ARTYKUŁÓW (NEVER ENDING SCROLLING) ---
-        function renderArticles(items, container, append = false) {
+        function renderArticles(items, container, append = false, isCalendar = false) {
             if (!append) {
                 container.innerHTML = '';
                 displayedCount = 0;
+
+                // Jeśli to zakładka kalendarz, wygeneruj widget jak kalendarzswiat.pl + dane na żywo z internetu
+                if (isCalendar) {
+                    const today = new Date();
+                    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                    const dateFormatted = today.toLocaleDateString('pl-PL', options);
+                    const capitalizedDate = dateFormatted.charAt(0).toUpperCase() + dateFormatted.slice(1);
+
+                    const dayOfYear = getDayOfYear(today);
+                    const weekNum = getWeekNumber(today);
+                    const stats = getYearStats(today);
+                    const zodiac = getZodiacSign(today.getDate(), today.getMonth() + 1);
+                    const moon = getMoonPhase(today);
+                    const przyslowie = przyslowia[dayOfYear % przyslowia.length];
+                    const cytat = cytaty[dayOfYear % cytaty.length];
+
+                    const widget = document.createElement('div');
+                    widget.style.cssText = 'background: #161920; border: 1px solid var(--border); border-radius: 10px; padding: 25px; margin-bottom: 40px;';
+                    widget.innerHTML = `
+                        <p style="color: var(--text-main); font-weight: 700; font-size: 1.6rem; margin: 0 0 4px 0;">${capitalizedDate}</p>
+                        <p style="color: var(--text-muted); font-weight: 400; font-size: 0.9rem; margin: 0 0 15px 0;">${dayOfYear}. dzień roku &bull; Tydzień ${weekNum} &bull; ${stats.diffDays} dni do końca roku</p>
+
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; font-size: 0.95rem; color: var(--text-muted);">
+                            <div>
+                                <strong style="color: var(--text-main);">Znak zodiaku:</strong> ${zodiac}<br><br>
+                                <strong style="color: var(--text-main);">Przysłowie na dziś:</strong><br><em>${przyslowie}</em>
+                            </div>
+                            <div>
+                                <strong style="color: var(--text-main);">Słońce i dzień:</strong><br>
+                                <span id="cal-sun">⏳ Pobieranie…</span><br>
+                                🌙 <strong style="color: var(--text-main);">Faza Księżyca:</strong> ${moon.name} (${moon.illum}% jasności)
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 20px; border-top: 1px solid var(--border); padding-top: 15px;">
+                            <strong style="color: var(--text-main);">Najbliższe ważne daty (święta PL, na żywo):</strong>
+                            <ul id="cal-najblizsze" style="margin: 5px 0 0 20px; padding: 0; color: var(--text-muted); font-size: 0.9rem;">
+                                <li>⏳ Pobieranie…</li>
+                            </ul>
+                        </div>
+
+                        <div style="margin-top: 20px; background: rgba(79, 70, 229, 0.08); padding: 12px 16px; border-radius: 6px; border-left: 3px solid var(--accent);">
+                            <strong style="color: var(--text-main);">Cytat dnia:</strong><br>
+                            <em style="color: var(--text-main);">${cytat.t}</em><br>
+                            <small style="color: var(--text-muted);">— ${cytat.a}</small>
+                        </div>
+                    `;
+                    container.appendChild(widget);
+                    // Uzupełnij dane z internetu bez blokowania listy artykułów
+                    fillCalendarWidget(today);
+                }
             }
 
             const slice = items.slice(displayedCount, displayedCount + batchSize);
@@ -353,13 +555,14 @@
             if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 400) {
                 if (currentItems.length > 0 && displayedCount < currentItems.length) {
                     const feedContainer = document.getElementById('feed');
-                    renderArticles(currentItems, feedContainer, true);
+                    renderArticles(currentItems, feedContainer, true, currentSourceKey === 'kalendarz');
                 }
             }
         });
 
         // --- GŁÓWNA FUNKCJA POBIERANIA Z TŁUMACZENIEM I CACHINGIEM ---
         async function loadFeed(sourceKey) {
+            currentSourceKey = sourceKey;
             const loader = document.getElementById('loader');
             const feedContainer = document.getElementById('feed');
             
@@ -370,7 +573,7 @@
             if (feedCache[sourceKey]) {
                 loader.style.display = 'none';
                 currentItems = feedCache[sourceKey];
-                renderArticles(currentItems, feedContainer, false);
+                renderArticles(currentItems, feedContainer, false, sourceKey === 'kalendarz');
                 return;
             }
 
@@ -423,7 +626,7 @@
                 
                 loader.style.display = 'none';
                 
-                if (combinedItems.length === 0) {
+                if (combinedItems.length === 0 && sourceKey !== 'kalendarz') {
                     feedContainer.innerHTML = '<p class="text-muted">Nie udało się wczytać żadnych artykułów.</p>';
                     return;
                 }
@@ -433,7 +636,7 @@
                 // Zapisz w cache przetłumaczone artykuły
                 feedCache[sourceKey] = combinedItems;
                 currentItems = combinedItems;
-                renderArticles(currentItems, feedContainer, false);
+                renderArticles(currentItems, feedContainer, false, sourceKey === 'kalendarz');
 
             } catch (error) {
                 loader.style.display = 'none';
