@@ -156,7 +156,30 @@
         @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
         .card-list{display:flex;flex-direction:column;gap:10px}
-        @media(min-width:760px){.card-list{display:grid;grid-template-columns:repeat(2,1fr);align-items:start}}
+        /* Desktop: zamiast kafelków — jedna czytelna oś czasu */
+        @media(min-width:900px){
+            .card-list{max-width:720px;margin:0 auto;gap:0;position:relative;padding-left:30px}
+            .card-list::before{content:"";position:absolute;left:9px;top:10px;bottom:10px;width:2px;border-radius:2px;
+                background:linear-gradient(var(--s-color),var(--journal-color));opacity:.4}
+            .tl-item{position:relative}
+            .tl-item::before{content:"";position:absolute;left:-25px;top:24px;width:12px;height:12px;border-radius:50%;
+                background:var(--surface-solid);border:2.5px solid var(--s-strong);box-shadow:0 0 0 4px rgba(159,156,239,.18);z-index:1}
+            .tl-item.teal::before{border-color:var(--journal-color);box-shadow:0 0 0 4px rgba(62,138,139,.18)}
+            .tl-item .card{margin:0 0 12px}
+        }
+        .month-divider{display:flex;align-items:center;gap:10px;margin:14px 0 10px;color:var(--text-2);
+            font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+        .month-divider::after{content:"";flex:1;height:.5px;background:var(--hairline)}
+        @media(min-width:900px){.month-divider{margin-left:-30px}}
+        .subhead{display:flex;align-items:center;gap:8px;margin:14px 0 10px;font-size:13px;font-weight:800;color:var(--text-2)}
+        .subhead .pill{font-size:11px;font-weight:800;background:rgba(100,116,139,.14);padding:2px 9px;border-radius:999px}
+        @media(min-width:900px){.subhead{margin-left:-30px}}
+        .idx{display:inline-grid;place-items:center;min-width:24px;height:24px;padding:0 7px;border-radius:8px;
+            background:rgba(122,119,232,.13);color:var(--s-strong);font-size:12px;font-weight:800}
+        .rel{font-size:11.5px;font-weight:700;color:var(--text-2);background:rgba(100,116,139,.12);padding:3px 9px;border-radius:999px;white-space:nowrap}
+        .rel.soon{background:rgba(34,197,94,.15);color:#15803d}
+        .rel.overdue{background:rgba(241,98,98,.14);color:#b42323}
+        .sort-btn{flex:0 0 auto}
 
         .card{
             background:var(--surface);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
@@ -308,14 +331,15 @@
 
     <div id="events-sec" class="content-section active">
         <div class="section-head"><h3>Wydarzenia</h3><span class="count" id="cnt-events">0</span><button class="btn btn-teal btn-sm" onclick="openModal('event')">＋ Dodaj</button></div>
+        <div class="sub-legend" style="margin:0 4px 10px;font-size:12.5px;color:var(--text-2)">Najbliższe u góry • przeszłe na dole</div>
         <div id="eventsTable" class="card-list"></div>
     </div>
     <div id="health-sec" class="content-section">
-        <div class="section-head"><h3>Zdrowie</h3><span class="count" id="cnt-health">0</span><button class="btn btn-teal btn-sm" onclick="openModal('health')">＋ Dodaj</button></div>
+        <div class="section-head"><h3>Zdrowie</h3><span class="count" id="cnt-health">0</span><button class="btn btn-soft btn-sm sort-btn" id="sort-health" onclick="toggleSort('health')">↓ Najnowsze</button><button class="btn btn-teal btn-sm" onclick="openModal('health')">＋ Dodaj</button></div>
         <div id="healthTable" class="card-list"></div>
     </div>
     <div id="journal-sec" class="content-section">
-        <div class="section-head"><h3>Dziennik</h3><span class="count" id="cnt-journal">0</span><button class="btn btn-teal btn-sm" onclick="openModal('journal')">＋ Dodaj</button></div>
+        <div class="section-head"><h3>Dziennik</h3><span class="count" id="cnt-journal">0</span><button class="btn btn-soft btn-sm sort-btn" id="sort-journal" onclick="toggleSort('journal')">↓ Najnowsze</button><button class="btn btn-teal btn-sm" onclick="openModal('journal')">＋ Dodaj</button></div>
         <div id="journalTable" class="card-list"></div>
     </div>
 </div>
@@ -374,6 +398,48 @@
     let currentEditId = null;
     let fileHandle = null;
     let currentFileName = '';
+    let sortOrder = { health: localStorage.getItem('sort-health') || 'desc', journal: localStorage.getItem('sort-journal') || 'desc' };
+
+    function toggleSort(key){
+        sortOrder[key] = sortOrder[key] === 'desc' ? 'asc' : 'desc';
+        localStorage.setItem('sort-'+key, sortOrder[key]);
+        syncSortLabels();
+        renderAll();
+    }
+    function syncSortLabels(){
+        const hs = document.getElementById('sort-health');
+        const js = document.getElementById('sort-journal');
+        if(hs) hs.textContent = sortOrder.health === 'desc' ? '↓ Najnowsze' : '↑ Najstarsze';
+        if(js) js.textContent = sortOrder.journal === 'desc' ? '↓ Najnowsze' : '↑ Najstarsze';
+    }
+    function ordered(list, key){
+        const desc = sortOrder[key] !== 'asc';
+        return [...list].sort((a,b)=> desc ? new Date(b.date) - new Date(a.date) : new Date(a.date) - new Date(b.date));
+    }
+    function relTime(ds){
+        const d = new Date(ds);
+        if(isNaN(d)) return {t:'brak daty', c:''};
+        const now = new Date(); now.setHours(0,0,0,0);
+        const dd = new Date(d); dd.setHours(0,0,0,0);
+        const diff = Math.round((dd - now) / 864e5);
+        if(diff === 0) return {t:'dziś', c:''};
+        if(diff === 1) return {t:'jutro', c:'soon'};
+        if(diff === -1) return {t:'wczoraj', c:''};
+        if(diff > 1 && diff < 30) return {t:`za ${diff} dni`, c:'soon'};
+        if(diff < 0 && diff > -30) return {t:`${Math.abs(diff)} dni temu`, c:''};
+        if(diff <= -30) return {t:`${Math.floor(Math.abs(diff)/30)} mies. temu`, c:''};
+        return {t:`za ${Math.floor(diff/30)} mies.`, c:'soon'};
+    }
+    function monthLabel(ds){
+        const d = new Date(ds);
+        if(isNaN(d)) return 'Bez daty';
+        return d.toLocaleDateString('pl-PL',{month:'long', year:'numeric'});
+    }
+    function fmtDT(ds){
+        const d = new Date(ds);
+        if(isNaN(d)) return 'Brak daty';
+        return d.toLocaleDateString('pl-PL',{day:'numeric',month:'short',year:'numeric'});
+    }
 
     function toast(msg){
         const t = document.getElementById('toast');
@@ -495,6 +561,7 @@
     }
 
     function renderAll() {
+        syncSortLabels();
         renderEvents();
         renderHealth();
         renderJournal();
@@ -508,40 +575,76 @@
     }
 
     function renderEvents() {
-        let h = '';
-        db.events.forEach(item => {
-            h += `
+        const today = new Date(); today.setHours(0,0,0,0);
+        const up = db.events.filter(i=>new Date(i.date) >= today).sort((a,b)=>new Date(a.date)-new Date(b.date));
+        const past = db.events.filter(i=>new Date(i.date) < today).sort((a,b)=>new Date(b.date)-new Date(a.date));
+        let h = '', n = 0, lastM = '';
+        const card = (item)=>{
+            n++;
+            const r = relTime(item.date);
+            const rc = item.date && new Date(item.date) < today ? 'overdue' : r.c;
+            return `
+            <div class="tl-item">
             <div class="card">
                 <div class="card-header">
-                    <div>
-                        <h3 class="card-title">${esc(item.title)}</h3>
-                        <div class="card-subtitle">${esc(item.category || 'Brak kategorii')} • ${esc((item.date||'').replace('T',' ') || 'Brak daty')}</div>
+                    <div style="display:flex;gap:10px;align-items:flex-start;min-width:0">
+                        <span class="idx">${n}</span>
+                        <div style="min-width:0">
+                            <h3 class="card-title">${esc(item.title)}</h3>
+                            <div class="card-subtitle">${esc(item.category || 'Brak kategorii')} • ${esc((item.date||'').replace('T',' ') || 'Brak daty')}</div>
+                        </div>
                     </div>
-                    <span class="badge mood-neutral">${esc(item.priority || '—')}</span>
+                    <span class="rel ${rc}">${esc(r.t)}</span>
                 </div>
                 <div class="card-body">
+                    <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+                        <span class="badge mood-neutral">${esc(item.priority || '—')}</span>
+                        <span style="font-size:12px;color:var(--text-3)">${esc(fmtDT(item.date))}</span>
+                    </div>
                     ${item.description ? `<div>${esc(item.description)}</div>` : '<span style="color:var(--text-3)">Brak opisu</span>'}
                 </div>
                 <div class="card-actions">
                     <button class="btn btn-ghost" onclick="openModal('event','${item.id}')">Edytuj</button>
                     <button class="btn btn-ghost danger" onclick="deleteItem('events','${item.id}')">Usuń</button>
                 </div>
+            </div>
             </div>`;
-        });
+        };
+        const group = (list)=>{
+            let s = '';
+            list.forEach(item=>{
+                const m = monthLabel(item.date);
+                if(m !== lastM){ s += `<div class="month-divider">${esc(m)}</div>`; lastM = m; }
+                s += card(item);
+            });
+            return s;
+        };
+        if(up.length) h += `<div class="subhead">Nadchodzące <span class="pill">${up.length}</span></div>` + group(up);
+        lastM = '§past';
+        if(past.length) h += `<div class="subhead">Minione <span class="pill">${past.length}</span></div>` + group(past);
         document.getElementById('eventsTable').innerHTML = h || emptyState('📅','Brak wydarzeń. Dodaj pierwsze.');
     }
 
     function renderHealth() {
-        let h = '';
-        db.health.forEach(item => {
+        const list = ordered(db.health, 'health');
+        let h = '', lastM = '';
+        list.forEach((item, i) => {
             const symptoms = (item.physical_symptoms || []).map(s => `<span class="tag">${esc(s)}</span>`).join('');
+            const m = monthLabel(item.date);
+            if(m !== lastM){ h += `<div class="month-divider">${esc(m)}</div>`; lastM = m; }
+            const r = relTime(item.date);
             h += `
+            <div class="tl-item teal">
             <div class="card">
                 <div class="card-header">
-                    <div>
-                        <h3 class="card-title">${esc(new Date(item.date).toLocaleString())}</h3>
-                        <div class="card-subtitle">${esc(item.family_member_id || 'Ja')} • energia ${esc(item.energy_level ?? '–')}/10</div>
+                    <div style="display:flex;gap:10px;align-items:flex-start;min-width:0">
+                        <span class="idx">${i+1}</span>
+                        <div style="min-width:0">
+                            <h3 class="card-title">${esc(fmtDT(item.date))}</h3>
+                            <div class="card-subtitle">${esc(item.family_member_id || 'Ja')} • energia ${esc(item.energy_level ?? '–')}/10</div>
+                        </div>
                     </div>
+                    <span class="rel">${esc(r.t)}</span>
                 </div>
                 <div class="card-body">
                      <div class="vitals">
@@ -558,21 +661,30 @@
                     <button class="btn btn-ghost" onclick="openModal('health','${item.id}')">Edytuj</button>
                     <button class="btn btn-ghost danger" onclick="deleteItem('health','${item.id}')">Usuń</button>
                  </div>
+            </div>
             </div>`;
         });
         document.getElementById('healthTable').innerHTML = h || emptyState('🩺','Brak wpisów medycznych.');
     }
 
     function renderJournal() {
-        let h = '';
-        db.journal.forEach(item => {
+        const list = ordered(db.journal, 'journal');
+        let h = '', lastM = '';
+        list.forEach((item, i) => {
             const tags = (item.tags || []).map(t => `<span class="tag">#${esc(t)}</span>`).join('');
+            const m = monthLabel(item.date);
+            if(m !== lastM){ h += `<div class="month-divider">${esc(m)}</div>`; lastM = m; }
+            const r = relTime(item.date);
             h += `
+            <div class="tl-item teal">
             <div class="card">
                 <div class="card-header">
-                    <div>
-                        <h3 class="card-title">${esc(item.title)}</h3>
-                        <div class="card-subtitle">${esc(item.date || '')}</div>
+                    <div style="display:flex;gap:10px;align-items:flex-start;min-width:0">
+                        <span class="idx">${i+1}</span>
+                        <div style="min-width:0">
+                            <h3 class="card-title">${esc(item.title)}</h3>
+                            <div class="card-subtitle">${esc(fmtDT(item.date))} • ${esc(r.t)}</div>
+                        </div>
                     </div>
                     <span class="badge mood-${esc(item.mood)}">${esc(item.mood || 'Brak')}</span>
                 </div>
@@ -584,6 +696,7 @@
                      <button class="btn btn-ghost" onclick="openModal('journal','${item.id}')">Edytuj</button>
                     <button class="btn btn-ghost danger" onclick="deleteItem('journal','${item.id}')">Usuń</button>
                 </div>
+            </div>
             </div>`;
         });
         document.getElementById('journalTable').innerHTML = h || emptyState('📖','Brak wpisów. Napisz coś dla siebie.');
