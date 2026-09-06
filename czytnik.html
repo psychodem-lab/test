@@ -140,21 +140,56 @@
             <nav>
                 <button onclick="loadFeed('sciencedaily')" id="btn-sciencedaily" class="active">ScienceDaily</button>
                 <button onclick="loadFeed('pap')" id="btn-pap">Polska</button>
-               <button onclick="loadFeed('pl2')" id="btn-pl2">Polska2</button>
+                <button onclick="loadFeed('pl2')" id="btn-pl2">Polska2</button>
                 <button onclick="loadFeed('cnn')" id="btn-cnn">Świat</button>
-                <button onclick="loadFeed('gazetaru')" id="btn-gazetaru">Ruskie</button>               
+                <button onclick="loadFeed('gazetaru')" id="btn-gazetaru">Ruskie</button>
+                <button onclick="loadFeed('psychologia')" id="btn-psychologia">Psychologia</button>
             </nav>
         </header>
         
-        <div id="loader" class="loader" translate="no">Wczytywanie artykułów...</div>
+        <div id="loader" class="loader" translate="no">Tłumaczenie i wczytywanie artykułów...</div>
         <main id="feed" class="feed-container"></main>
     </div>
 
     <script>
-       
+        // Mapa źródeł RSS z czytelnymi nazwami
+        const feedSources = {
+            'https://www.sciencedaily.com/rss/all.xml': 'ScienceDaily',
+            'https://www.sciencedaily.com/rss/top/science.xml': 'ScienceDaily Top',
+            'https://www.sciencedaily.com/rss/mind_brain.xml': 'ScienceDaily Mind & Brain',
+            'https://www.sciencedaily.com/rss/space_time.xml': 'ScienceDaily Space & Time',
+            'https://www.sciencedaily.com/rss/matter_energy.xml': 'ScienceDaily Matter & Energy',
+            'https://www.sciencedaily.com/rss/computers_math.xml': 'ScienceDaily Computers & Math',
+            'https://www.sciencedaily.com/rss/health_medicine.xml': 'ScienceDaily Health',
+            'https://pap-mediaroom.pl/kategoria/zdrowie-i-styl-zycia/rss.xml': 'PAP',
+            'https://pap-mediaroom.pl/kategoria/nauka-i-technologie/rss.xml': 'PAP',
+            'https://pap-mediaroom.pl/kategoria/ludzie-i-kultura/rss.xml': 'PAP',
+            'https://pap-mediaroom.pl/kategoria/polityka-i-społeczenstwo/rss.xml': 'PAP',
+            'https://pap-mediaroom.pl/kategoria/biznes-i-finanse/rss.xml': 'PAP',
+            'https://pap-mediaroom.pl/kalendarium/rss.xml': 'PAP',
+            'http://feeds.bbci.co.uk/news/rss.xml': 'BBC News',
+            'https://news.google.com/rss/search?q=site%3Areuters.com%20when%3A1h&hl=en-US&gl=US&ceid=US%3Aen': 'Reuters',
+            'https://www.reutersagency.com/feed/?best-topics=political-general-news&post_type=best': 'Reuters Agency',
+            'https://www.gazeta.ru/export/rss/first.xml': 'Gazeta.ru',
+            'https://www.polsatnews.pl/rss/wszystkie.xml': 'Polsat News',
+            'https://news.google.com/rss?hl=pl&gl=PL&ceid=PL:pl': 'Google News',
+            'https://rss.dw.com/xml/rss-pl-pol': 'DW Polska',
+            'https://www.polsatsport.pl/rss/wszystkie.xml': 'Polsat Sport',
+            'https://www.rynekzdrowia.pl/Kanal/all.xml': 'Rynek Zdrowia',
+            'https://news.google.com/rss/search?q=psychologia&hl=pl&gl=PL&ceid=PL:pl': 'Psychologia (Google News)',
+            'https://news.google.com/rss/search?q=psychoterapia+OR+pttpb&hl=pl&gl=PL&ceid=PL:pl': 'PTTPB / Psychoterapia',
+            'https://news.google.com/rss/search?q=zdrowie+psychiczne&hl=pl&gl=PL&ceid=PL:pl': 'Zdrowie Psychiczne'
+        };
+
         const feeds = {
             sciencedaily: [
-                'https://www.sciencedaily.com/rss/all.xml'
+                'https://www.sciencedaily.com/rss/all.xml',
+                'https://www.sciencedaily.com/rss/top/science.xml',
+                'https://www.sciencedaily.com/rss/mind_brain.xml',
+                'https://www.sciencedaily.com/rss/space_time.xml',
+                'https://www.sciencedaily.com/rss/matter_energy.xml',
+                'https://www.sciencedaily.com/rss/computers_math.xml',
+                'https://www.sciencedaily.com/rss/health_medicine.xml'
             ],
             pap: [
                 'https://pap-mediaroom.pl/kategoria/zdrowie-i-styl-zycia/rss.xml', 
@@ -163,7 +198,6 @@
                 'https://pap-mediaroom.pl/kategoria/polityka-i-społeczenstwo/rss.xml',
                 'https://pap-mediaroom.pl/kategoria/biznes-i-finanse/rss.xml',
                 'https://pap-mediaroom.pl/kalendarium/rss.xml'
-          
             ],
             cnn: [
                 'http://feeds.bbci.co.uk/news/rss.xml',
@@ -174,25 +208,39 @@
                 'https://www.gazeta.ru/export/rss/first.xml'
             ],
             pl2: [
-  
-'https://www.polsatnews.pl/rss/wszystkie.xml',  
+                'https://www.polsatnews.pl/rss/wszystkie.xml',  
                 'https://news.google.com/rss?hl=pl&gl=PL&ceid=PL:pl',
-'https://rss.dw.com/xml/rss-pl-pol',
-
-'https://www.polsatsport.pl/rss/wszystkie.xml',
+                'https://rss.dw.com/xml/rss-pl-pol',
+                'https://www.polsatsport.pl/rss/wszystkie.xml',
                 'https://www.rynekzdrowia.pl/Kanal/all.xml'
+            ],
+            psychologia: [
+                'https://news.google.com/rss/search?q=psychologia&hl=pl&gl=PL&ceid=PL:pl',
+                'https://news.google.com/rss/search?q=psychoterapia+OR+pttpb&hl=pl&gl=PL&ceid=PL:pl',
+                'https://news.google.com/rss/search?q=zdrowie+psychiczne&hl=pl&gl=PL&ceid=PL:pl'
             ]
-
-
         };
 
-        // Mapa języków dla poszczególnych kategorii wiadomości
-        const feedLanguages = {
-            sciencedaily: 'en',
-            pap: 'pl',
-            cnn: 'en',
-            gazetaru: 'ru'
-        };
+        // Pamięć podręczna (cache) dla błyskawicznego otwierania zakładek
+        const feedCache = {};
+        let currentItems = [];
+        let displayedCount = 0;
+        const batchSize = 10;
+
+        // --- AUTOMATYCZNE TŁUMACZENIE NA JĘZYK POLSKI ---
+        async function translateText(text) {
+            if (!text) return '';
+            const cleanText = text.replace(/<[^>]*>/g, '').trim();
+            if (!cleanText) return '';
+            try {
+                const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=pl&dt=t&q=${encodeURIComponent(cleanText)}`);
+                const data = await res.json();
+                if (data && data[0]) {
+                    return data[0].map(item => item[0]).join('');
+                }
+            } catch (e) {}
+            return text;
+        }
 
         // --- OBSŁUGA GESTÓW ---
         let touchstartX = 0;
@@ -269,39 +317,110 @@
             });
         }
 
-        // --- GŁÓWNA FUNKCJA POBIERANIA ---
+        // --- RENDEROWANIE ARTYKUŁÓW (NEVER ENDING SCROLLING) ---
+        function renderArticles(items, container, append = false) {
+            if (!append) {
+                container.innerHTML = '';
+                displayedCount = 0;
+            }
+
+            const slice = items.slice(displayedCount, displayedCount + batchSize);
+            if (slice.length === 0) return;
+
+            slice.forEach(item => {
+                const article = document.createElement('article');
+                const pubDate = parseFeedDate(item.pubDate);
+                const sourceName = item.sourceName || 'Wiadomości';
+
+                let cleanDescription = item.description || '';
+                cleanDescription = cleanDescription.replace(/<[^>]*>/g, '').trim();
+
+                article.innerHTML = `
+                    <div class="article-meta" translate="no">${pubDate} &bull; ${sourceName}</div>
+                    <h2 class="article-title">
+                        <a href="${item.link}" target="_blank" rel="noopener noreferrer">${item.title}</a>
+                    </h2>
+                    ${cleanDescription ? `<p class="article-description">${cleanDescription}</p>` : ''}
+                `;
+                container.appendChild(article);
+            });
+
+            displayedCount += slice.length;
+        }
+
+        // --- OBSŁUGA SCROLLOWANIA (NIESKOŃCZONE przewijanie) ---
+        window.addEventListener('scroll', () => {
+            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 400) {
+                if (currentItems.length > 0 && displayedCount < currentItems.length) {
+                    const feedContainer = document.getElementById('feed');
+                    renderArticles(currentItems, feedContainer, true);
+                }
+            }
+        });
+
+        // --- GŁÓWNA FUNKCJA POBIERANIA Z TŁUMACZENIEM I CACHINGIEM ---
         async function loadFeed(sourceKey) {
-            const urls = feeds[sourceKey];
             const loader = document.getElementById('loader');
             const feedContainer = document.getElementById('feed');
             
             document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('active'));
             document.getElementById(`btn-${sourceKey}`).classList.add('active');
 
+            // Jeśli dane są w pamięci podręcznej, otwórz natychmiast (0ms)
+            if (feedCache[sourceKey]) {
+                loader.style.display = 'none';
+                currentItems = feedCache[sourceKey];
+                renderArticles(currentItems, feedContainer, false);
+                return;
+            }
+
             loader.style.display = 'block';
             feedContainer.innerHTML = '';
-            
-            // Dynamicznie informujemy przeglądarkę o zmianie języka treści
-            const currentLang = feedLanguages[sourceKey] || 'pl';
-            document.documentElement.setAttribute('lang', currentLang);
+            displayedCount = 0;
+            currentItems = [];
             
             try {
+                const urls = feeds[sourceKey];
                 const fetchPromises = urls.map(async (url) => {
                     try {
                         const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`);
                         if (!response.ok) return null;
                         const data = await response.json();
-                        return data.status === 'ok' ? data.items : null;
+                        if (data.status !== 'ok' || !data.items) return null;
+                        
+                        const sourceName = feedSources[url] || data.feed?.title || 'Wiadomości';
+
+                        // Automatyczne tłumaczenie tytułów i opisów na język polski
+                        const translatedItems = await Promise.all(data.items.map(async (item) => {
+                            let title = item.title || '';
+                            let description = item.description || '';
+                            
+                            try {
+                                if (title) title = await translateText(title);
+                                if (description) description = await translateText(description);
+                            } catch (err) {}
+
+                            return {
+                                ...item,
+                                title,
+                                description,
+                                sourceName
+                            };
+                        }));
+
+                        return translatedItems;
                     } catch (e) {
                         return null;
                     }
                 });
+
                 const results = await Promise.all(fetchPromises);
                 
                 let combinedItems = [];
                 results.forEach(items => {
                     if (items) combinedItems = combinedItems.concat(items);
                 });
+                
                 loader.style.display = 'none';
                 
                 if (combinedItems.length === 0) {
@@ -311,23 +430,11 @@
 
                 combinedItems.sort((a, b) => getTimestamp(b.pubDate) - getTimestamp(a.pubDate));
                 
-                combinedItems.forEach(item => {
-                    const article = document.createElement('article');
-                    const pubDate = parseFeedDate(item.pubDate);
+                // Zapisz w cache przetłumaczone artykuły
+                feedCache[sourceKey] = combinedItems;
+                currentItems = combinedItems;
+                renderArticles(currentItems, feedContainer, false);
 
-                    let cleanDescription = item.description || '';
-                    cleanDescription = cleanDescription.replace(/<[^>]*>/g, '').trim();
-
-                    // translate="no" na sekcji meta chroni polski format daty przed zniekształceniem
-                    article.innerHTML = `
-                        <div class="article-meta" translate="no">${pubDate}</div>
-                        <h2 class="article-title">
-                            <a href="${item.link}" target="_blank" rel="noopener noreferrer">${item.title}</a>
-                        </h2>
-                        ${cleanDescription ? `<p class="article-description">${cleanDescription}</p>` : ''}
-                    `;
-                    feedContainer.appendChild(article);
-                });
             } catch (error) {
                 loader.style.display = 'none';
                 feedContainer.innerHTML = `
@@ -337,8 +444,47 @@
             }
         }
 
+        // --- POBIERANIE W TLE DLA POZOSTAŁYCH ZAKŁADEK ---
+        async function prefetchOtherFeeds() {
+            for (const key of Object.keys(feeds)) {
+                if (!feedCache[key]) {
+                    try {
+                        const urls = feeds[key];
+                        const fetchPromises = urls.map(async (url) => {
+                            try {
+                                const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`);
+                                if (!response.ok) return null;
+                                const data = await response.json();
+                                if (data.status !== 'ok' || !data.items) return null;
+
+                                const sourceName = feedSources[url] || data.feed?.title || 'Wiadomości';
+                                const translatedItems = await Promise.all(data.items.map(async (item) => {
+                                    let title = item.title || '';
+                                    let description = item.description || '';
+                                    try {
+                                        if (title) title = await translateText(title);
+                                        if (description) description = await translateText(description);
+                                    } catch (err) {}
+                                    return { ...item, title, description, sourceName };
+                                }));
+                                return translatedItems;
+                            } catch (e) { return null; }
+                        });
+                        const results = await Promise.all(fetchPromises);
+                        let combinedItems = [];
+                        results.forEach(items => { if (items) combinedItems = combinedItems.concat(items); });
+                        combinedItems.sort((a, b) => getTimestamp(b.pubDate) - getTimestamp(a.pubDate));
+                        if (combinedItems.length > 0) {
+                            feedCache[key] = combinedItems;
+                        }
+                    } catch (e) {}
+                }
+            }
+        }
+
         window.onload = () => {
             loadFeed('sciencedaily');
+            setTimeout(prefetchOtherFeeds, 2000);
         };
     </script>
 </body>

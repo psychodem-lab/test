@@ -425,10 +425,8 @@
         if(diff === 0) return {t:'dziś', c:''};
         if(diff === 1) return {t:'jutro', c:'soon'};
         if(diff === -1) return {t:'wczoraj', c:''};
-        if(diff > 1 && diff < 30) return {t:`za ${diff} dni`, c:'soon'};
-        if(diff < 0 && diff > -30) return {t:`${Math.abs(diff)} dni temu`, c:''};
-        if(diff <= -30) return {t:`${Math.floor(Math.abs(diff)/30)} mies. temu`, c:''};
-        return {t:`za ${Math.floor(diff/30)} mies.`, c:'soon'};
+        if(diff > 1) return {t:`za ${diff} dni`, c:'soon'};
+        return {t:`${Math.abs(diff)} dni temu`, c:''};
     }
     function monthLabel(ds){
         const d = new Date(ds);
