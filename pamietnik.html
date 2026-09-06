@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="https://img.icons8.com/dotty/80/journal.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pamiętnik</title>
+    <style>
+        :root { 
+            --p-color: #1e293bd5;
+            --s-color: #9f9cefd6; 
+            --bg: #f1f5f9; 
+            --accent: #87ac9fd1; 
+            --journal-color: #3e8a8bd6;
+            --danger: #f16262d6;
+            --surface: #ffffff5a;
+            --border: transparent;
+        }
+        
+        * { box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg); 
+            color: var(--p-color); 
+            margin: 0; 
+            padding: 10px; 
+            line-height: 1.5;
+        }
+        
+        .container { 
+            max-width: 1200px;
+            margin: 0 auto; 
+            background: transparent; 
+        }
+        
+        .header { 
+            text-align: center;
+            margin-bottom: 20px; 
+            padding: 15px;
+            background: var(--surface);
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+        
+        .header h1 { margin: 0;
+            font-size: 1.5rem; }
+
+        .toolbar { 
+            display: flex;
+            flex-direction: column; 
+            gap: 15px; 
+            margin-bottom: 20px; 
+            padding: 20px; 
+            background: var(--surface); 
+            border-radius: 16px; 
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+        
+        .toolbar-row {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .btn-group .btn {
+            flex: 1;
+            justify-content: center;
+        }
+        
+        .tabs { 
+            display: flex;
+            gap: 8px; 
+            margin-bottom: 20px; 
+            background: var(--surface); 
+            padding: 8px; 
+            border-radius: 12px; 
+            overflow-x: auto;
+            white-space: nowrap;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            scrollbar-width: none; 
+        }
+        .tabs::-webkit-scrollbar { display: none; } 
+        
+        .tab { 
+            flex: 0 0 auto;
+            padding: 12px 20px; 
+            cursor: pointer; 
+            border: none; 
+            background: transparent; 
+            font-weight: 600; 
+            font-size: 0.95rem;
+            border-radius: 8px; 
+            transition: 0.2s; 
+            color: #64748b;
+        }
+        .tab.active { 
+            background: var(--bg);
+            color: var(--s-color); 
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); 
+        }
+        
+        .content-section { display: none; }
+        .content-section.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        .card-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .card {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+        }
+
+        .card-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin: 0 0 5px 0;
+            color: var(--p-color);
+        }
+
+        .card-subtitle {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        .card-body {
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+            color: #475569;
+        }
+
+        .card-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            border-top: 1px solid var(--border);
+            padding-top: 10px;
+        }
+
+        .btn { 
+            padding: 12px 20px;
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-size: 0.95rem; 
+            font-weight: 600; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 8px; 
+            transition: opacity 0.2s;
+        }
+        .btn:active { opacity: 0.8; }
+        .btn-primary { background: var(--s-color); color: white; }
+        .btn-success { background: var(--accent); color: white; }
+        .btn-journal { background: var(--journal-color); color: white; }
+        .btn-danger { background: var(--danger); color: white; }
+        
+        .btn-block { width: 100%; justify-content: center; margin-bottom: 15px; padding: 15px; font-size: 1.05rem;}
+
+        .modal { 
+            display: none;
+            position: fixed; 
+            z-index: 1000; 
+            inset: 0; 
+            background: rgba(15, 23, 42, 0.6); 
+            backdrop-filter: blur(4px); 
+            padding: 10px;
+        }
+        .modal-content { 
+            background: var(--surface);
+            margin: auto; 
+            padding: 20px; 
+            width: 100%; 
+            max-width: 600px; 
+            border-radius: 16px; 
+            max-height: 95vh; 
+            overflow-y: auto; 
+            position: relative;
+            top: 50%;
+            transform: translateY(-50%);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-grid { 
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+        
+        label { 
+            display: block;
+            font-size: 0.85rem; 
+            font-weight: 600; 
+            margin-bottom: 6px; 
+            color: #475569; 
+        }
+        input, select, textarea { 
+            width: 100%;
+            padding: 12px; 
+            border: 1px solid #cbd5e1; 
+            border-radius: 8px; 
+            font-size: 1rem;
+            box-sizing: border-box;
+            background: var(--bg);
+            color: var(--p-color);
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--s-color);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+        textarea { min-height: 120px; resize: vertical; }
+
+        .badge { 
+            padding: 4px 10px;
+            border-radius: 12px; 
+            font-size: 0.75rem; 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            display: inline-block;
+        }
+        .mood-neutral { background: #e2e8f0; color: #475569;}
+        .mood-dobry { background: #dcfce7; color: #166534; }
+        .mood-smutny { background: #fee2e2; color: #991b1b; }
+        .tag { 
+            background: #e0f2fe;
+            color: #0369a1; 
+            padding: 4px 8px; 
+            border-radius: 6px; 
+            font-size: 0.8rem; 
+            margin-right: 5px; 
+            margin-bottom: 5px;
+            display: inline-block;
+        }
+
+        @media (min-width: 768px) {
+            body { padding: 20px; }
+            .toolbar { flex-direction: row; align-items: flex-end; justify-content: space-between;}
+            .toolbar-row { flex: 1; }
+            .btn-group { width: auto; }
+            .form-grid { grid-template-columns: repeat(2, 1fr); }
+            .full-w { grid-column: span 2; }
+            .header h1 { font-size: 2rem; }
+            .card-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); }
+        }
+/* Style dla trybu nocnego */
+body.dark-mode {
+    --p-color: #f8fafc;        /* Główny tekst (bardzo jasny szary/biały) */
+    --s-color: #60a5fa85;        /* Akcent niebieski */
+    --bg: #0f172a;             /* Tło strony */
+    --surface: #1e293b;        /* Tło kart / paneli */
+    --border: #334155;         /* Kolor ramek */
+}
+
+/* Dostosowanie elementów do trybu nocnego */
+body.dark-mode .card-title {
+    color: #f8fafc;
+}
+
+body.dark-mode .card-subtitle {
+    color: #94a3b8;           /* Jasny, czytelny szary dla daty/podtytułu */
+}
+
+body.dark-mode .card-body {
+    color: #cbd5e1;           /* Treść wpisów/notatek - wysoki kontrast */
+}
+
+body.dark-mode label {
+    color: #cbd5e1;           /* Etykiety w formularzach */
+}
+
+body.dark-mode input, 
+body.dark-mode select, 
+body.dark-mode textarea {
+    background-color: #0f172a;
+    color: #f8fafc;
+    border-color: #334155;
+}
+
+/* Dostosowanie tagów i odznak (badges) w trybie nocnym */
+body.dark-mode .tag {
+    background: #0369a1;
+    color: #e0f2fe;
+}
+
+body.dark-mode .mood-neutral {
+    background: #334155;
+    color: #f1f5f9;
+}
+
+body.dark-mode .mood-dobry {
+    background: #166534;
+    color: #dcfce7;
+}
+
+body.dark-mode .mood-smutny {
+    background: #991b1b;
+    color: #fee2e2;
+}
+
+body.dark-mode .tab {
+    color: #94a3b8;
+}
+
+body.dark-mode .tab.active {
+    background: #0f172a;
+    color: var(--s-color);
+}
+
+/* Styl dla przycisku przełączania */
+.dark-mode-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--s-color);
+    color: white;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    z-index: 1001;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+    </style>
+</head>
+<body>
+<button class="dark-mode-toggle" onclick="toggleDarkMode()" title="Przełącz tryb">🌓</button>
+<div class="container">
+    <div class="header">
+        <h1> Pamiętnik </h1>
+    </div>
+
+    <div class="toolbar">
+        <div class="toolbar-row">
+            <label>Plik bazy danych</label>
+            <button class="btn btn-primary btn-block" onclick="openLocalFile()">📂 Otwórz plik</button>
+            <input type="file" id="fileInputFallback" style="display: none;">
+        </div>
+        <div class="toolbar-row">
+            <label>Hasło Szyfrowania</label>
+            <input type="password" id="masterPassword" placeholder="Twoje tajne hasło dla plików .bin">
+        </div>
+        <div class="btn-group">
+            <button class="btn btn-success" onclick="saveLocalFile(false)">💾 Zapisz JSON</button>
+            <button class="btn btn-success" onclick="saveLocalFile(true)">🔒 Zapisz BIN</button>
+        </div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab active" onclick="switchTab('events')">  📅  </button>
+        <button class="tab" onclick="switchTab('health')">  🩺  </button>
+        <button class="tab" onclick="switchTab('journal')">  📖  </button>
+    </div>
+
+    <div id="events-sec" class="content-section active">
+        <button class="btn btn-journal btn-block" onclick="openModal('event')">+ Dodaj Wydarzenie</button>
+        <div id="eventsTable" class="card-list"></div>
+    </div>
+
+    <div id="health-sec" class="content-section">
+        <button class="btn btn-journal btn-block" onclick="openModal('health')">+ Nowy Wpis Medyczny</button>
+        <div id="healthTable" class="card-list"></div>
+    </div>
+
+    <div id="journal-sec" class="content-section">
+        <button class="btn btn-journal btn-block" onclick="openModal('journal')">+ Nowy Wpis Pamiętnika</button>
+        <div id="journalTable" class="card-list"></div>
+    </div>
+</div>
+
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <h2 id="modalTitle" style="margin-top:0; border-bottom: 2px solid var(--bg); padding-bottom: 10px;">Edytuj</h2>
+        <div id="modalFields" class="form-grid"></div>
+        <div style="margin-top: 25px; display: flex; gap: 10px; border-top: 1px solid var(--bg); padding-top: 15px;">
+            <button class="btn btn-danger" style="flex: 1;" onclick="closeModal()">Anuluj</button>
+            <button class="btn btn-success" style="flex: 2;" onclick="saveData()">Zapisz</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const SCHEMAS = {
+        event: [
+            { key: 'title', label: 'Tytuł', type: 'text', full: true },
+            { key: 'date', label: 'Data', type: 'datetime-local' },
+            { key: 'category', label: 'Kategoria', type: 'text' },
+            { key: 'priority', label: 'Priorytet', type: 'select', options: ['niska', 'średnia', 'wysoka'] },
+            { key: 'reminder_days', label: 'Przypomnienie (dni przed)', type: 'number' },
+            { key: 'description', label: 'Szczegóły', type: 'textarea', full: true }
+        ],
+        health: [
+            { key: 'family_member_id', label: 'Osoba (opcjonalnie)', type: 'text' },
+            { key: 'date', label: 'Data i Godzina', type: 'datetime-local' },
+            { key: 'temperature', label: 'Temperatura (°C)', type: 'number', step: '0.1' },
+            { key: 'heart_rate', label: 'Tętno', type: 'number' },
+            { key: 'blood_pressure_systolic', label: 'Skurczowe', type: 'number' },
+            { key: 'blood_pressure_diastolic', label: 'Rozkurczowe', type: 'number' },
+            { key: 'weight', label: 'Waga (kg)', type: 'number', step: '0.1' },
+            { key: 'energy_level', label: 'Energia (1-10)', type: 'number' },
+            { key: 'mental_state', label: 'Stan psychiczny', type: 'text', full: true },
+            { key: 'physical_symptoms', label: 'Objawy fizyczne (po przecinku)', type: 'array', full: true },
+            { key: 'notes', label: 'Notatki medyczne / Zalecenia', type: 'textarea', full: true }
+        ],
+        journal: [
+            { key: 'title', label: 'Tytuł wpisu', type: 'text', full: true },
+            { key: 'date', label: 'Data', type: 'date' },
+            { key: 'mood', label: 'Nastrój', type: 'select', options: ['dobry', 'neutralny', 'smutny', 'niepokój'] },
+            { key: 'tags', label: 'Tagi (po przecinku)', type: 'array', full: true },
+            { key: 'content', label: 'Treść przemyśleń', type: 'textarea', full: true }
+        ]
+    };
+    
+    let db = { events: [], health: [], journal: [] };
+    let currentMode = '';
+    let currentEditId = null;
+    let fileHandle = null; // Przechowuje uchwyt do pliku
+
+    // System wczytywania plików oparty o File System Access API
+    async function openLocalFile() {
+        if ('showOpenFilePicker' in window) {
+            try {
+                [fileHandle] = await window.showOpenFilePicker({
+                    types: [{
+                        description: 'Baza Danych',
+                        accept: { 'application/json': ['.json'], 'application/octet-stream': ['.bin'] }
+                    }],
+                    multiple: false
+                });
+                const file = await fileHandle.getFile();
+                await processFile(file);
+            } catch (err) {
+                if (err.name !== 'AbortError') console.error("Anulowano lub błąd:", err);
+            }
+        } else {
+            // Zapasowe rozwiązanie dla starszych przeglądarek / iOS
+            document.getElementById('fileInputFallback').click();
+        }
+    }
+
+    document.getElementById('fileInputFallback').addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (file) await processFile(file);
+    });
+
+    async function processFile(file) {
+        const reader = new FileReader();
+        reader.onload = async (ev) => {
+            try {
+                if (file.name.endsWith('.bin')) {
+                    const pass = document.getElementById('masterPassword').value;
+                    if (!pass) throw new Error("Hasło jest wymagane do odczytu pliku BIN!");
+                    const decrypted = await decryptData(ev.target.result, pass);
+                    db = JSON.parse(decrypted);
+                } else {
+                    db = JSON.parse(ev.target.result);
+                }
+                if (!db.journal) db.journal = [];
+                if (!db.health) db.health = [];
+                if (!db.events) db.events = [];
+                renderAll();
+                alert("Baza została wczytana pomyślnie.");
+            } catch (err) { alert("Błąd wczytywania: " + err.message); }
+        };
+        if (file.name.endsWith('.bin')) reader.readAsArrayBuffer(file);
+        else reader.readAsText(file);
+    }
+
+    // System zapisu wykorzystujący nadpisywanie pliku API (lub fallback na pobieranie)
+    async function saveLocalFile(encrypt) {
+        const dataStr = JSON.stringify(db);
+        let finalBlob;
+        let ext = encrypt ? '.bin' : '.json';
+
+        if (!encrypt) {
+            finalBlob = new Blob([dataStr], {type:'application/json'});
+        } else {
+            const pass = document.getElementById('masterPassword').value;
+            if (!pass) return alert("Wpisz hasło do zaszyfrowania bazy!");
+            const salt = crypto.getRandomValues(new Uint8Array(16));
+            const iv = crypto.getRandomValues(new Uint8Array(12));
+            const key = await deriveKey(pass, salt);
+            const encrypted = await crypto.subtle.encrypt({name:"AES-GCM", iv}, key, new TextEncoder().encode(dataStr));
+            
+            const res = new Uint8Array(salt.length + iv.length + encrypted.byteLength);
+            res.set(salt, 0);
+            res.set(iv, 16); 
+            res.set(new Uint8Array(encrypted), 28);
+            finalBlob = new Blob([res], {type:'application/octet-stream'});
+        }
+
+        if ('showSaveFilePicker' in window) {
+            try {
+                // Jeżeli nie mamy uchwytu lub nazwa końcówki pliku się zmieniła (np. z JSON na BIN) pytamy o nową ścieżkę
+                if (!fileHandle || !fileHandle.name.endsWith(ext)) {
+                    fileHandle = await window.showSaveFilePicker({
+                        suggestedName: `baza${ext}`,
+                        types: [{
+                            description: 'Baza Danych',
+                            accept: encrypt ? {'application/octet-stream': ['.bin']} : {'application/json': ['.json']}
+                        }]
+                    });
+                }
+                const writable = await fileHandle.createWritable();
+                await writable.write(finalBlob);
+                await writable.close();
+                alert("Pomyślnie nadpisano plik na dysku!");
+            } catch (e) {
+                if (e.name !== 'AbortError') {
+                    console.error("Błąd zapisu File System API:", e);
+                    // Jeżeli brak uprawnień - fallback do pobrania
+                    downloadBlob(finalBlob, `baza${ext}`);
+                }
+            }
+        } else {
+            downloadBlob(finalBlob, `baza${ext}`);
+        }
+    }
+
+    function renderAll() {
+        renderEvents();
+        renderHealth();
+        renderJournal();
+    }
+
+    function renderEvents() {
+        let h = '';
+        db.events.forEach(item => {
+            h += `
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <h3 class="card-title">${item.title}</h3>
+                        <div class="card-subtitle">${item.category || 'Brak kategorii'}</div>
+                    </div>
+                    <span class="badge" style="background: #e2e8f0">${item.priority}</span>
+                </div>
+                <div class="card-body">
+                    <strong>📅 Data:</strong> ${item.date?.replace('T', ' ') || 'Brak'}<br>
+                    ${item.description ? `<div style="margin-top:8px">${item.description}</div>` : ''}
+                </div>
+                <div class="card-actions">
+                    <button class="btn btn-primary" onclick="openModal('event','${item.id}')">✏️ Edytuj</button>
+                    <button class="btn btn-danger" onclick="deleteItem('events','${item.id}')">🗑️ Usuń</button>
+                </div>
+            </div>`;
+        });
+        document.getElementById('eventsTable').innerHTML = h || '<div style="text-align:center; padding: 20px; color:#64748b;">Brak wydarzeń.</div>';
+    }
+
+    function renderHealth() {
+        let h = '';
+        db.health.forEach(item => {
+            const symptoms = (item.physical_symptoms || []).map(s => `<span class="tag">${s}</span>`).join('');
+            h += `
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <h3 class="card-title">${new Date(item.date).toLocaleString()}</h3>
+                        <div class="card-subtitle">Osoba: <strong>${item.family_member_id || 'Ja'}</strong></div>
+                    </div>
+                </div>
+                <div class="card-body">
+                     <div style="display: flex; gap: 15px; margin-bottom: 10px; flex-wrap: wrap;">
+                        <span>🌡️ ${item.temperature || '--'}°C</span>
+                        <span>💓 ${item.heart_rate || '--'} bpm</span>
+                        <span>🩸 ${item.blood_pressure_systolic || '--'}/${item.blood_pressure_diastolic || '--'}</span>
+                        <span>⚖️ ${item.weight || '--'} kg</span>
+                    </div>
+                    <div><strong>Stan:</strong> ${item.mental_state || '-'} (Energia: ${item.energy_level || '-'}/10)</div>
+                    ${symptoms ? `<div style="margin-top: 10px;">${symptoms}</div>` : ''}
+                    ${item.notes ? `<div style="margin-top: 10px; font-size: 0.85rem; padding: 10px; background: var(--bg); border-radius: 8px;">${item.notes}</div>` : ''}
+                </div>
+                <div class="card-actions">
+                    <button class="btn btn-success" onclick="openModal('health','${item.id}')">✏️ Edytuj</button>
+                    <button class="btn btn-danger" onclick="deleteItem('health','${item.id}')">🗑️ Usuń</button>
+                 </div>
+            </div>`;
+        });
+        document.getElementById('healthTable').innerHTML = h || '<div style="text-align:center; padding: 20px; color:#64748b;">Brak wpisów medycznych.</div>';
+    }
+
+    function renderJournal() {
+        let h = '';
+        db.journal.forEach(item => {
+            const tags = (item.tags || []).map(t => `<span class="tag">#${t}</span>`).join('');
+            h += `
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <h3 class="card-title">${item.title}</h3>
+                        <div class="card-subtitle">${item.date || ''}</div>
+                    </div>
+                    <span class="badge mood-${item.mood}">${item.mood || 'Brak'}</span>
+                </div>
+                <div class="card-body">
+                    <div style="margin-bottom: 10px;">${item.content?.replace(/\n/g, '<br>') || ''}</div>
+                    <div>${tags}</div>
+                </div>
+                <div class="card-actions">
+                     <button class="btn btn-journal" onclick="openModal('journal','${item.id}')">✏️ Edytuj</button>
+                    <button class="btn btn-danger" onclick="deleteItem('journal','${item.id}')">🗑️ Usuń</button>
+                </div>
+            </div>`;
+        });
+        document.getElementById('journalTable').innerHTML = h || '<div style="text-align:center; padding: 20px; color:#64748b;">Brak wpisów w pamiętniku.</div>';
+    }
+
+    function openModal(mode, id = null) {
+        currentMode = mode;
+        currentEditId = id;
+        const schema = SCHEMAS[mode];
+        const data = id ? db[mode === 'event' ? 'events' : mode].find(x => x.id === id) : {};
+        
+        let fieldsHtml = '';
+        schema.forEach(f => {
+            let val = data[f.key] || '';
+            if (f.type === 'array') val = (data[f.key] || []).join(', ');
+            
+            const fieldClass = f.full ? 'full-w' : '';
+            fieldsHtml += `<div class="${fieldClass}"><label>${f.label}</label>`;
+            if (f.type === 'textarea') {
+                fieldsHtml += `<textarea id="val_${f.key}">${val}</textarea>`;
+            } else if (f.type === 'select') {
+                fieldsHtml += `<select id="val_${f.key}">${f.options.map(o => `<option value="${o}" ${o===val?'selected':''}>${o}</option>`).join('')}</select>`;
+            } else {
+                fieldsHtml += `<input type="${f.type}" id="val_${f.key}" value="${val}" step="${f.step || 1}">`;
+            }
+            fieldsHtml += `</div>`;
+        });
+        document.getElementById('modalFields').innerHTML = fieldsHtml;
+        const plMode = mode === 'event' ? 'Wydarzenie' : (mode === 'health' ? 'Wpis Medyczny' : 'Wpis Pamiętnika');
+        document.getElementById('modalTitle').innerText = (id ? 'Edytuj ' : 'Dodaj ') + plMode;
+        document.getElementById('modal').style.display = 'block';
+    }
+
+    function saveData() {
+    const modeKey = currentMode === 'event' ? 'events' : currentMode;
+    const schema = SCHEMAS[currentMode];
+    
+    // 1. Pobieramy istniejący obiekt lub tworzymy nowy
+    let item = currentEditId 
+        ? db[modeKey].find(x => x.id === currentEditId) 
+        : { id: crypto.randomUUID().substring(0, 8), created_date: new Date().toISOString() };
+    
+    // 2. Mapujemy wartości z formularza do obiektu
+    schema.forEach(f => {
+        const input = document.getElementById(`val_${f.key}`);
+        if (f.type === 'array') {
+            item[f.key] = input.value.split(',').map(s => s.trim()).filter(s => s !== '');
+        } else if (f.type === 'number') {
+            item[f.key] = input.value ? parseFloat(input.value) : null;
+        } else {
+            item[f.key] = input.value;
+        }
+    });
+    
+    // 3. Jeśli to nowy wpis, dodajemy go do bazy (używamy push zamiast unshift)
+    if (!currentEditId) {
+        db[modeKey].push(item);
+    }
+
+    // 4. KLUCZOWA ZMIANA: Sortowanie po każdej operacji zapisu
+    if (modeKey === 'events') {
+        // Dla Wydarzeń: Od najstarszej daty do najnowszej (chronologicznie w dół)
+        db.events.sort((a, b) => new Date(a.date) - new Date(b.date));
+    } else {
+        // Dla Zdrowia i Pamiętnika: Najnowsze na górze (odwrócona chronologia)
+        db[modeKey].sort((a, b) => new Date(b.date) - new Date(a.date));
+    }
+    
+    closeModal();
+    renderAll(); // Odświeżamy widok z nowym sortowaniem
+}
+
+
+    function switchTab(t) {
+        document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+        document.getElementById(t + '-sec').classList.add('active');
+        event.target.classList.add('active');
+    }
+
+    function deleteItem(key, id) {
+        if (confirm("Czy na pewno chcesz usunąć ten wpis?")) {
+            db[key] = db[key].filter(x => x.id !== id);
+            renderAll();
+        }
+    }
+
+    function closeModal() { document.getElementById('modal').style.display = 'none'; }
+
+    async function deriveKey(pass, salt) {
+        const enc = new TextEncoder();
+        const base = await crypto.subtle.importKey("raw", enc.encode(pass), "PBKDF2", false, ["deriveKey"]);
+        return crypto.subtle.deriveKey(
+            { name: "PBKDF2", salt, iterations: 100000, hash: "SHA-256" },
+            base, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]
+        );
+    }
+
+    async function decryptData(buffer, pass) {
+        const salt = new Uint8Array(buffer.slice(0, 16));
+        const iv = new Uint8Array(buffer.slice(16, 28));
+        const data = buffer.slice(28);
+        const key = await deriveKey(pass, salt);
+        const dec = await crypto.subtle.decrypt({name:"AES-GCM", iv}, key, data);
+        return new TextDecoder().decode(dec);
+    }
+
+    function downloadBlob(blob, name) {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = name;
+        a.click();
+    }
+
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js');
+    }
+function toggleDarkMode() {
+    const isDark = document.body.classList.toggle('dark-mode');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+}
+
+// Sprawdź zapisane preferencje przy starcie strony
+(function() {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+    } else if (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        // Jeśli użytkownik nie wybrał, a system operacyjny ma tryb ciemny
+        document.body.classList.add('dark-mode');
+    }
+})();
+
+</script>
+</body>
+</html>
